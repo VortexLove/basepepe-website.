@@ -6,94 +6,83 @@
     <title>BasePepe - Meme Coin</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #222;
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(to right, #0072ff, #00c6ff);
             color: #fff;
             text-align: center;
             padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
         }
-        h1 {
-            font-size: 3em;
-            color: #00ff00;
+        .card {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1, h2 {
+            font-size: 1.5em;
         }
         .btn {
-            background-color: #00ff00;
+            background-color: #ffcc00;
             color: #222;
             padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
             display: inline-block;
-            margin-top: 20px;
+            margin-top: 10px;
+            font-weight: bold;
         }
-        .image-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .image-container img {
-            width: 100px;
-            height: auto;
-        }
-        .roadmap, .tokenomics {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #333;
-            border-radius: 10px;
-        }
-        .pre-sale {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #444;
-            border-radius: 10px;
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🐸 BasePepe 🚀</h1>
-        <p>El meme coin más divertido en la red BASE</p>
-        
-        <div class="image-container">
-            <img src="pepe1.png" alt="BasePepe 1">
-            <img src="pepe2.png" alt="BasePepe 2">
-            <img src="pepe3.png" alt="BasePepe 3">
+        <div class="card">
+            <h1>Welcome to BasePepe</h1>
+            <p>The most hyped meme token on Base Network!</p>
+            <button class="btn">Buy Now</button>
+            <button class="btn">Join Community</button>
         </div>
         
-        <a href="https://t.me/BasePepeChat" class="btn">Únete a Telegram</a>
-        
-        <div class="roadmap">
-            <h2>📍 Roadmap</h2>
-            <p>🚀 Lanzamiento Stealth</p>
-            <p>🔥 Crecimiento Orgánico con Memes</p>
-            <p>🎁 Airdrops y Recompensas</p>
-            <p>🌍 Expansión Global</p>
+        <div class="card">
+            <h2>BasePepe Presale</h2>
+            <p>Join the exclusive presale and secure your BasePepe tokens now!</p>
+            <button class="btn">Connect Wallet</button>
+            <input type="text" placeholder="Enter amount in ETH">
+            <button class="btn">Buy Tokens</button>
         </div>
         
-        <div class="tokenomics">
-            <h2>📊 Tokenomics</h2>
-            <p>🔹 Suministro Total: 1,000,000,000 BPEPE</p>
-            <p>🔹 50% Liquidez</p>
-            <p>🔹 30% Recompensas & Staking</p>
-            <p>🔹 20% Desarrollo & Marketing</p>
+        <div class="card">
+            <h2>Roadmap</h2>
+            <p>🚀 Phase 1: Launch & Community Building</p>
+            <p>🔥 Phase 2: Marketing & Listings</p>
+            <p>🌍 Phase 3: Partnerships & Utility Expansion</p>
         </div>
         
-        <div class="pre-sale">
-            <h2>🔥 Preventa</h2>
-            <p>Compra BasePepe antes del lanzamiento oficial</p>
-            <p>Precio: 1000 BPEPE por 1 ETH</p>
-            <button onclick="buyPresale()" class="btn">Comprar Ahora</button>
+        <div class="card">
+            <h2>Tokenomics</h2>
+            <p>Total Supply: 1,000,000,000 BPEPE</p>
+            <p>Liquidity: 50%</p>
+            <p>Marketing: 20%</p>
+            <p>Development: 15%</p>
+            <p>Community & Airdrops: 15%</p>
+        </div>
+        
+        <div class="card">
+            <h2>Join the Community</h2>
+            <p>Be part of the BasePepe family! Join our Telegram group for the latest updates and discussions.</p>
+            <button class="btn">Join Telegram</button>
         </div>
     </div>
-    
-    <script>
-        function buyPresale() {
-            alert("Función de compra en preventa próximamente disponible!");
-        }
-    </script>
 </body>
 </html>
