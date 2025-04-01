@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BasePepe - The Ultimate Meme Token</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -74,6 +75,14 @@
         <a href="#community" class="btn">Join Community</a>
     </div>
     
+    <div class="container section" id="presale">
+        <h2>BasePepe Presale</h2>
+        <p>Join the exclusive presale and secure your BasePepe tokens now!</p>
+        <button class="btn" onclick="connectWallet()">Connect Wallet</button>
+        <input type="number" id="amount" placeholder="Enter amount in ETH" style="padding: 10px; margin: 10px;">
+        <button class="btn" onclick="buyTokens()">Buy Tokens</button>
+    </div>
+    
     <div class="container section" id="roadmap">
         <h2>Roadmap</h2>
         <p>🚀 Phase 1: Launch & Community Building</p>
@@ -90,27 +99,43 @@
         <p>Community & Airdrops: 15%</p>
     </div>
     
-    <div class="container section" id="whitepaper">
-        <h2>Whitepaper</h2>
-        <p>Read our detailed whitepaper to understand the vision and technology behind BasePepe.</p>
-        <a href="your-whitepaper-url.pdf" class="btn">Download Whitepaper</a>
+    <div class="container section" id="community">
+        <h2>Join the Community</h2>
+        <p>Be part of the BasePepe family! Join our Telegram group for the latest updates and discussions.</p>
+        <a href="https://t.me/BasePepeChat" class="btn" target="_blank">Join Telegram</a>
     </div>
-    
-    <div class="container section" id="faq">
-        <h2>FAQ</h2>
-        <p><strong>How can I buy BasePepe?</strong></p>
-        <p>You can buy BasePepe on decentralized exchanges on the Base Network.</p>
-        <p><strong>Is BasePepe safe?</strong></p>
-        <p>Yes! Our smart contract is verified and safe.</p>
-    </div>
-    
-    <div class="container section">
-        <h2>Meet the Pepes!</h2>
-        <div class="running-pepes">
-            <img src="your-running-pepe1-url.png" alt="Running Pepe">
-            <img src="your-running-pepe2-url.png" alt="Running Pepe">
-            <img src="your-running-pepe3-url.png" alt="Running Pepe">
-        </div>
-    </div>
+
+    <script>
+        let web3;
+        async function connectWallet() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                alert("Wallet connected!");
+            } else {
+                alert("Please install MetaMask");
+            }
+        }
+        
+        async function buyTokens() {
+            const accounts = await web3.eth.getAccounts();
+            const amount = document.getElementById("amount").value;
+            if (!amount || amount <= 0) {
+                alert("Enter a valid amount");
+                return;
+            }
+            
+            const presaleAddress = "0xYourPresaleContractAddress"; 
+            const transaction = {
+                from: accounts[0],
+                to: presaleAddress,
+                value: web3.utils.toWei(amount, "ether")
+            };
+            
+            web3.eth.sendTransaction(transaction)
+                .then(() => alert("Transaction sent successfully!"))
+                .catch((err) => alert("Transaction failed: " + err.message));
+        }
+    </script>
 </body>
 </html>
