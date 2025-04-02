@@ -13,13 +13,15 @@
             font-family: 'Press Start 2P', cursive;
             text-align: center;
             background: black;
+            overflow-x: hidden;
         }
         .parallax {
-            background: url('background.png') no-repeat center center fixed;
+            background: url('background.png') no-repeat center center;
             background-size: cover;
             background-attachment: fixed;
             height: 100vh;
             width: 100%;
+            position: relative;
         }
         .content {
             padding: 20px;
@@ -27,6 +29,8 @@
             border-radius: 10px;
             max-width: 600px;
             margin: auto;
+            position: relative;
+            z-index: 2;
         }
         input, button {
             font-family: inherit;
@@ -50,7 +54,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-    <div class="parallax"></div>
+    <div class="parallax" id="parallax"></div>
     <div class="content">
         <h1>🐸 BasePepe Presale 🐸</h1>
         <p>Hace eones, Pepe reinaba en los oscuros rincones de internet... hasta que encontró su hogar en la red BASE.</p>
@@ -110,6 +114,11 @@
                 console.error(error);
                 alert("Error en la transacción");
             }
+        });
+
+        window.addEventListener("scroll", function() {
+            let scrollPosition = window.scrollY;
+            document.getElementById("parallax").style.backgroundPositionY = -(scrollPosition * 0.5) + "px";
         });
     </script>
 </body>
