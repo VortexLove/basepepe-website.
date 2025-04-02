@@ -7,22 +7,26 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         body {
-            background: url('background.png') no-repeat center center fixed;
-            background-size: 100% 100%;
-            background-color: black;
+            margin: 0;
+            padding: 0;
             color: white;
             font-family: 'Press Start 2P', cursive;
             text-align: center;
-            padding: 20px;
-            min-height: 100vh;
-            margin: 0;
+            background: black;
         }
-        .container {
+        .parallax {
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            background-attachment: fixed;
+            height: 100vh;
+            width: 100%;
+        }
+        .content {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
             max-width: 600px;
             margin: auto;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
         }
         input, button {
             font-family: inherit;
@@ -46,17 +50,16 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-    <h1>🐸 BasePepe Presale 🐸</h1>
-    <p>Hace eones, Pepe reinaba en los oscuros rincones de internet... hasta que encontró su hogar en la red BASE.</p>
-    
-    <div class="container">
+    <div class="parallax"></div>
+    <div class="content">
+        <h1>🐸 BasePepe Presale 🐸</h1>
+        <p>Hace eones, Pepe reinaba en los oscuros rincones de internet... hasta que encontró su hogar en la red BASE.</p>
         <p>1 ETH = 1,000,000 BasePepe</p>
         <input type="number" id="ethAmount" placeholder="Cantidad en ETH" step="0.01">
         <p id="basePepeAmount">Recibirás: 0 BasePepe</p>
         <button id="connectWallet">Conectar Wallet</button>
         <button id="buyTokens" disabled>Comprar BasePepe</button>
     </div>
-    
     <h2>📜 Roadmap</h2>
     <ul>
         <li>🔥 Lanzamiento stealth y preventa</li>
@@ -64,7 +67,6 @@
         <li>🎮 Integraciones con staking y juegos</li>
         <li>🚀 Listado en exchanges</li>
     </ul>
-
     <script>
         let account;
         const tokenRate = 1000000;
