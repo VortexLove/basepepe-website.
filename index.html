@@ -18,6 +18,11 @@
         .parallax {
             height: 100vh;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
         }
         .content {
             padding: 20px;
@@ -51,15 +56,16 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-    <div class="parallax"></div>
-    <div class="content">
-        <h1>🌺 BasePepe Presale 🌺</h1>
-        <p>Hace eones, Pepe reinaba en los oscuros rincones de internet... hasta que encontró su hogar en la red BASE.</p>
-        <p>1 ETH = 1,000,000 BasePepe</p>
-        <input type="number" id="ethAmount" placeholder="Cantidad en ETH" step="0.01">
-        <p id="basePepeAmount">Recibirás: 0 BasePepe</p>
-        <button id="connectWallet">Conectar Wallet</button>
-        <button id="buyTokens" disabled>Comprar BasePepe</button>
+    <div class="parallax">
+        <div class="content">
+            <h1>🌺 BasePepe Presale 🌺</h1>
+            <p>Hace eones, Pepe reinaba en los oscuros rincones de internet... hasta que encontró su hogar en la red BASE.</p>
+            <p>1 ETH = 1,000,000 BasePepe</p>
+            <input type="number" id="ethAmount" placeholder="Cantidad en ETH" step="0.01">
+            <p id="basePepeAmount">Recibirás: 0 BasePepe</p>
+            <button id="connectWallet">Conectar Wallet</button>
+            <button id="buyTokens" disabled>Comprar BasePepe</button>
+        </div>
     </div>
     <h2>📜 Roadmap</h2>
     <ul>
