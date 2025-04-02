@@ -12,7 +12,7 @@
             color: white;
             font-family: 'Press Start 2P', cursive;
             text-align: center;
-            background: url('background.png') no-repeat center center fixed;
+            background: url('background.png') no-repeat center top;
             background-size: cover;
         }
         .parallax {
@@ -29,26 +29,7 @@
         .spacer {
             height: 2000px; /* Permite hacer mucho scroll */
         }
-        input, button {
-            font-family: inherit;
-            padding: 10px;
-            margin: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-        input {
-            width: 80%;
-        }
-        button {
-            background-color: green;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: darkgreen;
-        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
     <div class="parallax"></div>
@@ -56,62 +37,12 @@
         <h1>🐸 BasePepe Presale 🐸</h1>
         <p>Hace eones, Pepe reinaba en los oscuros rincones de internet... hasta que encontró su hogar en la red BASE.</p>
         <p>1 ETH = 1,000,000 BasePepe</p>
-        <input type="number" id="ethAmount" placeholder="Cantidad en ETH" step="0.01">
-        <p id="basePepeAmount">Recibirás: 0 BasePepe</p>
-        <button id="connectWallet">Conectar Wallet</button>
-        <button id="buyTokens" disabled>Comprar BasePepe</button>
     </div>
-    <h2>📜 Roadmap</h2>
-    <ul>
-        <li>🔥 Lanzamiento stealth y preventa</li>
-        <li>📢 Marketing con memes e influencers</li>
-        <li>🎮 Integraciones con staking y juegos</li>
-        <li>🚀 Listado en exchanges</li>
-    </ul>
     <div class="spacer"></div>
     <script>
-        let account;
-        const tokenRate = 1000000;
-        const minEth = 0.01;
-        const maxEth = 2;
-
-        document.getElementById("ethAmount").addEventListener("input", function() {
-            let ethValue = parseFloat(this.value) || 0;
-            document.getElementById("basePepeAmount").innerText = `Recibirás: ${ethValue * tokenRate} BasePepe`;
-        });
-
-        document.getElementById("connectWallet").addEventListener("click", async function() {
-            if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const accounts = await provider.send("eth_requestAccounts", []);
-                account = accounts[0];
-                document.getElementById("buyTokens").disabled = false;
-            } else {
-                alert("Instala MetaMask para continuar");
-            }
-        });
-
-        document.getElementById("buyTokens").addEventListener("click", async function() {
-            if (!account) return alert("Conecta tu wallet primero");
-            let ethValue = parseFloat(document.getElementById("ethAmount").value);
-            if (ethValue < minEth || ethValue > maxEth) return alert("Monto fuera de los límites permitidos");
-
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-            
-            const tx = {
-                to: "0xYourContractAddress", // Reemplazar con la dirección real del contrato
-                value: ethers.utils.parseEther(ethValue.toString())
-            };
-            
-            try {
-                const transaction = await signer.sendTransaction(tx);
-                await transaction.wait();
-                alert("Compra exitosa de " + (ethValue * tokenRate) + " BasePepe");
-            } catch (error) {
-                console.error(error);
-                alert("Error en la transacción");
-            }
+        window.addEventListener("scroll", function() {
+            let scrollPosition = window.scrollY;
+            document.body.style.backgroundPosition = `center ${scrollPosition * 0.5}px`;
         });
     </script>
 </body>
