@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venta Preventa BasePepe</title>
+  <title>Venta Preventa y Juego BasePepe</title>
   <!-- Fuente pixelada -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
@@ -21,28 +21,17 @@
       justify-content: space-between;
       padding: 20px;
     }
-    header img {
-      height: 60px;
-    }
+    header img { height: 60px; }
     nav a {
       color: #39ff14;
       text-decoration: none;
       margin-left: 20px;
-      font-size: 16px;
-    }
-    #hero {
-      text-align: center;
-      padding: 80px 20px;
-    }
-    #hero h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
-    #hero p {
-      max-width: 600px;
-      margin: 0 auto 30px;
       font-size: 14px;
     }
+    section { padding: 60px 20px; }
+    #hero { text-align: center; padding: 80px 20px; }
+    #hero h1 { font-size: 48px; margin-bottom: 20px; }
+    #hero p { max-width: 600px; margin: 0 auto 30px; font-size: 14px; }
     .btn {
       display: inline-block;
       padding: 15px 30px;
@@ -51,56 +40,36 @@
       font-size: 14px;
       cursor: pointer;
       transition: background 0.2s;
-    }
-    .btn:hover {
-      background-color: #39ff14;
-      color: #0b0b0b;
-    }
-    section {
-      padding: 60px 20px;
-    }
-    #lore, #roadmap {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    #lore p {
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-    #roadmap .step {
-      margin-bottom: 30px;
-    }
-    #roadmap .step h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-    #presale {
-      text-align: center;
-    }
-    #presale p {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    #presale input {
-      padding: 10px;
-      width: 200px;
-      margin-bottom: 10px;
-      border: 2px solid #39ff14;
       background: transparent;
       color: #39ff14;
-      font-family: 'Press Start 2P', cursive;
-      text-align: center;
     }
-    footer {
-      text-align: center;
-      padding: 40px 20px;
+    .btn:hover { background-color: #39ff14; color: #0b0b0b; }
+    #lore, #roadmap, #presale, #blackjack { max-width: 800px; margin: 0 auto; }
+    #lore p, #presale p { font-size: 14px; margin-bottom: 20px; }
+    #roadmap .step { margin-bottom: 30px; }
+    #roadmap .step h3 { font-size: 18px; margin-bottom: 10px; }
+    /* Blackjack Styles */
+    #blackjack h2 { text-align: center; margin-bottom: 20px; }
+    .game-area { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
+    .hand { border: 2px solid #39ff14; padding: 10px; width: 45%; min-height: 120px; }
+    .hand h3 { margin-bottom: 10px; font-size: 16px; }
+    .cards { display: flex; flex-wrap: wrap; }
+    .card {
+      width: 40px;
+      height: 60px;
+      border: 1px solid #39ff14;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 5px;
+      margin-bottom: 5px;
       font-size: 12px;
     }
-    footer a {
-      color: #39ff14;
-      text-decoration: none;
-      margin: 0 10px;
-    }
+    .controls { text-align: center; margin-bottom: 20px; }
+    .message { text-align: center; font-size: 14px; min-height: 20px; }
+    footer { text-align: center; padding: 40px 20px; font-size: 12px; }
+    footer a { color: #39ff14; text-decoration: none; margin: 0 10px; }
   </style>
 </head>
 <body>
@@ -111,6 +80,7 @@
       <a href="#lore">Lore</a>
       <a href="#roadmap">Roadmap</a>
       <a href="#presale">Preventa</a>
+      <a href="#blackjack">Blackjack</a>
     </nav>
   </header>
 
@@ -153,9 +123,31 @@
     <p>Duración: 7 días (hasta agotar supply)</p>
     <p><em>Presupuesto total disponible: 5,000 ETH</em></p>
     <input type="number" id="ethAmount" placeholder="Ingresa ETH" min="0.01" max="2" step="0.01">
-    <br>
+    <br><br>
     <button class="btn" onclick="buyTokens()">Comprar BasePepe</button>
     <p id="countdown"></p>
+  </section>
+
+  <section id="blackjack">
+    <h2>¡Juega Blackjack con BasePepe!</h2>
+    <div class="game-area">
+      <div class="hand" id="dealer-hand">
+        <h3>Dealer</h3>
+        <div class="cards" id="dealer-cards"></div>
+        <p>Puntaje: <span id="dealer-score">0</span></p>
+      </div>
+      <div class="hand" id="player-hand">
+        <h3>Jugador</h3>
+        <div class="cards" id="player-cards"></div>
+        <p>Puntaje: <span id="player-score">0</span></p>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="hit-btn">Pedir Carta</button>
+      <button class="btn" id="stand-btn">Plantarse</button>
+      <button class="btn" id="new-game-btn">Nueva Partida</button>
+    </div>
+    <div class="message" id="message"></div>
   </section>
 
   <footer>
@@ -166,33 +158,101 @@
   </footer>
 
   <script>
-    // Ejemplo de integración básica de Web3
+    // Preventa MetaMask
     async function buyTokens() {
       const ethAmount = document.getElementById('ethAmount').value;
       if (!window.ethereum) return alert('Instala MetaMask para comprar tokens.');
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0];
       const value = (parseFloat(ethAmount) * 1e18).toString();
-      const tx = await ethereum.request({
+      await ethereum.request({
         method: 'eth_sendTransaction',
         params: [{ from: account, to: '0xAF9ef2d915b993cb2DD9c77F563912d492Cb9642', value }]
       });
-      console.log('Transacción enviada:', tx);
     }
-    // Countdown timer
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 7);
+    // Countdown
+    const endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
     function updateCountdown() {
-      const now = new Date();
-      const diff = endDate - now;
+      const now = new Date(); const diff = endDate - now;
       if (diff <= 0) { document.getElementById('countdown').textContent = '¡La preventa ha terminado!'; return; }
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const mins = Math.floor((diff / (1000 * 60)) % 60);
-      const secs = Math.floor((diff / 1000) % 60);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
       document.getElementById('countdown').textContent = `Tiempo restante: ${days}d ${hours}h ${mins}m ${secs}s`;
     }
     setInterval(updateCountdown, 1000);
+
+    // Blackjack Logic
+    let deck = [], dealerHand = [], playerHand = [];
+    const suits = ['♠️','♥️','♦️','♣️'];
+    const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+    function createDeck() {
+      deck = [];
+      suits.forEach(s => values.forEach(v => deck.push({suit: s, value: v})));
+    }
+    function shuffle() {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    }
+    function cardScore(card) {
+      if (card.value === 'A') return 11;
+      if (['J','Q','K'].includes(card.value)) return 10;
+      return parseInt(card.value);
+    }
+    function calculateScore(hand) {
+      let score = hand.reduce((sum,c) => sum + cardScore(c), 0);
+      let aces = hand.filter(c => c.value === 'A').length;
+      while (score > 21 && aces > 0) { score -= 10; aces--; }
+      return score;
+    }
+    function renderHands() {
+      const dealerDiv = document.getElementById('dealer-cards'); dealerDiv.innerHTML = '';
+      const playerDiv = document.getElementById('player-cards'); playerDiv.innerHTML = '';
+      dealerHand.forEach(c => {
+        const cardEl = document.createElement('div'); cardEl.className = 'card'; cardEl.textContent = c.value + c.suit;
+        dealerDiv.appendChild(cardEl);
+      });
+      playerHand.forEach(c => {
+        const cardEl = document.createElement('div'); cardEl.className = 'card'; cardEl.textContent = c.value + c.suit;
+        playerDiv.appendChild(cardEl);
+      });
+      document.getElementById('dealer-score').textContent = calculateScore(dealerHand);
+      document.getElementById('player-score').textContent = calculateScore(playerHand);
+    }
+    function dealerPlay() {
+      while (calculateScore(dealerHand) < 17) {
+        dealerHand.push(deck.pop());
+      }
+    }
+    function checkOutcome() {
+      const playerScore = calculateScore(playerHand);
+      const dealerScore = calculateScore(dealerHand);
+      let msg = '';
+      if (playerScore > 21) msg = '¡Te pasaste! Dealer gana.';
+      else if (dealerScore > 21) msg = '¡Dealer se pasó! Tú ganas.';
+      else if (dealerScore >= playerScore) msg = 'Dealer gana.';
+      else msg = '¡Tú ganas!';
+      document.getElementById('message').textContent = msg;
+    }
+    function startGame() {
+      createDeck(); shuffle();
+      dealerHand = [deck.pop(), deck.pop()];
+      playerHand = [deck.pop(), deck.pop()];
+      renderHands();
+      document.getElementById('message').textContent = '';
+    }
+    document.getElementById('hit-btn').onclick = () => {
+      playerHand.push(deck.pop()); renderHands();
+      if (calculateScore(playerHand) > 21) checkOutcome();
+    };
+    document.getElementById('stand-btn').onclick = () => {
+      dealerPlay(); renderHands(); checkOutcome();
+    };
+    document.getElementById('new-game-btn').onclick = startGame;
+    window.onload = startGame;
   </script>
 </body>
 </html>
