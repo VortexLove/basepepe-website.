@@ -1,108 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PepeJack - Blackjack con Crupier Pepe</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-green-900 text-white font-sans p-4 flex flex-col items-center min-h-screen">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PepeJack - Blackjack con Crupier Pepe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #0f0f0f, #1a1a1a);
+    }
+  </style>
+</head>
+<body class="text-white font-mono flex flex-col items-center min-h-screen py-6 px-4">
 
-    <h1 class="text-4xl font-bold mb-6">🎲 Blackjack con Pepe Crupier 🎩</h1>
+  <!-- Imagen de Pepe Crupier -->
+  <img src="pepe_crupier.png" alt="Pepe Crupier" class="w-48 mb-6 rounded-xl shadow-xl border-4 border-yellow-500">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 w-full max-w-3xl text-center">
-      <div class="bg-green-800 border-white border-2 p-4 rounded-xl shadow-lg">
-        <h2 class="text-xl font-bold mb-2">Tu Mano</h2>
-        <p id="player-hand" class="text-lg">-</p>
+  <h1 class="text-5xl font-bold mb-4 text-yellow-400 drop-shadow-lg">🎩 PepeJack Casino</h1>
+  <p class="text-lg text-gray-300 mb-8 text-center max-w-xl">Bienvenido al blackjack de Pepe. ¡Disfruta y entrena tus habilidades antes de apostar!</p>
+
+  <div class="bg-green-800 border-yellow-500 border-4 rounded-2xl p-6 w-full max-w-3xl shadow-2xl">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-yellow-300 mb-2">Tu Mano</h2>
+        <p id="player-hand" class="text-xl">-</p>
       </div>
-      <div class="bg-green-800 border-white border-2 p-4 rounded-xl shadow-lg">
-        <h2 class="text-xl font-bold mb-2">Mano del Crupier</h2>
-        <p id="dealer-hand" class="text-lg">-</p>
+      <div>
+        <h2 class="text-2xl font-bold text-yellow-300 mb-2">Crupier</h2>
+        <p id="dealer-hand" class="text-xl">-</p>
       </div>
     </div>
 
-    <div id="status" class="mb-4 text-2xl font-semibold">En juego</div>
+    <div id="status" class="text-center text-2xl font-semibold text-white mb-6">En juego...</div>
 
-    <div class="flex gap-4 mb-8">
-      <button onclick="hit()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded">Pedir Carta</button>
-      <button onclick="stand()" class="bg-blue-500 hover:bg-blue-600 font-bold py-2 px-4 rounded">Plantarse</button>
-      <button onclick="restart()" class="bg-red-500 hover:bg-red-600 font-bold py-2 px-4 rounded">Reiniciar</button>
+    <div class="flex flex-wrap justify-center gap-4">
+      <button onclick="hit()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-2 px-6 rounded-xl">Pedir Carta</button>
+      <button onclick="stand()" class="bg-blue-500 hover:bg-blue-400 font-bold py-2 px-6 rounded-xl">Plantarse</button>
+      <button onclick="restart()" class="bg-red-500 hover:bg-red-400 font-bold py-2 px-6 rounded-xl">Reiniciar</button>
     </div>
+  </div>
 
-    <script>
-      const cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+  <footer class="mt-10 text-gray-500 text-sm">
+    © 2025 PepeJack Casino – Solo para uso de prueba sin apuestas reales.
+  </footer>
 
-      function getRandomCard() {
-        return cards[Math.floor(Math.random() * cards.length)];
-      }
+  <script>
+    const cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    let playerHand = [], dealerHand = [], gameOver = false;
 
-      function calculateValue(hand) {
-        let value = 0;
-        let aces = 0;
-        hand.forEach(card => {
-          if (card === "A") {
-            value += 11;
-            aces++;
-          } else if (["J", "Q", "K"].includes(card)) {
-            value += 10;
-          } else {
-            value += parseInt(card);
-          }
-        });
-        while (value > 21 && aces > 0) {
-          value -= 10;
-          aces--;
-        }
-        return value;
-      }
+    function getRandomCard() {
+      return cards[Math.floor(Math.random() * cards.length)];
+    }
 
-      let playerHand = [];
-      let dealerHand = [];
-      let gameOver = false;
+    function calculateValue(hand) {
+      let value = 0, aces = 0;
+      hand.forEach(card => {
+        if (card === "A") { value += 11; aces++; }
+        else if (["J", "Q", "K"].includes(card)) value += 10;
+        else value += parseInt(card);
+      });
+      while (value > 21 && aces > 0) { value -= 10; aces--; }
+      return value;
+    }
 
-      function render() {
-        document.getElementById("player-hand").textContent = `${playerHand.join(" - ")} (${calculateValue(playerHand)})`;
-        document.getElementById("dealer-hand").textContent = `${dealerHand.join(" - ")} (${calculateValue(dealerHand)})`;
-      }
+    function render() {
+      document.getElementById("player-hand").textContent = `${playerHand.join(" - ")} (${calculateValue(playerHand)})`;
+      document.getElementById("dealer-hand").textContent = `${dealerHand.join(" - ")} (${calculateValue(dealerHand)})`;
+    }
 
-      function hit() {
-        if (gameOver) return;
-        playerHand.push(getRandomCard());
-        if (calculateValue(playerHand) > 21) {
-          document.getElementById("status").textContent = "Te pasaste. Pierdes.";
-          gameOver = true;
-        }
-        render();
-      }
-
-      function stand() {
-        if (gameOver) return;
-        while (calculateValue(dealerHand) < 17) {
-          dealerHand.push(getRandomCard());
-        }
-        const playerValue = calculateValue(playerHand);
-        const dealerValue = calculateValue(dealerHand);
-        if (dealerValue > 21 || playerValue > dealerValue) {
-          document.getElementById("status").textContent = "¡Ganaste!";
-        } else if (dealerValue > playerValue) {
-          document.getElementById("status").textContent = "Perdiste.";
-        } else {
-          document.getElementById("status").textContent = "Empate.";
-        }
+    function hit() {
+      if (gameOver) return;
+      playerHand.push(getRandomCard());
+      if (calculateValue(playerHand) > 21) {
+        document.getElementById("status").textContent = "😵 Te pasaste. Pierdes.";
         gameOver = true;
-        render();
       }
+      render();
+    }
 
-      function restart() {
-        playerHand = [getRandomCard(), getRandomCard()];
-        dealerHand = [getRandomCard()];
-        gameOver = false;
-        document.getElementById("status").textContent = "En juego";
-        render();
+    function stand() {
+      if (gameOver) return;
+      while (calculateValue(dealerHand) < 17) {
+        dealerHand.push(getRandomCard());
       }
+      const playerValue = calculateValue(playerHand);
+      const dealerValue = calculateValue(dealerHand);
+      if (dealerValue > 21 || playerValue > dealerValue) {
+        document.getElementById("status").textContent = "🎉 ¡Ganaste!";
+      } else if (dealerValue > playerValue) {
+        document.getElementById("status").textContent = "😩 Perdiste.";
+      } else {
+        document.getElementById("status").textContent = "😐 Empate.";
+      }
+      gameOver = true;
+      render();
+    }
 
-      // Inicializa el juego al cargar
-      restart();
-    </script>
-  </body>
+    function restart() {
+      playerHand = [getRandomCard(), getRandomCard()];
+      dealerHand = [getRandomCard()];
+      gameOver = false;
+      document.getElementById("status").textContent = "En juego...";
+      render();
+    }
+
+    restart();
+  </script>
+</body>
 </html>
