@@ -1,201 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Venta Preventa y Juego BasePepe</title>
-  <!-- Fuente pixelada -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    /* Reset básico */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      background-color: #0b0b0b;
-      color: #39ff14;
-      font-family: 'Press Start 2P', cursive;
-      line-height: 1.4;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-    }
-    header img { height: 60px; }
-    nav a {
-      color: #39ff14;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 14px;
-    }
-    section { padding: 60px 20px; }
-    #hero { text-align: center; padding: 80px 20px; }
-    #hero h1 { font-size: 48px; margin-bottom: 20px; }
-    #hero p { max-width: 600px; margin: 0 auto 30px; font-size: 14px; }
-    .btn {
-      display: inline-block;
-      padding: 15px 30px;
-      border: 2px solid #39ff14;
-      text-transform: uppercase;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-      background: transparent;
-      color: #39ff14;
-    }
-    .btn:hover { background-color: #39ff14; color: #0b0b0b; }
-    #lore, #roadmap, #presale, #blackjack { max-width: 800px; margin: 0 auto; }
-    #lore p, #presale p { font-size: 14px; margin-bottom: 20px; }
-    #roadmap .step { margin-bottom: 30px; }
-    #roadmap .step h3 { font-size: 18px; margin-bottom: 10px; }
-    /* Estilo de fondo para Blackjack Dealer */
-    #blackjack {
-      background: url('basepepe-dealer.png') center/cover no-repeat;
-      padding: 80px 20px;
-      border-radius: 8px;
-    }
-    /* Blackjack Styles */
-    #blackjack h2 { text-align: center; margin-bottom: 20px; }
-    .game-area { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
-    .hand { background: rgba(0,0,0,0.6); border: 2px solid #39ff14; padding: 10px; width: 45%; min-height: 120px; }
-    .hand h3 { margin-bottom: 10px; font-size: 16px; }
-    .cards { display: flex; flex-wrap: wrap; }
-    .card {
-      width: 40px;
-      height: 60px;
-      border: 1px solid #39ff14;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 5px;
-      margin-bottom: 5px;
-      font-size: 12px;
-      background: rgba(0,0,0,0.8);
-    }
-    .controls { text-align: center; margin-bottom: 20px; }
-    .message { text-align: center; font-size: 14px; min-height: 20px; }
-    footer { text-align: center; padding: 40px 20px; font-size: 12px; }
-    footer a { color: #39ff14; text-decoration: none; margin: 0 10px; }
-  </style>
-</head>
-<body>
-  <header>
-    <img src="logo.png" alt="Logo BasePepe">
-    <nav>
-      <a href="#hero">Inicio</a>
-      <a href="#lore">Lore</a>
-      <a href="#roadmap">Roadmap</a>
-      <a href="#presale">Preventa</a>
-      <a href="#blackjack">Blackjack</a>
-    </nav>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PepeJack - Blackjack con Crupier Pepe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-green-900 text-white font-sans p-4 flex flex-col items-center min-h-screen">
 
-  <section id="hero">
-    <h1>¡Bienvenido a la Preventa de BasePepe!</h1>
-    <p>Únete al salto de Pepe hacia la red Base. Aprovecha esta oferta limitada y apoya al token meme más épico de la blockchain.</p>
-    <button class="btn" onclick="document.getElementById('presale').scrollIntoView({ behavior: 'smooth' });">Comprar Ahora</button>
-  </section>
+    <h1 class="text-4xl font-bold mb-6">🎲 Blackjack con Pepe Crupier 🎩</h1>
 
-  <section id="lore">
-    <h2>Lore de BasePepe</h2>
-    <p>Pepe nació en los foros como un meme inofensivo, conquistó Internet y ahora está listo para invadir la red Base. Desde sus humildes orígenes hasta convertirse en un símbolo de la cultura crypto, Pepe trae consigo la energía y la comunidad que siempre ha representado.</p>
-    <p>Con BasePepe, la rana más famosa del mundo digital se fusiona con la velocidad y eficiencia de Base para llevar tu experiencia cripto al siguiente nivel.</p>
-  </section>
-
-  <section id="roadmap">
-    <h2>Roadmap</h2>
-    <div class="step">
-      <h3>Q2 2025 - Preparación</h3>
-      <p>Diseño de marca, desarrollo de contrato ERC-20, y creación de materiales de marketing.</p>
-    </div>
-    <div class="step">
-      <h3>Finales Q2 2025 - Preventa</h3>
-      <p>Inicio de la preventa pública: 1 ETH = 1,000,000 BasePepe, duración 7 días.</p>
-    </div>
-    <div class="step">
-      <h3>Q3 2025 - Launch</h3>
-      <p>Listados en exchanges, staking, y lanzamiento de NFTs exclusivos de Pepe.</p>
-    </div>
-    <div class="step">
-      <h3>Q4 2025 - Expansión</h3>
-      <p>Integraciones en juegos, colaboraciones con influencers, y más funcionalidades DeFi.</p>
-    </div>
-  </section>
-
-  <section id="presale">
-    <h2>Detalles de la Preventa</h2>
-    <p>Tipo de cambio: <strong>1 ETH = 1,000,000 BasePepe</strong></p>
-    <p>Compra mínima: <strong>0.01 ETH</strong> | Compra máxima: <strong>2 ETH</strong></p>
-    <p>Duración: 7 días (hasta agotar supply)</p>
-    <p><em>Presupuesto total disponible: 5,000 ETH</em></p>
-    <input type="number" id="ethAmount" placeholder="Ingresa ETH" min="0.01" max="2" step="0.01">
-    <br><br>
-    <button class="btn" onclick="buyTokens()">Comprar BasePepe</button>
-    <p id="countdown"></p>
-  </section>
-
-  <section id="blackjack">
-    <h2>¡Juega Blackjack con BasePepe!</h2>
-    <div class="game-area">
-      <div class="hand" id="dealer-hand">
-        <h3>Dealer</h3>
-        <div class="cards" id="dealer-cards"></div>
-        <p>Puntaje: <span id="dealer-score">0</span></p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 w-full max-w-3xl text-center">
+      <div class="bg-green-800 border-white border-2 p-4 rounded-xl shadow-lg">
+        <h2 class="text-xl font-bold mb-2">Tu Mano</h2>
+        <p id="player-hand" class="text-lg">-</p>
       </div>
-      <div class="hand" id="player-hand">
-        <h3>Jugador</h3>
-        <div class="cards" id="player-cards"></div>
-        <p>Puntaje: <span id="player-score">0</span></p>
+      <div class="bg-green-800 border-white border-2 p-4 rounded-xl shadow-lg">
+        <h2 class="text-xl font-bold mb-2">Mano del Crupier</h2>
+        <p id="dealer-hand" class="text-lg">-</p>
       </div>
     </div>
-    <div class="controls">
-      <button class="btn" id="hit-btn">Pedir Carta</button>
-      <button class="btn" id="stand-btn">Plantarse</button>
-      <button class="btn" id="new-game-btn">Nueva Partida</button>
+
+    <div id="status" class="mb-4 text-2xl font-semibold">En juego</div>
+
+    <div class="flex gap-4 mb-8">
+      <button onclick="hit()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded">Pedir Carta</button>
+      <button onclick="stand()" class="bg-blue-500 hover:bg-blue-600 font-bold py-2 px-4 rounded">Plantarse</button>
+      <button onclick="restart()" class="bg-red-500 hover:bg-red-600 font-bold py-2 px-4 rounded">Reiniciar</button>
     </div>
-    <div class="message" id="message"></div>
-  </section>
 
-  <footer>
-    <p>Sigue a BasePepe en redes sociales:</p>
-    <a href="#">Twitter</a>|
-    <a href="#">Discord</a>|
-    <a href="#">Telegram</a>
-  </footer>
+    <script>
+      const cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
-  <script>
-    // Preventa MetaMask
-    async function buyTokens() {
-      const ethAmount = document.getElementById('ethAmount').value;
-      if (!window.ethereum) return alert('Instala MetaMask para comprar tokens.');
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-      const account = accounts[0];
-      const value = (parseFloat(ethAmount) * 1e18).toString();
-      await ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [{ from: account, to: '0xAF9ef2d915b993cb2DD9c77F563912d492Cb9642', value }]
-      });
-    }
-    // Countdown
-    const endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
-    function updateCountdown() {
-      const now = new Date(); const diff = endDate - now;
-      if (diff <= 0) { document.getElementById('countdown').textContent = '¡La preventa ha terminado!'; return; }
-      const days = Math.floor(diff / 86400000);
-      const hours = Math.floor((diff % 86400000) / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      document.getElementById('countdown').textContent = `Tiempo restante: ${days}d ${hours}h ${mins}m ${secs}s`;
-    }
-    setInterval(updateCountdown, 1000);
+      function getRandomCard() {
+        return cards[Math.floor(Math.random() * cards.length)];
+      }
 
-    // Blackjack Logic
-    let deck = [], dealerHand = [], playerHand = [];
-    const suits = ['♠️','♥️','♦️','♣️'];
-    const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+      function calculateValue(hand) {
+        let value = 0;
+        let aces = 0;
+        hand.forEach(card => {
+          if (card === "A") {
+            value += 11;
+            aces++;
+          } else if (["J", "Q", "K"].includes(card)) {
+            value += 10;
+          } else {
+            value += parseInt(card);
+          }
+        });
+        while (value > 21 && aces > 0) {
+          value -= 10;
+          aces--;
+        }
+        return value;
+      }
 
-    function createDeck() { deck = []; suits.forEach(s => values.forEach(v => deck.push({suit: s, value: v}))); }
-    function shuffle() { for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }}
-    function cardScore(card) { if (card.value === 'A') return 11; if (['J','Q','K'].includes(card.value)) return 10; return parseInt(card.value); }
-    function calculateScore(hand) { let score = hand.reduce((sum,c) => sum + cardScore(c), 0); let aces = hand.filter(c => c.value === 'A').length; while (score > 21 && aces--
+      let playerHand = [];
+      let dealerHand = [];
+      let gameOver = false;
+
+      function render() {
+        document.getElementById("player-hand").textContent = `${playerHand.join(" - ")} (${calculateValue(playerHand)})`;
+        document.getElementById("dealer-hand").textContent = `${dealerHand.join(" - ")} (${calculateValue(dealerHand)})`;
+      }
+
+      function hit() {
+        if (gameOver) return;
+        playerHand.push(getRandomCard());
+        if (calculateValue(playerHand) > 21) {
+          document.getElementById("status").textContent = "Te pasaste. Pierdes.";
+          gameOver = true;
+        }
+        render();
+      }
+
+      function stand() {
+        if (gameOver) return;
+        while (calculateValue(dealerHand) < 17) {
+          dealerHand.push(getRandomCard());
+        }
+        const playerValue = calculateValue(playerHand);
+        const dealerValue = calculateValue(dealerHand);
+        if (dealerValue > 21 || playerValue > dealerValue) {
+          document.getElementById("status").textContent = "¡Ganaste!";
+        } else if (dealerValue > playerValue) {
+          document.getElementById("status").textContent = "Perdiste.";
+        } else {
+          document.getElementById("status").textContent = "Empate.";
+        }
+        gameOver = true;
+        render();
+      }
+
+      function restart() {
+        playerHand = [getRandomCard(), getRandomCard()];
+        dealerHand = [getRandomCard()];
+        gameOver = false;
+        document.getElementById("status").textContent = "En juego";
+        render();
+      }
+
+      // Inicializa el juego al cargar
+      restart();
+    </script>
+  </body>
+</html>
