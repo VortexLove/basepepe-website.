@@ -1,210 +1,153 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>BasePepe Blackjack</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BasePepe BlackJack</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      background: url('https://i.imgur.com/JTxlNQ8.jpg') no-repeat center center fixed; /* fondo tapiz verde */
+      background: url('casino-background.jpg') no-repeat center center fixed;
       background-size: cover;
-      color: white;
+      color: #fff;
       text-align: center;
-      overflow-x: hidden;
     }
 
     header {
-      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 1rem;
       font-size: 2rem;
       color: gold;
-      text-shadow: 2px 2px 5px #000;
-      animation: blink 1.5s infinite;
+      text-shadow: 1px 1px 5px red;
     }
 
-    @keyframes blink {
-      0%, 100% { color: gold; }
-      50% { color: white; }
-    }
-
-    .casino-frame {
-      border: 10px solid gold;
-      padding: 20px;
-      margin: 20px;
-      border-radius: 30px;
-      background: rgba(0, 0, 0, 0.7);
-      animation: neonBorder 2s infinite alternate;
-    }
-
-    @keyframes neonBorder {
-      0% { box-shadow: 0 0 10px gold, 0 0 20px gold; }
-      100% { box-shadow: 0 0 20px gold, 0 0 40px red; }
+    .game-container {
+      margin: 2rem auto;
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid gold;
+      border-radius: 15px;
     }
 
     button {
-      background: linear-gradient(to right, gold, darkorange);
-      border: none;
       padding: 10px 20px;
       margin: 10px;
       font-size: 1rem;
-      border-radius: 10px;
-      cursor: pointer;
-      color: black;
-      transition: 0.3s;
       font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      background-color: gold;
+      color: black;
+      cursor: pointer;
     }
 
     button:hover {
-      background: linear-gradient(to right, darkorange, gold);
-      transform: scale(1.1);
+      background-color: #ffd700;
     }
-
-    select, input {
-      padding: 10px;
-      margin: 10px;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: none;
-    }
-
-    .dealer-img {
-      width: 250px;
-      margin: 20px auto;
-      display: block;
-      border-radius: 20px;
-      border: 4px solid gold;
-      box-shadow: 0 0 20px black;
-    }
-
-    #popupWin {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
-      z-index: 1000;
-      color: gold;
-      font-size: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      animation: fadeIn 1s forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    #popupWin button {
-      margin-top: 20px;
-      background: white;
-      color: black;
-    }
-
-    .ranking {
-      margin-top: 30px;
-    }
-
   </style>
 </head>
 <body>
 
 <header>
-  🎲 BasePepe Blackjack 🎲
+  🃏 BasePepe BlackJack 🎰
 </header>
 
-<div class="casino-frame">
-  <img src="https://i.imgur.com/Gi7VPZR.png" alt="BasePepe Dealer" class="dealer-img">
-
-  <div>
-    <button id="connectBtn">Conectar Wallet</button>
-    <div id="balance">Saldo: 0 $BPEPE</div>
-  </div>
-
-  <div>
-    <select id="betAmount">
-      <option value="500">Apostar 500 $BPEPE</option>
-      <option value="1000">Apostar 1000 $BPEPE</option>
-      <option value="2000">Apostar 2000 $BPEPE</option>
-    </select>
-    <button id="startGame">🎰 Iniciar Partida</button>
-  </div>
-
-  <div id="result"></div>
-
-  <div class="ranking">
-    <h2>🏆 Ranking Ganadores 🏆</h2>
-    <ul id="leaderboard"></ul>
-  </div>
-</div>
-
-<div id="popupWin">
-  🎉 ¡Ganaste BasePepe! 🎉
-  <button onclick="closePopup()">Cerrar</button>
+<div class="game-container">
+  <h2>Juego de Blackjack</h2>
+  <p id="status">¿Listo para jugar?</p>
+  <p id="player-cards">Tus cartas: </p>
+  <p id="dealer-cards">Cartas del dealer: </p>
+  <button onclick="startGame()">Comenzar</button>
+  <button onclick="hit()">Pedir carta</button>
+  <button onclick="stand()">Plantarse</button>
 </div>
 
 <script>
-let balance = 0;
-let leaderboard = [];
+  let deck, playerHand, dealerHand, gameOver;
 
-function updateBalance() {
-  document.getElementById('balance').innerText = `Saldo: ${balance} $BPEPE`;
-}
-
-function showPopupWin() {
-  document.getElementById('popupWin').style.display = 'flex';
-}
-
-function closePopup() {
-  document.getElementById('popupWin').style.display = 'none';
-}
-
-function updateLeaderboard(name) {
-  leaderboard.push(name);
-  const board = document.getElementById('leaderboard');
-  board.innerHTML = leaderboard.map(player => `<li>${player}</li>`).join('');
-}
-
-// Simular conexión de wallet
-const connectBtn = document.getElementById('connectBtn');
-connectBtn.addEventListener('click', async () => {
-  if (typeof window.ethereum !== 'undefined') {
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    connectBtn.innerText = `Wallet: ${accounts[0].slice(0,6)}...`;
-    balance = 5000; // dar saldo inicial ficticio
-    updateBalance();
-  } else {
-    alert('Instala Metamask!');
-  }
-});
-
-// Juego blackjack simple
-const startGame = document.getElementById('startGame');
-startGame.addEventListener('click', () => {
-  const bet = parseInt(document.getElementById('betAmount').value);
-  if (balance < bet) {
-    alert('No tienes suficiente $BPEPE');
-    return;
+  function createDeck() {
+    const suits = ['♠', '♥', '♣', '♦'];
+    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    let deck = [];
+    for (let suit of suits) {
+      for (let value of values) {
+        deck.push({ value, suit });
+      }
+    }
+    return deck.sort(() => Math.random() - 0.5);
   }
 
-  balance -= bet;
-  updateBalance();
-
-  const playerCard = Math.floor(Math.random()*11)+1 + Math.floor(Math.random()*11)+1;
-  const dealerCard = Math.floor(Math.random()*11)+1 + Math.floor(Math.random()*11)+1;
-
-  if (playerCard > dealerCard && playerCard <= 21 || dealerCard > 21) {
-    document.getElementById('result').innerText = `Ganaste! ${playerCard} vs ${dealerCard}`;
-    balance += bet*2;
-    updateBalance();
-    showPopupWin();
-    updateLeaderboard(`Jugador - ${playerCard}`);
-  } else {
-    document.getElementById('result').innerText = `Perdiste! ${playerCard} vs ${dealerCard}`;
+  function getCardValue(card) {
+    if (['K', 'Q', 'J'].includes(card.value)) return 10;
+    if (card.value === 'A') return 11;
+    return parseInt(card.value);
   }
-});
+
+  function calculateHandValue(hand) {
+    let value = hand.reduce((sum, card) => sum + getCardValue(card), 0);
+    let aces = hand.filter(card => card.value === 'A').length;
+    while (value > 21 && aces > 0) {
+      value -= 10;
+      aces--;
+    }
+    return value;
+  }
+
+  function displayHands(hideDealer = true) {
+    document.getElementById('player-cards').innerText = 'Tus cartas: ' + playerHand.map(c => `${c.value}${c.suit}`).join(' ');
+    if (hideDealer) {
+      document.getElementById('dealer-cards').innerText = 'Cartas del dealer: ❓ ' + dealerHand.slice(1).map(c => `${c.value}${c.suit}`).join(' ');
+    } else {
+      document.getElementById('dealer-cards').innerText = 'Cartas del dealer: ' + dealerHand.map(c => `${c.value}${c.suit}`).join(' ');
+    }
+  }
+
+  function startGame() {
+    deck = createDeck();
+    playerHand = [deck.pop(), deck.pop()];
+    dealerHand = [deck.pop(), deck.pop()];
+    gameOver = false;
+    displayHands();
+    document.getElementById('status').innerText = "Tu turno";
+  }
+
+  function hit() {
+    if (gameOver) return;
+    playerHand.push(deck.pop());
+    const value = calculateHandValue(playerHand);
+    displayHands();
+    if (value > 21) {
+      document.getElementById('status').innerText = "¡Perdiste! Te pasaste de 21.";
+      gameOver = true;
+    }
+  }
+
+  function stand() {
+    if (gameOver) return;
+    while (calculateHandValue(dealerHand) < 17) {
+      dealerHand.push(deck.pop());
+    }
+
+    const playerValue = calculateHandValue(playerHand);
+    const dealerValue = calculateHandValue(dealerHand);
+    displayHands(false);
+
+    let result = "";
+    if (dealerValue > 21 || playerValue > dealerValue) {
+      result = "¡Ganaste!";
+    } else if (playerValue < dealerValue) {
+      result = "Perdiste.";
+    } else {
+      result = "Empate.";
+    }
+    document.getElementById('status').innerText = result;
+    gameOver = true;
+  }
 </script>
 
 </body>
