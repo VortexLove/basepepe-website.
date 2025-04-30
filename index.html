@@ -1,80 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
     <title>Pepe Blackjack</title>
-    <link rel="stylesheet" href="style.css"> <!-- Aquí puedes agregar un archivo CSS si necesitas personalizar más el estilo -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.1/dist/web3.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
             background-color: #1a1a1a;
             color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
             margin: 0;
             padding: 0;
         }
         .header {
             background-color: #4CAF50;
             padding: 20px;
-            font-size: 30px;
+            font-size: 28px;
         }
         .button {
-            background-color: #4CAF50;
-            padding: 15px 32px;
+            margin-top: 30px;
+            padding: 15px 30px;
             font-size: 16px;
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 30px;
         }
         .button:hover {
             background-color: #45a049;
         }
-        #pepe-crupier {
+        img {
             margin-top: 20px;
-            width: 200px;
-            height: auto;
+            width: 250px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Bienvenido a Pepe Blackjack</h1>
-        <p>¡Juega con Pepe el crupier y gana grandes premios en la red de Base!</p>
+        🃏 Pepe Blackjack en la red Base 🐸
     </div>
+
+    <img src="https://example.com/pepe-crupier.png" alt="Pepe Crupier">
+    <!-- Cambia esta imagen por tu versión de Pepe crupier -->
 
     <div>
-        <img id="pepe-crupier" src="https://example.com/pepe-crupier.png" alt="Pepe Crupier">
-        <!-- Reemplaza el enlace de la imagen por una ilustración de Pepe como crupier -->
+        <button class="button" id="connectButton">Conectar MetaMask</button>
     </div>
 
-    <button class="button" id="connectWalletButton">Conectar MetaMask</button>
-
     <script>
-        // Comprobamos si MetaMask está disponible
-        if (typeof window.ethereum !== 'undefined') {
-            const connectButton = document.getElementById('connectWalletButton');
-            const web3 = new Web3(window.ethereum);
-            
+        window.addEventListener('DOMContentLoaded', () => {
+            const connectButton = document.getElementById('connectButton');
+
+            if (typeof window.ethereum === 'undefined') {
+                connectButton.innerText = 'MetaMask no detectado';
+                connectButton.disabled = true;
+                alert('MetaMask no está instalado. Instálalo para usar esta dApp.');
+                return;
+            }
+
             connectButton.addEventListener('click', async () => {
                 try {
-                    // Solicitar conexión con MetaMask
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const accounts = await web3.eth.getAccounts();
-                    alert(`Conectado con la billetera: ${accounts[0]}`);
-                    connectButton.textContent = "Billetera Conectada";
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const selectedAccount = accounts[0];
+                    alert(`¡Conectado! Dirección: ${selectedAccount}`);
+                    connectButton.innerText = '✅ Conectado';
                     connectButton.disabled = true;
-                } catch (error) {
-                    console.error("Error al conectar la billetera:", error);
-                    alert("Hubo un error al conectar la billetera. Asegúrate de tener MetaMask instalado.");
+                } catch (err) {
+                    console.error(err);
+                    alert('Error al conectar la billetera. Revisa MetaMask.');
                 }
             });
-        } else {
-            alert('MetaMask no está instalado. Por favor, instala MetaMask para continuar.');
-        }
+        });
     </script>
 </body>
 </html>
