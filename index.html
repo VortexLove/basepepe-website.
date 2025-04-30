@@ -1,103 +1,80 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>PepeJack Casino Lobby</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Scrollbar personalizado */
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepe Blackjack</title>
+    <link rel="stylesheet" href="style.css"> <!-- Aquí puedes agregar un archivo CSS si necesitas personalizar más el estilo -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.1/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1a1a1a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #4CAF50;
+            padding: 20px;
+            font-size: 30px;
+        }
+        .button {
+            background-color: #4CAF50;
+            padding: 15px 32px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        #pepe-crupier {
+            margin-top: 20px;
+            width: 200px;
+            height: auto;
+        }
+    </style>
 </head>
-<body class="bg-[#0d0d0d] text-white font-sans">
-
-  <!-- ====== HEADER ====== -->
-  <header class="flex items-center justify-between px-6 py-4 bg-[#111] shadow-md">
-    <div class="flex items-center space-x-4">
-      <!-- Moneda -->
-      <img src="icons/coin.png" alt="Coins" class="w-6 h-6">
-      <span class="text-lg font-semibold">19,047</span>
-      <button>
-        <img src="icons/plus.png" alt="Añadir" class="w-6 h-6">
-      </button>
+<body>
+    <div class="header">
+        <h1>Bienvenido a Pepe Blackjack</h1>
+        <p>¡Juega con Pepe el crupier y gana grandes premios en la red de Base!</p>
     </div>
 
-    <div class="flex items-center space-x-6">
-      <button><img src="icons/home.png" alt="Home" class="w-6 h-6"></button>
-      <button><img src="icons/play.png" alt="Play" class="w-6 h-6"></button>
-      <button><img src="icons/settings.png" alt="Settings" class="w-6 h-6"></button>
+    <div>
+        <img id="pepe-crupier" src="https://example.com/pepe-crupier.png" alt="Pepe Crupier">
+        <!-- Reemplaza el enlace de la imagen por una ilustración de Pepe como crupier -->
     </div>
 
-    <div class="flex items-center space-x-4">
-      <div class="px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black rounded-full text-sm font-bold">
-        LEVEL 5
-      </div>
-      <button><img src="icons/profile.png" alt="Perfil" class="w-6 h-6"></button>
-    </div>
-  </header>
+    <button class="button" id="connectWalletButton">Conectar MetaMask</button>
 
-  <!-- ====== LOBBY CARRUSEL ====== -->
-  <main class="py-8 px-4">
-    <div class="relative">
-      <div class="flex space-x-6 overflow-x-auto scrollbar-hide pb-4">
-        
-        <!-- Game Card -->
-        <div class="relative flex-shrink-0 w-60 bg-[#222] rounded-xl shadow-xl overflow-hidden">
-          <img src="games/slots1.png" alt="Slingo Cascade" class="w-full h-40 object-cover">
-          <span class="absolute top-3 left-3 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">NEW!</span>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold">Slingo Cascade</h3>
-          </div>
-        </div>
-
-        <div class="relative flex-shrink-0 w-60 bg-[#222] rounded-xl shadow-xl overflow-hidden">
-          <img src="games/slots2.png" alt="Featured Valkyrie" class="w-full h-40 object-cover">
-          <span class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">FEATURED</span>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold">Slingo Valkyrie</h3>
-          </div>
-        </div>
-
-        <div class="relative flex-shrink-0 w-60 bg-[#222] rounded-xl shadow-xl overflow-hidden">
-          <img src="games/slots3.png" alt="Gypsy Riches" class="w-full h-40 object-cover">
-          <span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">HOT!</span>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold">Gypsy Riches</h3>
-          </div>
-        </div>
-
-        <div class="relative flex-shrink-0 w-60 bg-[#222] rounded-xl shadow-xl overflow-hidden">
-          <img src="games/slots4.png" alt="Slingo Extreme" class="w-full h-40 object-cover">
-          <span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">HOT!</span>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold">Slingo Extreme</h3>
-          </div>
-        </div>
-
-        <div class="relative flex-shrink-0 w-60 bg-[#222] rounded-xl shadow-xl overflow-hidden">
-          <img src="games/slots5.png" alt="Wild Adventure" class="w-full h-40 object-cover">
-          <span class="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">AWESOME</span>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold">Wild Adventure</h3>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Botón central BUY -->
-      <div class="absolute inset-x-0 bottom-0 flex justify-center mb-[-1.5rem]">
-        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-2xl">
-          BUY
-        </button>
-      </div>
-    </div>
-  </main>
-
-  <!-- ====== FOOTER ====== -->
-  <footer class="text-center text-gray-500 text-sm py-6">
-    © 2025 PepeJack Casino – Demo sin apuestas reales.
-  </footer>
+    <script>
+        // Comprobamos si MetaMask está disponible
+        if (typeof window.ethereum !== 'undefined') {
+            const connectButton = document.getElementById('connectWalletButton');
+            const web3 = new Web3(window.ethereum);
+            
+            connectButton.addEventListener('click', async () => {
+                try {
+                    // Solicitar conexión con MetaMask
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await web3.eth.getAccounts();
+                    alert(`Conectado con la billetera: ${accounts[0]}`);
+                    connectButton.textContent = "Billetera Conectada";
+                    connectButton.disabled = true;
+                } catch (error) {
+                    console.error("Error al conectar la billetera:", error);
+                    alert("Hubo un error al conectar la billetera. Asegúrate de tener MetaMask instalado.");
+                }
+            });
+        } else {
+            alert('MetaMask no está instalado. Por favor, instala MetaMask para continuar.');
+        }
+    </script>
 </body>
 </html>
