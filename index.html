@@ -29,6 +29,11 @@
     footer { text-align: center; padding: 40px 20px; font-size: 12px; }
     footer a { color: #39ff14; text-decoration: none; margin: 0 10px; }
     .saldo { font-size: 16px; text-align: center; margin-top: 20px; }
+    .roadmap { margin-top: 40px; }
+    .roadmap h3 { font-size: 24px; text-align: center; margin-bottom: 20px; }
+    .roadmap ul { list-style: none; padding: 0; }
+    .roadmap li { font-size: 18px; color: #39ff14; margin-bottom: 10px; }
+    .lore { background: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 8px; margin-top: 40px; color: #fff; }
   </style>
 </head>
 <body>
@@ -65,11 +70,30 @@
       </div>
     </div>
     <div class="controls">
+      <label for="bet-amount">Apostar:</label>
+      <input type="number" id="bet-amount" value="100" min="1" max="1000">
       <button class="btn" id="hit-btn">Pedir Carta</button>
       <button class="btn" id="stand-btn">Plantarse</button>
       <button class="btn" id="new-game-btn">Nueva Partida</button>
     </div>
     <div class="message" id="message"></div>
+  </section>
+
+  <section id="lore" class="lore">
+    <h2>BasePepe como Crupier</h2>
+    <p>Desde sus humildes orígenes como un simple meme, BasePepe ha ascendido hasta convertirse en el crupier más famoso de la blockchain. Con su estilo único y su conocimiento de las reglas del blackjack, BasePepe ha venido a ofrecer a los jugadores una experiencia auténtica de casino. Ahora, desde su mesa de blackjack, BasePepe está listo para repartir cartas y premios, llevando a todos los jugadores a la victoria en este mundo digital.</p>
+  </section>
+
+  <section id="roadmap" class="roadmap">
+    <h3>Roadmap de BasePepe</h3>
+    <ul>
+      <li><strong>Q2 2025:</strong> Lanzamiento de BasePepe y preventa exitosa.</li>
+      <li><strong>Q3 2025:</strong> Lanzamiento de juego de blackjack y primeros torneos con BasePepe como crupier.</li>
+      <li><strong>Q4 2025:</strong> Expansión a más juegos de casino (ruleta, póker, tragamonedas).</li>
+      <li><strong>Q1 2026:</strong> Implementación de un sistema de recompensas y staking.</li>
+      <li><strong>Q2 2026:</strong> Construcción de un casino completo en línea con más juegos y funciones interactivas.</li>
+      <li><strong>Q3 2026:</strong> Integración de una plataforma de apuestas deportivas y otros juegos de azar.</li>
+    </ul>
   </section>
 
   <footer>
@@ -81,6 +105,7 @@
 
   <script>
     let saldo = 1000; // Saldo inicial del jugador
+    let apuesta = 100; // Apuesta inicial
 
     // Mostrar el saldo en la interfaz
     function updateSaldo() {
@@ -89,6 +114,7 @@
 
     // Lógica de Blackjack
     let deck = [], dealerHand = [], playerHand = [];
+
     const suits = ['♠️','♥️','♦️','♣️'];
     const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
@@ -130,16 +156,16 @@
       let msg = '';
       if (playerScore > 21) {
         msg = '¡Te pasaste! Dealer gana.';
-        saldo -= 100; // El jugador pierde 100 BasePepe
+        saldo -= apuesta; // El jugador pierde la apuesta
       } else if (dealerScore > 21) {
         msg = '¡Dealer se pasó! Tú ganas.';
-        saldo += 100; // El jugador gana 100 BasePepe
+        saldo += apuesta; // El jugador gana la apuesta
       } else if (dealerScore >= playerScore) {
         msg = 'Dealer gana.';
-        saldo -= 100; // El jugador pierde 100 BasePepe
+        saldo -= apuesta; // El jugador pierde la apuesta
       } else {
         msg = '¡Tú ganas!';
-        saldo += 100; // El jugador gana 100 BasePepe
+        saldo += apuesta; // El jugador gana la apuesta
       }
       document.getElementById('message').textContent = msg;
       updateSaldo(); // Actualiza el saldo después de cada partida
@@ -167,6 +193,11 @@
     };
 
     document.getElementById('new-game-btn').onclick = startGame;
+
+    document.getElementById('bet-amount').addEventListener('input', function() {
+      apuesta = parseInt(this.value);
+    });
+
     window.onload = startGame;
   </script>
 </body>
