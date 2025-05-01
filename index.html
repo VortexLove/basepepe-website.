@@ -94,6 +94,24 @@
             font-size: 18px;
         }
 
+        /* Estilos para distinguir las manos */
+        #playerHand {
+            border: 3px solid #FFD700; /* Borde dorado para el jugador */
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #dealerHand {
+            border: 3px solid #FF6347; /* Borde rojo para el dealer */
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #playerValue, #dealerValue {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
     </style>
 </head>
 <body>
@@ -114,12 +132,12 @@
             <button class="button" onclick="stand()">Plantarse</button>
             
             <div id="playerHand">
-                <h3>Jugador</h3>
-                <div id="playerValue"></div>
+                <h3>Tu mano</h3>
+                <div id="playerValue">Valor: 0</div>
             </div>
             <div id="dealerHand">
-                <h3>Crupier</h3>
-                <div id="dealerValue"></div>
+                <h3>Mano del Crupier</h3>
+                <div id="dealerValue">Valor: 0</div>
             </div>
 
             <p id="gameResult"></p>
