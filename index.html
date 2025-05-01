@@ -50,7 +50,7 @@
             position: relative;
             z-index: 1;
             flex-direction: column;
-            padding-bottom: 100px; /* Espacio para los botones */
+            padding-bottom: 50px; /* Reducido para ajustar espacio de los botones */
         }
 
         #gameArea {
@@ -65,12 +65,10 @@
         }
 
         .button-container {
-            position: fixed;
-            bottom: 10px;
-            width: 100%;
             display: flex;
             justify-content: center;
             gap: 20px;
+            margin-top: 20px; /* Espacio entre las manos y los botones */
         }
 
         .button {
@@ -173,14 +171,14 @@
 
             <p id="gameResult"></p>
             <p id="betStatus"></p> <!-- Mostrar la apuesta y resultado -->
+            
+            <!-- Botones debajo de la mano del jugador -->
+            <div class="button-container">
+                <button class="button" onclick="startGame()">Iniciar Juego</button>
+                <button class="button" onclick="hit()">Pedir Carta</button>
+                <button class="button" onclick="stand()">Plantarse</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Botones abajo de la mesa -->
-    <div class="button-container">
-        <button class="button" onclick="startGame()">Iniciar Juego</button>
-        <button class="button" onclick="hit()">Pedir Carta</button>
-        <button class="button" onclick="stand()">Plantarse</button>
     </div>
 
     <!-- Imagen y mensaje lateral -->
