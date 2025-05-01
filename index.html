@@ -89,20 +89,25 @@
             margin-top: 20px;
         }
 
+        #betStatus {
+            margin: 20px;
+            font-size: 18px;
+        }
+
     </style>
 </head>
 <body>
 
     <div id="header">
         <div>BasePepe Blackjack</div>
-        <div id="saldo">Saldo: 0</div>
+        <div id="saldo">Saldo: 1000</div> <!-- Saldo inicial -->
     </div>
 
     <div id="main-container">
         <div id="gameArea">
             <h2>Juego de Blackjack</h2>
-            <p>Tokens disponibles: <span id="tokenBalance">0</span> BasePepe</p>
-            <input type="number" id="betAmount" placeholder="Apostar BasePepe" min="1">
+            <p>Tokens disponibles: <span id="tokenBalance">1000</span> BasePepe</p>
+            <input type="number" id="betAmount" placeholder="Apostar BasePepe" min="1" max="1000">
             <br>
             <button class="button" onclick="startGame()">Iniciar Juego</button>
             <button class="button" onclick="hit()">Pedir Carta</button>
@@ -110,31 +115,42 @@
             
             <div id="playerHand">
                 <h3>Jugador</h3>
+                <div id="playerValue"></div>
             </div>
             <div id="dealerHand">
                 <h3>Crupier</h3>
+                <div id="dealerValue"></div>
             </div>
+
             <p id="gameResult"></p>
+            <p id="betStatus"></p> <!-- Mostrar la apuesta y resultado -->
         </div>
     </div>
 
     <script>
-        // Variables del juego
         let deck = [], playerHand = [], dealerHand = [], bet = 0;
+        let playerBalance = 1000;
 
         // Función para iniciar el juego
         function startGame() {
             bet = parseInt(document.getElementById("betAmount").value);
-            if (isNaN(bet) || bet <= 0) {
+            if (isNaN(bet) || bet <= 0 || bet > playerBalance) {
                 alert("Ingresa una apuesta válida.");
                 return;
             }
+            playerBalance -= bet; // Reducir la apuesta del saldo del jugador
+            document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
+            document.getElementById("tokenBalance").innerText = playerBalance;
+
             deck = createDeck();
             shuffle(deck);
             playerHand = [drawCard(), drawCard()];
             dealerHand = [drawCard()];
             renderHands();
             document.getElementById("gameResult").innerText = "";
+            document.getElementById("betStatus").innerText = `Apuesta: ${bet} BasePepe`;
+            document.getElementById("playerValue").innerText = `Valor: ${getPoints(playerHand)}`;
+            document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
         }
 
         // Crear el mazo de cartas
@@ -193,6 +209,7 @@
         function hit() {
             playerHand.push(drawCard());
             renderHands();
+            document.getElementById("playerValue").innerText = `Valor: ${getPoints(playerHand)}`;
             if (getPoints(playerHand) > 21) {
                 endGame("Perdiste 🪦");
             }
@@ -204,20 +221,26 @@
                 dealerHand.push(drawCard());
             }
             renderHands();
+            document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
             const playerPts = getPoints(playerHand);
             const dealerPts = getPoints(dealerHand);
             if (dealerPts > 21 || playerPts > dealerPts) {
                 endGame("Ganaste 🎉");
+                playerBalance += bet * 2; // El jugador gana el doble de su apuesta
             } else if (dealerPts === playerPts) {
                 endGame("Empate 🤝");
+                playerBalance += bet; // El jugador recupera su apuesta
             } else {
                 endGame("Perdiste 🪦");
             }
+            document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
+            document.getElementById("tokenBalance").innerText = playerBalance;
         }
 
         // Terminar el juego
         function endGame(result) {
             document.getElementById("gameResult").innerText = result;
+            document.getElementById("betStatus").innerText = "";
         }
     </script>
 
