@@ -99,12 +99,14 @@
             border: 3px solid #FFD700; /* Borde dorado para el jugador */
             padding: 10px;
             border-radius: 10px;
+            margin-top: 20px; /* Manos del jugador abajo */
         }
 
         #dealerHand {
             border: 3px solid #FF6347; /* Borde rojo para el dealer */
             padding: 10px;
             border-radius: 10px;
+            margin-bottom: 20px; /* Manos del crupier arriba */
         }
 
         #playerValue, #dealerValue {
@@ -131,13 +133,14 @@
             <button class="button" onclick="hit()">Pedir Carta</button>
             <button class="button" onclick="stand()">Plantarse</button>
             
-            <div id="playerHand">
-                <h3>Tu mano</h3>
-                <div id="playerValue">Valor: 0</div>
-            </div>
             <div id="dealerHand">
                 <h3>Mano del Crupier</h3>
                 <div id="dealerValue">Valor: 0</div>
+            </div>
+
+            <div id="playerHand">
+                <h3>Tu mano</h3>
+                <div id="playerValue">Valor: 0</div>
             </div>
 
             <p id="gameResult"></p>
@@ -259,6 +262,21 @@
         function endGame(result) {
             document.getElementById("gameResult").innerText = result;
             document.getElementById("betStatus").innerText = "";
+            setTimeout(() => {
+                alert(result); // Popup con el resultado
+                resetGame(); // Reiniciar el juego automáticamente
+            }, 1000); // Mostrar el mensaje con un pequeño retraso
+        }
+
+        // Reiniciar el juego
+        function resetGame() {
+            playerHand = [];
+            dealerHand = [];
+            deck = [];
+            document.getElementById("playerValue").innerText = "Valor: 0";
+            document.getElementById("dealerValue").innerText = "Valor: 0";
+            document.getElementById("playerHand").innerHTML = "";
+            document.getElementById("dealerHand").innerHTML = "";
         }
     </script>
 
