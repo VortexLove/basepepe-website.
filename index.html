@@ -22,7 +22,7 @@
         }
 
         #header {
-            background-color: rgba(50, 205, 50, 0.8); /* verde con transparencia */
+            background-color: transparent; /* Fondo transparente */
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -33,11 +33,12 @@
             width: 100%;
             top: 0;
             z-index: 10;
+            box-shadow: none; /* Sin sombra */
         }
 
         #header #saldo {
-            background-color: white;
-            color: black;
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+            color: white;
             padding: 5px 10px;
             border-radius: 5px;
         }
