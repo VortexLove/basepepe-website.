@@ -72,9 +72,9 @@
     <div class="controls">
       <label for="bet-amount">Apostar:</label>
       <input type="number" id="bet-amount" value="100" min="1" max="1000">
-      <button class="btn" id="hit-btn">Pedir Carta</button>
-      <button class="btn" id="stand-btn">Plantarse</button>
-      <button class="btn" id="new-game-btn">Nueva Partida</button>
+      <button class="btn" id="bet-btn" disabled>Apostar</button>
+      <button class="btn" id="hit-btn" disabled>Pedir Carta</button>
+      <button class="btn" id="stand-btn" disabled>Plantarse</button>
     </div>
     <div class="message" id="message"></div>
   </section>
@@ -118,87 +118,130 @@
     const suits = ['♠️','♥️','♦️','♣️'];
     const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
-    function createDeck() { deck = []; suits.forEach(s => values.forEach(v => deck.push({suit: s, value: v}))); }
-    function shuffle() { for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }}
-    function cardScore(card) { if (card.value === 'A') return 11; if (['J','Q','K'].includes(card.value)) return 10; return parseInt(card.value); }
-    function calculateScore(hand) { let score = hand.reduce((sum,c) => sum + cardScore(c), 0); let aces = hand.filter(c => c.value === 'A').length; while (score > 21 && aces--) score -= 10; return score; }
-
-    function renderHands() {
-      const dealerDiv = document.getElementById('dealer-cards');
-      const playerDiv = document.getElementById('player-cards');
-      dealerDiv.innerHTML = '';
-      playerDiv.innerHTML = '';
-      dealerHand.forEach(c => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.textContent = c.value + c.suit;
-        dealerDiv.appendChild(cardEl);
+    function createDeck() {
+      deck = [];
+      suits.forEach(suit => {
+        values.forEach(value => {
+          deck.push({ suit, value });
+        });
       });
-      playerHand.forEach(c => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.textContent = c.value + c.suit;
-        playerDiv.appendChild(cardEl);
-      });
-      document.getElementById('dealer-score').textContent = calculateScore(dealerHand);
-      document.getElementById('player-score').textContent = calculateScore(playerHand);
+      shuffleDeck();
     }
 
-    function dealerPlay() {
-      while (calculateScore(dealerHand) < 17) {
-        dealerHand.push(deck.pop());
+    function shuffleDeck() {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
       }
     }
 
-    function checkOutcome() {
-      const playerScore = calculateScore(playerHand);
-      const dealerScore = calculateScore(dealerHand);
-      let msg = '';
-      if (playerScore > 21) {
-        msg = '¡Te pasaste! Dealer gana.';
-        saldo -= apuesta; // El jugador pierde la apuesta
-      } else if (dealerScore > 21) {
-        msg = '¡Dealer se pasó! Tú ganas.';
-        saldo += apuesta; // El jugador gana la apuesta
-      } else if (dealerScore >= playerScore) {
-        msg = 'Dealer gana.';
-        saldo -= apuesta; // El jugador pierde la apuesta
-      } else {
-        msg = '¡Tú ganas!';
-        saldo += apuesta; // El jugador gana la apuesta
-      }
-      document.getElementById('message').textContent = msg;
-      updateSaldo(); // Actualiza el saldo después de cada partida
+    // Función para repartir una carta
+    function dealCard(hand) {
+      const card = deck.pop();
+      hand.push(card);
+      return card;
     }
 
+    // Función para mostrar las cartas
+    function displayHand(hand, isDealer = false) {
+      const handDiv = isDealer ? document.getElementById('dealer-cards') : document.getElementById('player-cards');
+      handDiv.innerHTML = '';
+      hand.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('card');
+        cardDiv.textContent = `${card.value} ${card.suit}`;
+        handDiv.appendChild(cardDiv);
+      });
+    }
+
+    // Función para calcular el puntaje de la mano
+    function calculateScore(hand) {
+      let score = 0;
+      let aceCount = 0;
+      hand.forEach(card => {
+        if (card.value === 'A') {
+          aceCount++;
+          score += 11;
+        } else if (['K','Q','J'].includes(card.value)) {
+          score += 10;
+        } else {
+          score += parseInt(card.value);
+        }
+      });
+      while (score > 21 && aceCount > 0) {
+        score -= 10;
+        aceCount--;
+      }
+      return score;
+    }
+
+    // Iniciar el juego
     function startGame() {
-      createDeck();
-      shuffle();
-      dealerHand = [deck.pop(), deck.pop()];
-      playerHand = [deck.pop(), deck.pop()];
-      renderHands();
-      document.getElementById('message').textContent = '';
+      if (apuesta > 100) {
+        saldo -= apuesta;
+        updateSaldo();
+        dealerHand = [];
+        playerHand = [];
+        createDeck();
+        dealCard(dealerHand);
+        dealCard(playerHand);
+        dealCard(playerHand);
+        displayHand(dealerHand, true); // Mostrar solo la primera carta del dealer
+        displayHand(playerHand);
+        document.getElementById('hit-btn').disabled = false;
+        document.getElementById('stand-btn').disabled = false;
+      } else {
+        document.getElementById('message').textContent = 'La apuesta debe ser mayor a 100 monedas.';
+      }
     }
 
-    document.getElementById('hit-btn').onclick = () => {
-      playerHand.push(deck.pop());
-      renderHands();
-      if (calculateScore(playerHand) > 21) checkOutcome();
-    };
+    // Función para pedir carta
+    function hit() {
+      dealCard(playerHand);
+      displayHand(playerHand);
+      const playerScore = calculateScore(playerHand);
+      if (playerScore > 21) {
+        document.getElementById('message').textContent = '¡Te has pasado! Has perdido.';
+        endGame();
+      }
+    }
 
-    document.getElementById('stand-btn').onclick = () => {
-      dealerPlay();
-      renderHands();
-      checkOutcome();
-    };
+    // Función para plantarse
+    function stand() {
+      let dealerScore = calculateScore(dealerHand);
+      while (dealerScore < 17) {
+        dealCard(dealerHand);
+        dealerScore = calculateScore(dealerHand);
+      }
+      displayHand(dealerHand, true);
+      const playerScore = calculateScore(playerHand);
+      if (dealerScore > 21 || playerScore > dealerScore) {
+        document.getElementById('message').textContent = '¡Ganaste!';
+        saldo += apuesta * 2;
+      } else if (playerScore < dealerScore) {
+        document.getElementById('message').textContent = 'Perdiste.';
+      } else {
+        document.getElementById('message').textContent = '¡Empate!';
+        saldo += apuesta;
+      }
+      updateSaldo();
+      endGame();
+    }
 
-    document.getElementById('new-game-btn').onclick = startGame;
+    // Terminar el juego
+    function endGame() {
+      document.getElementById('hit-btn').disabled = true;
+      document.getElementById('stand-btn').disabled = true;
+      document.getElementById('bet-btn').disabled = false;
+    }
 
-    document.getElementById('bet-amount').addEventListener('input', function() {
-      apuesta = parseInt(this.value);
-    });
+    // Inicializar eventos
+    document.getElementById('bet-btn').addEventListener('click', startGame);
+    document.getElementById('hit-btn').addEventListener('click', hit);
+    document.getElementById('stand-btn').addEventListener('click', stand);
 
-    window.onload = startGame;
+    // Llamada inicial
+    updateSaldo();
   </script>
 </body>
 </html>
