@@ -72,7 +72,7 @@
     <div class="controls">
       <label for="bet-amount">Apostar:</label>
       <input type="number" id="bet-amount" value="100" min="1" max="1000">
-      <button class="btn" id="bet-btn" disabled>Apostar</button>
+      <button class="btn" id="bet-btn">Apostar</button>
       <button class="btn" id="hit-btn" disabled>Pedir Carta</button>
       <button class="btn" id="stand-btn" disabled>Plantarse</button>
     </div>
@@ -135,14 +135,12 @@
       }
     }
 
-    // Función para repartir una carta
     function dealCard(hand) {
       const card = deck.pop();
       hand.push(card);
       return card;
     }
 
-    // Función para mostrar las cartas
     function displayHand(hand, isDealer = false) {
       const handDiv = isDealer ? document.getElementById('dealer-cards') : document.getElementById('player-cards');
       handDiv.innerHTML = '';
@@ -154,7 +152,6 @@
       });
     }
 
-    // Función para calcular el puntaje de la mano
     function calculateScore(hand) {
       let score = 0;
       let aceCount = 0;
@@ -175,28 +172,22 @@
       return score;
     }
 
-    // Iniciar el juego
     function startGame() {
-      if (apuesta > 100) {
-        saldo -= apuesta;
-        updateSaldo();
-        dealerHand = [];
-        playerHand = [];
-        createDeck();
-        dealCard(dealerHand);
-        dealCard(playerHand);
-        dealCard(playerHand);
-        displayHand(dealerHand, true); // Mostrar solo la primera carta del dealer
-        displayHand(playerHand);
-        document.getElementById('hit-btn').disabled = false;
-        document.getElementById('stand-btn').disabled = false;
-        document.getElementById('bet-btn').disabled = true; // Deshabilitar el botón de apostar
-      } else {
-        document.getElementById('message').textContent = 'La apuesta debe ser mayor a 100 monedas.';
-      }
+      saldo -= apuesta;
+      updateSaldo();
+      dealerHand = [];
+      playerHand = [];
+      createDeck();
+      dealCard(dealerHand);
+      dealCard(playerHand);
+      dealCard(playerHand);
+      displayHand(dealerHand, true);
+      displayHand(playerHand);
+      document.getElementById('hit-btn').disabled = false;
+      document.getElementById('stand-btn').disabled = false;
+      document.getElementById('bet-btn').disabled = true;
     }
 
-    // Función para pedir carta
     function hit() {
       dealCard(playerHand);
       displayHand(playerHand);
@@ -207,7 +198,6 @@
       }
     }
 
-    // Función para plantarse
     function stand() {
       let dealerScore = calculateScore(dealerHand);
       while (dealerScore < 17) {
@@ -229,19 +219,20 @@
       endGame();
     }
 
-    // Terminar el juego
     function endGame() {
       document.getElementById('hit-btn').disabled = true;
       document.getElementById('stand-btn').disabled = true;
       document.getElementById('bet-btn').disabled = false;
     }
 
-    // Inicializar eventos
+    // Eventos
     document.getElementById('bet-btn').addEventListener('click', startGame);
     document.getElementById('hit-btn').addEventListener('click', hit);
     document.getElementById('stand-btn').addEventListener('click', stand);
+    document.getElementById('bet-amount').addEventListener('input', function () {
+      apuesta = parseInt(document.getElementById('bet-amount').value);
+    });
 
-    // Llamada inicial
     updateSaldo();
   </script>
 </body>
