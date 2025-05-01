@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venta Preventa y Juego BasePepe</title>
-  <!-- Fuente pixelada -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    /* Reset básico */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
       background-color: #0b0b0b;
@@ -99,27 +97,27 @@
 
   <section id="lore">
     <h2>Lore de BasePepe</h2>
-    <p>Pepe nació en los foros como un meme inofensivo, conquistó Internet y ahora está listo para invadir la red Base. Desde sus humildes orígenes hasta convertirse en un símbolo de la cultura crypto, Pepe trae consigo la energía y la comunidad que siempre ha representado.</p>
-    <p>Con BasePepe, la rana más famosa del mundo digital se fusiona con la velocidad y eficiencia de Base para llevar tu experiencia cripto al siguiente nivel.</p>
+    <p>Pepe, la rana más famosa de Internet, cambió su vida al convertirse en un crupier de blackjack en el **BasePepe Casino**. Desde repartir cartas hasta poner grandes premios en juego, BasePepe ha decidido llevar la cultura cripto a los casinos. ¡Aquí comienza una nueva aventura de Pepe, llena de apuestas, cartas y diversión!</p>
+    <p>BasePepe ahora no solo reparte cartas, ¡sino que quiere construir todo un **imperio de casino** en la blockchain!</p>
   </section>
 
   <section id="roadmap">
     <h2>Roadmap</h2>
     <div class="step">
-      <h3>Q2 2025 - Preparación</h3>
-      <p>Diseño de marca, desarrollo de contrato ERC-20, y creación de materiales de marketing.</p>
+      <h3>Q2 2025 - El Inicio del Imperio BasePepe</h3>
+      <p>BasePepe lanza su preventa y abre las puertas de su casino en línea, con Blackjack en vivo y su propia moneda.</p>
     </div>
     <div class="step">
-      <h3>Finales Q2 2025 - Preventa</h3>
-      <p>Inicio de la preventa pública: 1 ETH = 1,000,000 BasePepe, duración 7 días.</p>
+      <h3>Finales de Q2 2025 - Poker y Ruleta BasePepe</h3>
+      <p>El Poker en vivo y la Ruleta llegan al casino, con nuevos desafíos y premios aún mayores para los jugadores más arriesgados.</p>
     </div>
     <div class="step">
-      <h3>Q3 2025 - Launch</h3>
-      <p>Listados en exchanges, staking, y lanzamiento de NFTs exclusivos de Pepe.</p>
+      <h3>Q3 2025 - Torneos de Blackjack</h3>
+      <p>¡Es hora de la competencia! Torneos de Blackjack con grandes premios y rangos exclusivos para los mejores jugadores.</p>
     </div>
     <div class="step">
-      <h3>Q4 2025 - Expansión</h3>
-      <p>Integraciones en juegos, colaboraciones con influencers, y más funcionalidades DeFi.</p>
+      <h3>Q4 2025 - Expansión al Casino Completo</h3>
+      <p>BasePepe expande su casino a juegos completos, incluyendo **tragamonedas**, **póker** y mucho más, con nuevas colaboraciones en el mundo de las cripto y NFTs.</p>
     </div>
   </section>
 
@@ -128,7 +126,6 @@
     <p>Tipo de cambio: <strong>1 ETH = 1,000,000 BasePepe</strong></p>
     <p>Compra mínima: <strong>0.01 ETH</strong> | Compra máxima: <strong>2 ETH</strong></p>
     <p>Duración: 7 días (hasta agotar supply)</p>
-    <p><em>Presupuesto total disponible: 5,000 ETH</em></p>
     <input type="number" id="ethAmount" placeholder="Ingresa ETH" min="0.01" max="2" step="0.01">
     <br><br>
     <button class="btn" onclick="buyTokens()">Comprar BasePepe</button>
@@ -189,78 +186,7 @@
       document.getElementById('countdown').textContent = `Tiempo restante: ${days}d ${hours}h ${mins}m ${secs}s`;
     }
     setInterval(updateCountdown, 1000);
-
-    // Blackjack Logic
-    let deck = [], dealerHand = [], playerHand = [];
-    const suits = ['♠️','♥️','♦️','♣️'];
-    const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-
-    function createDeck() { deck = []; suits.forEach(s => values.forEach(v => deck.push({suit: s, value: v}))); }
-    function shuffle() { for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }}
-    function cardScore(card) { if (card.value === 'A') return 11; if (['J','Q','K'].includes(card.value)) return 10; return parseInt(card.value); }
-    function calculateScore(hand) { let score = hand.reduce((sum,c) => sum + cardScore(c), 0); let aces = hand.filter(c => c.value === 'A').length; while (score > 21 && aces--) score -= 10; return score; }
-
-    function renderHands() {
-      const dealerDiv = document.getElementById('dealer-cards');
-      const playerDiv = document.getElementById('player-cards');
-      dealerDiv.innerHTML = '';
-      playerDiv.innerHTML = '';
-      dealerHand.forEach(c => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.textContent = c.value + c.suit;
-        dealerDiv.appendChild(cardEl);
-      });
-      playerHand.forEach(c => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'card';
-        cardEl.textContent = c.value + c.suit;
-        playerDiv.appendChild(cardEl);
-      });
-      document.getElementById('dealer-score').textContent = calculateScore(dealerHand);
-      document.getElementById('player-score').textContent = calculateScore(playerHand);
-    }
-
-    function dealerPlay() {
-      while (calculateScore(dealerHand) < 17) {
-        dealerHand.push(deck.pop());
-      }
-    }
-
-    function checkOutcome() {
-      const playerScore = calculateScore(playerHand);
-      const dealerScore = calculateScore(dealerHand);
-      let msg = '';
-      if (playerScore > 21) msg = '¡Te pasaste! Dealer gana.';
-      else if (dealerScore > 21) msg = '¡Dealer se pasó! Tú ganas.';
-      else if (dealerScore >= playerScore) msg = 'Dealer gana.';
-      else msg = '¡Tú ganas!';
-      document.getElementById('message').textContent = msg;
-    }
-
-    function startGame() {
-      createDeck();
-      shuffle();
-      dealerHand = [deck.pop(), deck.pop()];
-      playerHand = [deck.pop(), deck.pop()];
-      renderHands();
-      document.getElementById('message').textContent = '';
-    }
-
-    document.getElementById('hit-btn').onclick = () => {
-      playerHand.push(deck.pop());
-      renderHands();
-      if (calculateScore(playerHand) > 21) checkOutcome();
-    };
-
-    document.getElementById('stand-btn').onclick = () => {
-      dealerPlay();
-      renderHands();
-      checkOutcome();
-    };
-
-    document.getElementById('new-game-btn').onclick = startGame;
-    window.onload = startGame;
   </script>
+
 </body>
 </html>
