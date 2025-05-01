@@ -44,7 +44,7 @@
       color: #39ff14;
     }
     .btn:hover { background-color: #39ff14; color: #0b0b0b; }
-    #lore, #roadmap, #presale, #blackjack { max-width: 800px; margin: 0 auto; }
+    #lore, #roadmap, #presale { max-width: 800px; margin: 0 auto; }
     #lore p, #presale p { font-size: 14px; margin-bottom: 20px; }
     #roadmap .step { margin-bottom: 30px; }
     #roadmap .step h3 { font-size: 18px; margin-bottom: 10px; }
@@ -53,6 +53,7 @@
       background: url('basepepe-dealer.png') center/cover no-repeat;
       padding: 80px 20px;
       border-radius: 8px;
+      margin-bottom: 40px;
     }
     /* Blackjack Styles */
     #blackjack h2 { text-align: center; margin-bottom: 20px; }
@@ -90,6 +91,25 @@
       <a href="#blackjack">Blackjack</a>
     </nav>
   </header>
+
+  <section id="blackjack">
+    <h2>¡Juega Blackjack con BasePepe!</h2>
+    <div class="game-area">
+      <div class="hand" id="player-hand">
+        <h3>Tu Mano</h3>
+        <div class="cards" id="player-cards"></div>
+      </div>
+      <div class="hand" id="dealer-hand">
+        <h3>Mano del Crupier</h3>
+        <div class="cards" id="dealer-cards"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <input type="number" id="betAmount" placeholder="Cantidad a Apostar" min="1" step="1">
+      <button class="btn" onclick="placeBet()">Apostar</button>
+    </div>
+    <div class="message" id="gameMessage"></div>
+  </section>
 
   <section id="hero">
     <h1>¡Bienvenido a la Preventa de BasePepe!</h1>
@@ -142,25 +162,6 @@
     <p id="countdown"></p>
   </section>
 
-  <section id="blackjack">
-    <h2>¡Juega Blackjack con BasePepe!</h2>
-    <div class="game-area">
-      <div class="hand" id="player-hand">
-        <h3>Tu Mano</h3>
-        <div class="cards" id="player-cards"></div>
-      </div>
-      <div class="hand" id="dealer-hand">
-        <h3>Mano del Crupier</h3>
-        <div class="cards" id="dealer-cards"></div>
-      </div>
-    </div>
-    <div class="controls">
-      <input type="number" id="betAmount" placeholder="Cantidad a Apostar" min="1" step="1">
-      <button class="btn" onclick="placeBet()">Apostar</button>
-    </div>
-    <div class="message" id="gameMessage"></div>
-  </section>
-
   <footer>
     <p>&copy; 2025 BasePepe. Todos los derechos reservados. | <a href="#">Política de Privacidad</a></p>
   </footer>
@@ -191,8 +192,12 @@
     }
 
     function startGame() {
-      // Lógica para repartir las cartas y jugar la mano de blackjack
-    }
-  </script>
-</body>
-</html>
+      playerCards = [];
+      dealerCards = [];
+      playerHandValue = 0;
+      dealerHandValue = 0;
+      
+      document.getElementById("player-cards").innerHTML = "";
+      document.getElementById("dealer-cards").innerHTML = "";
+
+      //
