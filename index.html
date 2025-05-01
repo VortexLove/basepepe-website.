@@ -22,7 +22,7 @@
         }
 
         #header {
-            background-color: transparent; /* Fondo transparente */
+            background-color: transparent;
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -33,11 +33,11 @@
             width: 100%;
             top: 0;
             z-index: 10;
-            box-shadow: none; /* Sin sombra */
+            box-shadow: none;
         }
 
         #header #saldo {
-            background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
@@ -51,13 +51,13 @@
             position: relative;
             z-index: 1;
             flex-direction: column;
-            padding-bottom: 50px; /* Reducido para ajustar espacio de los botones */
+            padding-bottom: 50px;
         }
 
         #gameArea {
             text-align: center;
-            margin-top: 100px; /* Para dar espacio debajo del header */
-            background-color: #006400; /* Fondo verde para la mesa */
+            margin-top: 100px;
+            background-color: #006400;
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
@@ -69,7 +69,7 @@
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 20px; /* Espacio entre las manos y los botones */
+            margin-top: 20px;
         }
 
         .button {
@@ -105,19 +105,18 @@
             font-size: 18px;
         }
 
-        /* Estilos para distinguir las manos */
         #playerHand {
-            border: 3px solid #FFD700; /* Borde dorado para el jugador */
+            border: 3px solid #FFD700;
             padding: 10px;
             border-radius: 10px;
-            margin-top: 20px; /* Manos del jugador abajo */
+            margin-top: 20px;
         }
 
         #dealerHand {
-            border: 3px solid #FF6347; /* Borde rojo para el dealer */
+            border: 3px solid #FF6347;
             padding: 10px;
             border-radius: 10px;
-            margin-bottom: 20px; /* Manos del crupier arriba */
+            margin-bottom: 20px;
         }
 
         #playerValue, #dealerValue {
@@ -125,7 +124,6 @@
             font-size: 18px;
         }
 
-        /* Estilos para la imagen y el mensaje */
         #sideImage {
             position: fixed;
             right: 20px;
@@ -145,31 +143,29 @@
             width: 200px;
         }
 
-        /* Contenedor para el título */
         #title-container {
             position: fixed;
-            top: 20px; /* Ajustar la distancia desde la parte superior */
+            top: 20px;
             left: 50%;
-            transform: translateX(-50%); /* Centrar horizontalmente */
+            transform: translateX(-50%);
             z-index: 5;
         }
 
         #title-container img {
-            width: 300px; /* Ajusta el tamaño de la imagen */
-            opacity: 0.8; /* Opacidad para el efecto de transparencia */
+            width: 300px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
-    <!-- Título central transparente -->
     <div id="title-container">
         <img src="titulo.png" alt="BasePepe Blackjack">
     </div>
 
     <div id="header">
         <div>BasePepe Blackjack</div>
-        <div id="saldo">Saldo: 1000</div> <!-- Saldo inicial -->
+        <div id="saldo">Saldo: 1000</div>
     </div>
 
     <div id="main-container">
@@ -189,9 +185,8 @@
             </div>
 
             <p id="gameResult"></p>
-            <p id="betStatus"></p> <!-- Mostrar la apuesta y resultado -->
-            
-            <!-- Botones debajo de la mano del jugador -->
+            <p id="betStatus"></p>
+
             <div class="button-container">
                 <button class="button" onclick="startGame()">Iniciar Juego</button>
                 <button class="button" onclick="hit()">Pedir Carta</button>
@@ -200,7 +195,6 @@
         </div>
     </div>
 
-    <!-- Imagen y mensaje lateral -->
     <img id="sideImage" src="carta.png" alt="Cartas BasePepe">
     <div id="message">
         <p>¡Pronto estará listo el pack completo de cartas de BasePepe!</p>
@@ -211,14 +205,13 @@
         let deck = [], playerHand = [], dealerHand = [], bet = 0;
         let playerBalance = 1000;
 
-        // Función para iniciar el juego
         function startGame() {
             bet = parseInt(document.getElementById("betAmount").value);
             if (isNaN(bet) || bet <= 0 || bet > playerBalance) {
                 alert("Ingresa una apuesta válida.");
                 return;
             }
-            playerBalance -= bet; // Reducir la apuesta del saldo del jugador
+            playerBalance -= bet;
             document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
             document.getElementById("tokenBalance").innerText = playerBalance;
 
@@ -233,7 +226,6 @@
             document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
         }
 
-        // Crear el mazo de cartas
         function createDeck() {
             const suits = ["♠", "♥", "♣", "♦"];
             const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -246,7 +238,6 @@
             return d;
         }
 
-        // Mezclar el mazo
         function shuffle(deck) {
             for (let i = deck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -254,19 +245,16 @@
             }
         }
 
-        // Sacar una carta del mazo
         function drawCard() {
             return deck.pop();
         }
 
-        // Obtener el valor de las cartas
         function getCardValue(card) {
             if (card.value === "A") return 11;
             if (["K", "Q", "J"].includes(card.value)) return 10;
             return parseInt(card.value);
         }
 
-        // Obtener los puntos de la mano
         function getPoints(hand) {
             let points = 0;
             let aceCount = 0;
@@ -274,7 +262,6 @@
                 points += getCardValue(card);
                 if (card.value === "A") aceCount++;
             }
-            // Ajustar los ases
             while (points > 21 && aceCount > 0) {
                 points -= 10;
                 aceCount--;
@@ -282,7 +269,6 @@
             return points;
         }
 
-        // Mostrar las manos en la interfaz
         function renderHands() {
             let playerHTML = "";
             let dealerHTML = "";
@@ -296,45 +282,61 @@
 
             document.getElementById("playerHand").innerHTML = `Tu mano: ${playerHTML}`;
             document.getElementById("dealerHand").innerHTML = `Mano del crupier: ${dealerHTML}`;
+            document.getElementById("playerValue").innerText = `Valor: ${getPoints(playerHand)}`;
+            document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
         }
 
-        // Función para pedir carta
         function hit() {
             playerHand.push(drawCard());
             renderHands();
-            document.getElementById("playerValue").innerText = `Valor: ${getPoints(playerHand)}`;
-            checkGameOver();
+            if (getPoints(playerHand) > 21) {
+                document.getElementById("gameResult").innerText = "¡Perdiste! Has pasado de 21.";
+                playerBalance -= bet;
+                endGame();
+            }
         }
 
-        // Función para plantarse
         function stand() {
             while (getPoints(dealerHand) < 17) {
                 dealerHand.push(drawCard());
                 renderHands();
-                document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
             }
             checkGameOver();
         }
 
-        // Comprobar el estado del juego (si alguien ganó)
         function checkGameOver() {
             const playerPoints = getPoints(playerHand);
             const dealerPoints = getPoints(dealerHand);
             if (playerPoints > 21) {
                 document.getElementById("gameResult").innerText = "¡Perdiste! Has pasado de 21.";
+                playerBalance -= bet;
             } else if (dealerPoints > 21) {
                 document.getElementById("gameResult").innerText = "¡Ganaste! El crupier ha pasado de 21.";
+                playerBalance += bet;
             } else if (playerPoints === 21) {
                 document.getElementById("gameResult").innerText = "¡Ganaste! Tienes 21.";
+                playerBalance += bet;
             } else if (dealerPoints === 21) {
                 document.getElementById("gameResult").innerText = "¡Perdiste! El crupier tiene 21.";
+                playerBalance -= bet;
             } else if (playerPoints > dealerPoints) {
                 document.getElementById("gameResult").innerText = "¡Ganaste! Tienes más puntos.";
+                playerBalance += bet;
             } else if (dealerPoints > playerPoints) {
                 document.getElementById("gameResult").innerText = "¡Perdiste! El crupier tiene más puntos.";
+                playerBalance -= bet;
             } else {
                 document.getElementById("gameResult").innerText = "¡Es un empate!";
             }
+            endGame();
+        }
+
+        function endGame() {
+            document.getElementById("tokenBalance").innerText = playerBalance;
+            document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
+            document.getElementById("betAmount").value = '';
+            playerHand = [];
+            dealerHand = [];
         }
     </script>
 </body>
