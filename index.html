@@ -145,9 +145,27 @@
             width: 200px;
         }
 
+        /* Contenedor para el título */
+        #title-container {
+            position: fixed;
+            top: 20px; /* Ajustar la distancia desde la parte superior */
+            left: 50%;
+            transform: translateX(-50%); /* Centrar horizontalmente */
+            z-index: 5;
+        }
+
+        #title-container img {
+            width: 300px; /* Ajusta el tamaño de la imagen */
+            opacity: 0.8; /* Opacidad para el efecto de transparencia */
+        }
     </style>
 </head>
 <body>
+
+    <!-- Título central transparente -->
+    <div id="title-container">
+        <img src="titulo.png" alt="BasePepe Blackjack">
+    </div>
 
     <div id="header">
         <div>BasePepe Blackjack</div>
@@ -241,30 +259,43 @@
             return deck.pop();
         }
 
-        // Calcular puntos de una mano
-        function getPoints(hand) {
-            let total = 0;
-            let aces = 0;
-            for (let c of hand) {
-                if (["J", "Q", "K"].includes(c.value)) total += 10;
-                else if (c.value === "A") {
-                    total += 11;
-                    aces++;
-                } else {
-                    total += parseInt(c.value);
-                }
-            }
-            while (total > 21 && aces > 0) {
-                total -= 10;
-                aces--;
-            }
-            return total;
+        // Obtener el valor de las cartas
+        function getCardValue(card) {
+            if (card.value === "A") return 11;
+            if (["K", "Q", "J"].includes(card.value)) return 10;
+            return parseInt(card.value);
         }
 
-        // Renderizar las manos
+        // Obtener los puntos de la mano
+        function getPoints(hand) {
+            let points = 0;
+            let aceCount = 0;
+            for (let card of hand) {
+                points += getCardValue(card);
+                if (card.value === "A") aceCount++;
+            }
+            // Ajustar los ases
+            while (points > 21 && aceCount > 0) {
+                points -= 10;
+                aceCount--;
+            }
+            return points;
+        }
+
+        // Mostrar las manos en la interfaz
         function renderHands() {
-            document.getElementById("playerHand").innerHTML = playerHand.map(c => `<span class="card">${c.value}${c.suit}</span>`).join("");
-            document.getElementById("dealerHand").innerHTML = dealerHand.map(c => `<span class="card">${c.value}${c.suit}</span>`).join("");
+            let playerHTML = "";
+            let dealerHTML = "";
+
+            for (let card of playerHand) {
+                playerHTML += `<span class="card">${card.value} ${card.suit}</span>`;
+            }
+            for (let card of dealerHand) {
+                dealerHTML += `<span class="card">${card.value} ${card.suit}</span>`;
+            }
+
+            document.getElementById("playerHand").innerHTML = `Tu mano: ${playerHTML}`;
+            document.getElementById("dealerHand").innerHTML = `Mano del crupier: ${dealerHTML}`;
         }
 
         // Función para pedir carta
@@ -272,54 +303,39 @@
             playerHand.push(drawCard());
             renderHands();
             document.getElementById("playerValue").innerText = `Valor: ${getPoints(playerHand)}`;
-            if (getPoints(playerHand) > 21) {
-                endGame("Perdiste 🪦");
-            }
+            checkGameOver();
         }
 
         // Función para plantarse
         function stand() {
             while (getPoints(dealerHand) < 17) {
                 dealerHand.push(drawCard());
+                renderHands();
+                document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
             }
-            renderHands();
-            document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
-            const playerPts = getPoints(playerHand);
-            const dealerPts = getPoints(dealerHand);
-            if (dealerPts > 21 || playerPts > dealerPts) {
-                endGame("Ganaste 🎉");
-                playerBalance += bet * 2; // El jugador gana el doble de su apuesta
-            } else if (dealerPts === playerPts) {
-                endGame("Empate 🤝");
-                playerBalance += bet; // El jugador recupera su apuesta
+            checkGameOver();
+        }
+
+        // Comprobar el estado del juego (si alguien ganó)
+        function checkGameOver() {
+            const playerPoints = getPoints(playerHand);
+            const dealerPoints = getPoints(dealerHand);
+            if (playerPoints > 21) {
+                document.getElementById("gameResult").innerText = "¡Perdiste! Has pasado de 21.";
+            } else if (dealerPoints > 21) {
+                document.getElementById("gameResult").innerText = "¡Ganaste! El crupier ha pasado de 21.";
+            } else if (playerPoints === 21) {
+                document.getElementById("gameResult").innerText = "¡Ganaste! Tienes 21.";
+            } else if (dealerPoints === 21) {
+                document.getElementById("gameResult").innerText = "¡Perdiste! El crupier tiene 21.";
+            } else if (playerPoints > dealerPoints) {
+                document.getElementById("gameResult").innerText = "¡Ganaste! Tienes más puntos.";
+            } else if (dealerPoints > playerPoints) {
+                document.getElementById("gameResult").innerText = "¡Perdiste! El crupier tiene más puntos.";
             } else {
-                endGame("Perdiste 🪦");
+                document.getElementById("gameResult").innerText = "¡Es un empate!";
             }
-            document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
-            document.getElementById("tokenBalance").innerText = playerBalance;
-        }
-
-        // Terminar el juego
-        function endGame(result) {
-            document.getElementById("gameResult").innerText = result;
-            document.getElementById("betStatus").innerText = "";
-            setTimeout(() => {
-                alert(result); // Popup con el resultado
-                resetGame(); // Reiniciar el juego automáticamente
-            }, 1000); // Mostrar el mensaje con un pequeño retraso
-        }
-
-        // Reiniciar el juego
-        function resetGame() {
-            playerHand = [];
-            dealerHand = [];
-            deck = [];
-            document.getElementById("playerValue").innerText = "Valor: 0";
-            document.getElementById("dealerValue").innerText = "Valor: 0";
-            document.getElementById("playerHand").innerHTML = "";
-            document.getElementById("dealerHand").innerHTML = "";
         }
     </script>
-
 </body>
 </html>
