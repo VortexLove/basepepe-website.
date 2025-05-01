@@ -4,80 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venta Preventa y Juego BasePepe</title>
-  <!-- Fuente pixelada -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    /* Reset básico */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      background-color: #0b0b0b;
-      color: #39ff14;
-      font-family: 'Press Start 2P', cursive;
-      line-height: 1.4;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-    }
+    body { background-color: #0b0b0b; color: #39ff14; font-family: 'Press Start 2P', cursive; line-height: 1.4; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 20px; }
     header img { height: 60px; }
-    nav a {
-      color: #39ff14;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 14px;
-    }
+    nav a { color: #39ff14; text-decoration: none; margin-left: 20px; font-size: 14px; }
     section { padding: 60px 20px; }
     #hero { text-align: center; padding: 80px 20px; }
     #hero h1 { font-size: 48px; margin-bottom: 20px; }
     #hero p { max-width: 600px; margin: 0 auto 30px; font-size: 14px; }
-    .btn {
-      display: inline-block;
-      padding: 15px 30px;
-      border: 2px solid #39ff14;
-      text-transform: uppercase;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-      background: transparent;
-      color: #39ff14;
-    }
+    .btn { display: inline-block; padding: 15px 30px; border: 2px solid #39ff14; text-transform: uppercase; font-size: 14px; cursor: pointer; transition: background 0.2s; background: transparent; color: #39ff14; }
     .btn:hover { background-color: #39ff14; color: #0b0b0b; }
-    #lore, #roadmap, #presale { max-width: 800px; margin: 0 auto; }
-    #lore p, #presale p { font-size: 14px; margin-bottom: 20px; }
-    #roadmap .step { margin-bottom: 30px; }
-    #roadmap .step h3 { font-size: 18px; margin-bottom: 10px; }
-    /* Estilo de fondo para Blackjack Dealer */
-    #blackjack {
-      background: url('basepepe-dealer.png') center/cover no-repeat;
-      padding: 80px 20px;
-      border-radius: 8px;
-      margin-bottom: 40px;
-    }
-    /* Blackjack Styles */
+    #blackjack { background: url('basepepe-dealer.png') center/cover no-repeat; padding: 80px 20px; border-radius: 8px; }
     #blackjack h2 { text-align: center; margin-bottom: 20px; }
     .game-area { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
     .hand { background: rgba(0,0,0,0.6); border: 2px solid #39ff14; padding: 10px; width: 45%; min-height: 120px; }
     .hand h3 { margin-bottom: 10px; font-size: 16px; }
     .cards { display: flex; flex-wrap: wrap; }
-    .card {
-      width: 40px;
-      height: 60px;
-      border: 1px solid #39ff14;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 5px;
-      margin-bottom: 5px;
-      font-size: 12px;
-      background: rgba(0,0,0,0.8);
-    }
+    .card { width: 40px; height: 60px; border: 1px solid #39ff14; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-right: 5px; margin-bottom: 5px; font-size: 12px; background: rgba(0,0,0,0.8); }
     .controls { text-align: center; margin-bottom: 20px; }
     .message { text-align: center; font-size: 14px; min-height: 20px; }
     footer { text-align: center; padding: 40px 20px; font-size: 12px; }
     footer a { color: #39ff14; text-decoration: none; margin: 0 10px; }
+    .saldo { font-size: 16px; text-align: center; margin-top: 20px; }
+    .roadmap { margin-top: 40px; }
+    .roadmap h3 { font-size: 24px; text-align: center; margin-bottom: 20px; }
+    .roadmap ul { list-style: none; padding: 0; }
+    .roadmap li { font-size: 18px; color: #39ff14; margin-bottom: 10px; }
+    .lore { background: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 8px; margin-top: 40px; color: #fff; }
   </style>
 </head>
 <body>
@@ -92,112 +48,216 @@
     </nav>
   </header>
 
-  <section id="blackjack">
-    <h2>¡Juega Blackjack con BasePepe!</h2>
-    <div class="game-area">
-      <div class="hand" id="player-hand">
-        <h3>Tu Mano</h3>
-        <div class="cards" id="player-cards"></div>
-      </div>
-      <div class="hand" id="dealer-hand">
-        <h3>Mano del Crupier</h3>
-        <div class="cards" id="dealer-cards"></div>
-      </div>
-    </div>
-    <div class="controls">
-      <input type="number" id="betAmount" placeholder="Cantidad a Apostar" min="1" step="1">
-      <button class="btn" onclick="placeBet()">Apostar</button>
-    </div>
-    <div class="message" id="gameMessage"></div>
-  </section>
-
   <section id="hero">
     <h1>¡Bienvenido a la Preventa de BasePepe!</h1>
     <p>Únete al salto de Pepe hacia la red Base. Aprovecha esta oferta limitada y apoya al token meme más épico de la blockchain.</p>
     <button class="btn" onclick="document.getElementById('presale').scrollIntoView({ behavior: 'smooth' });">Comprar Ahora</button>
   </section>
 
-  <section id="lore" style="text-align: center; color: #39ff14;">
-    <h2>Lore de BasePepe como Crupier de Blackjack</h2>
-    <p>BasePepe, la rana más legendaria de la cultura meme, no solo fue una sensación viral en los foros y redes sociales, sino que también se convirtió en un auténtico líder dentro del mundo cripto. Desde su nacimiento como un simple meme en 2005, hasta su transformación en una figura emblemática de la blockchain, Pepe ha estado presente en cada rincón de la Internet, llevando siempre consigo una energía única que conecta con millones de personas.</p>
-    <p>Pero, ¿qué sucede cuando un meme decide saltar más allá de la pantalla y aventurarse en los juegos de azar? Así nació la idea de BasePepe como crupier de blackjack. Después de haber conquistado el mundo digital, BasePepe quería más. Decidió usar sus habilidades de estratega para ofrecer a la comunidad un juego como nunca antes: ¡un casino online donde él mismo sería el crupier!</p>
-    <p>En su rol de crupier, BasePepe no solo ofrece un juego de blackjack tradicional, sino que lo hace con una chispa única que solo él puede ofrecer. Imagina estar en una mesa virtual, rodeado de una comunidad de jugadores cripto, todos confiando en las manos del mismo Pepe que siempre ha estado en las mejores jugadas de Internet.</p>
-    <p>BasePepe, con su actitud relajada y su estilo inconfundible, lidera las partidas de blackjack con destreza y precisión. Su risa, su carisma y su toque especial hacen que cada mano sea una experiencia única. No se trata solo de ganar o perder; se trata de vivir el momento con BasePepe, el crupier de memes que ahora se ha convertido en una leyenda de los casinos online.</p>
-    <p>¿Te atreves a sentarte en su mesa y probar suerte? BasePepe está aquí para hacer de tu experiencia de juego algo inolvidable. ¡Bienvenido al casino de BasePepe, donde la suerte y la diversión siempre están de tu lado!</p>
+  <section id="blackjack">
+    <h2>¡Juega Blackjack con BasePepe!</h2>
+    <div class="saldo" id="saldo">Saldo: 1000 BasePepe</div> <!-- Muestra el saldo inicial -->
+    <div class="game-area">
+      <div class="hand" id="dealer-hand">
+        <h3>Dealer</h3>
+        <div class="cards" id="dealer-cards"></div>
+        <p>Puntaje: <span id="dealer-score">0</span></p>
+      </div>
+      <div class="hand" id="player-hand">
+        <h3>Jugador</h3>
+        <div class="cards" id="player-cards"></div>
+        <p>Puntaje: <span id="player-score">0</span></p>
+      </div>
+    </div>
+    <div class="controls">
+      <label for="bet-amount">Apostar:</label>
+      <input type="number" id="bet-amount" value="100" min="1" max="1000">
+      <button class="btn" id="bet-btn">Apostar</button>
+      <button class="btn" id="hit-btn" disabled>Pedir Carta</button>
+      <button class="btn" id="stand-btn" disabled>Plantarse</button>
+    </div>
+    <div class="message" id="message"></div>
   </section>
 
-  <section id="roadmap">
-    <h2>Roadmap</h2>
-    <div class="step">
-      <h3>Q2 2025 - Preparación</h3>
-      <p>Diseño de marca, desarrollo de contrato ERC-20, y creación de materiales de marketing.</p>
-    </div>
-    <div class="step">
-      <h3>Finales Q2 2025 - Preventa</h3>
-      <p>Inicio de la preventa pública: 1 ETH = 1,000,000 BasePepe, duración 7 días.</p>
-    </div>
-    <div class="step">
-      <h3>Q3 2025 - Launch</h3>
-      <p>Listados en exchanges, staking, y lanzamiento de NFTs exclusivos de Pepe.</p>
-    </div>
-    <div class="step">
-      <h3>Q4 2025 - Expansión</h3>
-      <p>Integraciones en juegos, colaboraciones con influencers, y más funcionalidades DeFi.</p>
-    </div>
-    <div class="step">
-      <h3>Q1 2026 - Casino Completo</h3>
-      <p>Implementación de nuevos juegos en el casino de BasePepe, incluyendo ruleta, poker, y tragamonedas, para ofrecer una experiencia completa de casino online.</p>
-    </div>
+  <section id="lore" class="lore">
+    <h2>BasePepe como Crupier</h2>
+    <p>Desde sus humildes orígenes como un simple meme, BasePepe ha ascendido hasta convertirse en el crupier más famoso de la blockchain. Con su estilo único y su conocimiento de las reglas del blackjack, BasePepe ha venido a ofrecer a los jugadores una experiencia auténtica de casino. Ahora, desde su mesa de blackjack, BasePepe está listo para repartir cartas y premios, llevando a todos los jugadores a la victoria en este mundo digital.</p>
   </section>
 
-  <section id="presale">
-    <h2>Detalles de la Preventa</h2>
-    <p>Tipo de cambio: <strong>1 ETH = 1,000,000 BasePepe</strong></p>
-    <p>Compra mínima: <strong>0.01 ETH</strong> | Compra máxima: <strong>2 ETH</strong></p>
-    <p>Duración: 7 días (hasta agotar supply)</p>
-    <p><em>Presupuesto total disponible: 5,000 ETH</em></p>
-    <input type="number" id="ethAmount" placeholder="Ingresa ETH" min="0.01" max="2" step="0.01">
-    <br><br>
-    <button class="btn" onclick="buyTokens()">Comprar BasePepe</button>
-    <p id="countdown"></p>
+  <section id="roadmap" class="roadmap">
+    <h3>Roadmap de BasePepe</h3>
+    <ul>
+      <li><strong>Q2 2025:</strong> Lanzamiento de BasePepe y preventa exitosa.</li>
+      <li><strong>Q3 2025:</strong> Lanzamiento de juego de blackjack y primeros torneos con BasePepe como crupier.</li>
+      <li><strong>Q4 2025:</strong> Expansión a más juegos de casino (ruleta, póker, tragamonedas).</li>
+      <li><strong>Q1 2026:</strong> Implementación de un sistema de recompensas y staking.</li>
+      <li><strong>Q2 2026:</strong> Construcción de un casino completo en línea con más juegos y funciones interactivas.</li>
+      <li><strong>Q3 2026:</strong> Integración de una plataforma de apuestas deportivas y otros juegos de azar.</li>
+    </ul>
   </section>
 
   <footer>
-    <p>&copy; 2025 BasePepe. Todos los derechos reservados. | <a href="#">Política de Privacidad</a></p>
+    <p>Sigue a BasePepe en redes sociales:</p>
+    <a href="#">Twitter</a>|
+    <a href="#">Discord</a>|
+    <a href="#">Telegram</a>
   </footer>
 
   <script>
-    // Lógica del Blackjack y Preventa
-    let playerBalance = 1000;
-    let dealerCards = [];
-    let playerCards = [];
-    let currentBet = 0;
-    let playerHandValue = 0;
-    let dealerHandValue = 0;
+    let saldo = 1000; // Saldo inicial del jugador
+    let apuesta = 100; // Apuesta inicial
+    let deck = [], dealerHand = [], playerHand = [];
 
-    function placeBet() {
-      const betAmount = parseInt(document.getElementById("betAmount").value);
-      if (betAmount > playerBalance) {
-        document.getElementById("gameMessage").innerHTML = "¡No tienes suficiente saldo!";
-        return;
-      }
-      if (betAmount >= 100) {
-        currentBet = betAmount;
-        document.getElementById("gameMessage").innerHTML = "Apuesta colocada. ¡Inicia el juego!";
-        // Inicia el juego
-        startGame();
-      } else {
-        document.getElementById("gameMessage").innerHTML = "La apuesta mínima es de 100 monedas.";
+    const suits = ['♠️','♥️','♦️','♣️'];
+    const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+    // Función para crear y barajar el mazo
+    function createDeck() {
+      deck = [];
+      suits.forEach(suit => {
+        values.forEach(value => {
+          deck.push({ suit, value });
+        });
+      });
+      shuffleDeck();
+    }
+
+    function shuffleDeck() {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
       }
     }
 
-    function startGame() {
-      playerCards = [];
-      dealerCards = [];
-      playerHandValue = 0;
-      dealerHandValue = 0;
-      
-      document.getElementById("player-cards").innerHTML = "";
-      document.getElementById("dealer-cards").innerHTML = "";
+    // Función para repartir cartas
+    function dealCard(hand) {
+      const card = deck.pop();
+      hand.push(card);
+      return card;
+    }
 
-      //
+    // Mostrar cartas en la mano
+    function displayHand(hand, isDealer = false) {
+      const handDiv = isDealer ? document.getElementById('dealer-cards') : document.getElementById('player-cards');
+      handDiv.innerHTML = '';
+      hand.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('card');
+        cardDiv.textContent = `${card.value} ${card.suit}`;
+        handDiv.appendChild(cardDiv);
+      });
+    }
+
+    // Calcular puntaje de la mano
+    function calculateScore(hand) {
+      let score = 0;
+      let aceCount = 0;
+      hand.forEach(card => {
+        if (card.value === 'A') {
+          aceCount++;
+          score += 11;
+        } else if (['K','Q','J'].includes(card.value)) {
+          score += 10;
+        } else {
+          score += parseInt(card.value);
+        }
+      });
+      while (score > 21 && aceCount > 0) {
+        score -= 10;
+        aceCount--;
+      }
+      return score;
+    }
+
+    // Actualizar el puntaje en la interfaz
+    function updateScores() {
+      const playerScore = calculateScore(playerHand);
+      const dealerScore = calculateScore(dealerHand);
+      document.getElementById('player-score').textContent = playerScore;
+      document.getElementById('dealer-score').textContent = dealerScore;
+    }
+
+    // Función para empezar el juego
+    function startGame() {
+      if (apuesta > saldo) {
+        alert("No tienes suficientes monedas para esa apuesta.");
+        return;
+      }
+
+      saldo -= apuesta;
+      updateSaldo();
+
+      dealerHand = [];
+      playerHand = [];
+      createDeck();
+      dealCard(dealerHand);
+      dealCard(playerHand);
+      dealCard(playerHand);
+      displayHand(dealerHand, true);
+      displayHand(playerHand);
+      updateScores(); // Mostrar puntaje inicial
+
+      document.getElementById('hit-btn').disabled = false;
+      document.getElementById('stand-btn').disabled = false;
+      document.getElementById('bet-btn').disabled = true;
+    }
+
+    // Función para pedir carta
+    function hit() {
+      dealCard(playerHand);
+      displayHand(playerHand);
+      updateScores(); // Actualizar puntaje después de pedir carta
+      const playerScore = calculateScore(playerHand);
+      if (playerScore > 21) {
+        document.getElementById('message').textContent = '¡Te has pasado! Has perdido.';
+        endGame();
+      }
+    }
+
+    // Función para plantarse
+    function stand() {
+      let dealerScore = calculateScore(dealerHand);
+      while (dealerScore < 17) {
+        dealCard(dealerHand);
+        dealerScore = calculateScore(dealerHand);
+      }
+      displayHand(dealerHand, true);
+      updateScores(); // Actualizar puntaje después de plantarse
+
+      const playerScore = calculateScore(playerHand);
+      if (dealerScore > 21 || playerScore > dealerScore) {
+        document.getElementById('message').textContent = '¡Ganaste!';
+        saldo += apuesta * 2;
+      } else if (playerScore < dealerScore) {
+        document.getElementById('message').textContent = 'Perdiste.';
+      } else {
+        document.getElementById('message').textContent = '¡Empate!';
+        saldo += apuesta;
+      }
+
+      updateSaldo();
+      endGame();
+    }
+
+    // Función para finalizar el juego
+    function endGame() {
+      document.getElementById('hit-btn').disabled = true;
+      document.getElementById('stand-btn').disabled = true;
+      document.getElementById('bet-btn').disabled = false;
+    }
+
+    // Actualizar saldo
+    function updateSaldo() {
+      document.getElementById('saldo').textContent = `Saldo: ${saldo} BasePepe`;
+    }
+
+    // Eventos
+    document.getElementById('bet-btn').addEventListener('click', startGame);
+    document.getElementById('hit-btn').addEventListener('click', hit);
+    document.getElementById('stand-btn').addEventListener('click', stand);
+    document.getElementById('bet-amount').addEventListener('input', function () {
+      apuesta = parseInt(document.getElementById('bet-amount').value);
+    });
+  </script>
+</body>
+</html>
