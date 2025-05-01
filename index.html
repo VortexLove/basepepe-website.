@@ -4,79 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venta Preventa y Juego BasePepe</title>
-  <!-- Fuente pixelada -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-    /* Reset básico */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      background-color: #0b0b0b;
-      color: #39ff14;
-      font-family: 'Press Start 2P', cursive;
-      line-height: 1.4;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-    }
+    body { background-color: #0b0b0b; color: #39ff14; font-family: 'Press Start 2P', cursive; line-height: 1.4; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 20px; }
     header img { height: 60px; }
-    nav a {
-      color: #39ff14;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 14px;
-    }
+    nav a { color: #39ff14; text-decoration: none; margin-left: 20px; font-size: 14px; }
     section { padding: 60px 20px; }
     #hero { text-align: center; padding: 80px 20px; }
     #hero h1 { font-size: 48px; margin-bottom: 20px; }
     #hero p { max-width: 600px; margin: 0 auto 30px; font-size: 14px; }
-    .btn {
-      display: inline-block;
-      padding: 15px 30px;
-      border: 2px solid #39ff14;
-      text-transform: uppercase;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-      background: transparent;
-      color: #39ff14;
-    }
+    .btn { display: inline-block; padding: 15px 30px; border: 2px solid #39ff14; text-transform: uppercase; font-size: 14px; cursor: pointer; transition: background 0.2s; background: transparent; color: #39ff14; }
     .btn:hover { background-color: #39ff14; color: #0b0b0b; }
-    #lore, #roadmap, #presale, #blackjack { max-width: 800px; margin: 0 auto; }
-    #lore p, #presale p { font-size: 14px; margin-bottom: 20px; }
-    #roadmap .step { margin-bottom: 30px; }
-    #roadmap .step h3 { font-size: 18px; margin-bottom: 10px; }
-    /* Estilo de fondo para Blackjack Dealer */
-    #blackjack {
-      background: url('basepepe-dealer.png') center/cover no-repeat;
-      padding: 80px 20px;
-      border-radius: 8px;
-    }
-    /* Blackjack Styles */
+    #blackjack { background: url('basepepe-dealer.png') center/cover no-repeat; padding: 80px 20px; border-radius: 8px; }
     #blackjack h2 { text-align: center; margin-bottom: 20px; }
     .game-area { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
     .hand { background: rgba(0,0,0,0.6); border: 2px solid #39ff14; padding: 10px; width: 45%; min-height: 120px; }
     .hand h3 { margin-bottom: 10px; font-size: 16px; }
     .cards { display: flex; flex-wrap: wrap; }
-    .card {
-      width: 40px;
-      height: 60px;
-      border: 1px solid #39ff14;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 5px;
-      margin-bottom: 5px;
-      font-size: 12px;
-      background: rgba(0,0,0,0.8);
-    }
+    .card { width: 40px; height: 60px; border: 1px solid #39ff14; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-right: 5px; margin-bottom: 5px; font-size: 12px; background: rgba(0,0,0,0.8); }
     .controls { text-align: center; margin-bottom: 20px; }
     .message { text-align: center; font-size: 14px; min-height: 20px; }
     footer { text-align: center; padding: 40px 20px; font-size: 12px; }
     footer a { color: #39ff14; text-decoration: none; margin: 0 10px; }
+    .saldo { font-size: 16px; text-align: center; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -97,46 +49,9 @@
     <button class="btn" onclick="document.getElementById('presale').scrollIntoView({ behavior: 'smooth' });">Comprar Ahora</button>
   </section>
 
-  <section id="lore">
-    <h2>Lore de BasePepe</h2>
-    <p>Pepe nació en los foros como un meme inofensivo, conquistó Internet y ahora está listo para invadir la red Base. Desde sus humildes orígenes hasta convertirse en un símbolo de la cultura crypto, Pepe trae consigo la energía y la comunidad que siempre ha representado.</p>
-    <p>Con BasePepe, la rana más famosa del mundo digital se fusiona con la velocidad y eficiencia de Base para llevar tu experiencia cripto al siguiente nivel.</p>
-  </section>
-
-  <section id="roadmap">
-    <h2>Roadmap</h2>
-    <div class="step">
-      <h3>Q2 2025 - Preparación</h3>
-      <p>Diseño de marca, desarrollo de contrato ERC-20, y creación de materiales de marketing.</p>
-    </div>
-    <div class="step">
-      <h3>Finales Q2 2025 - Preventa</h3>
-      <p>Inicio de la preventa pública: 1 ETH = 1,000,000 BasePepe, duración 7 días.</p>
-    </div>
-    <div class="step">
-      <h3>Q3 2025 - Launch</h3>
-      <p>Listados en exchanges, staking, y lanzamiento de NFTs exclusivos de Pepe.</p>
-    </div>
-    <div class="step">
-      <h3>Q4 2025 - Expansión</h3>
-      <p>Integraciones en juegos, colaboraciones con influencers, y más funcionalidades DeFi.</p>
-    </div>
-  </section>
-
-  <section id="presale">
-    <h2>Detalles de la Preventa</h2>
-    <p>Tipo de cambio: <strong>1 ETH = 1,000,000 BasePepe</strong></p>
-    <p>Compra mínima: <strong>0.01 ETH</strong> | Compra máxima: <strong>2 ETH</strong></p>
-    <p>Duración: 7 días (hasta agotar supply)</p>
-    <p><em>Presupuesto total disponible: 5,000 ETH</em></p>
-    <input type="number" id="ethAmount" placeholder="Ingresa ETH" min="0.01" max="2" step="0.01">
-    <br><br>
-    <button class="btn" onclick="buyTokens()">Comprar BasePepe</button>
-    <p id="countdown"></p>
-  </section>
-
   <section id="blackjack">
     <h2>¡Juega Blackjack con BasePepe!</h2>
+    <div class="saldo" id="saldo">Saldo: 1000 BasePepe</div> <!-- Muestra el saldo inicial -->
     <div class="game-area">
       <div class="hand" id="dealer-hand">
         <h3>Dealer</h3>
@@ -165,32 +80,14 @@
   </footer>
 
   <script>
-    // Preventa MetaMask
-    async function buyTokens() {
-      const ethAmount = document.getElementById('ethAmount').value;
-      if (!window.ethereum) return alert('Instala MetaMask para comprar tokens.');
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-      const account = accounts[0];
-      const value = (parseFloat(ethAmount) * 1e18).toString();
-      await ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [{ from: account, to: '0xAF9ef2d915b993cb2DD9c77F563912d492Cb9642', value }]
-      });
-    }
-    // Countdown
-    const endDate = new Date(); endDate.setDate(endDate.getDate() + 7);
-    function updateCountdown() {
-      const now = new Date(); const diff = endDate - now;
-      if (diff <= 0) { document.getElementById('countdown').textContent = '¡La preventa ha terminado!'; return; }
-      const days = Math.floor(diff / 86400000);
-      const hours = Math.floor((diff % 86400000) / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      document.getElementById('countdown').textContent = `Tiempo restante: ${days}d ${hours}h ${mins}m ${secs}s`;
-    }
-    setInterval(updateCountdown, 1000);
+    let saldo = 1000; // Saldo inicial del jugador
 
-    // Blackjack Logic
+    // Mostrar el saldo en la interfaz
+    function updateSaldo() {
+      document.getElementById('saldo').textContent = `Saldo: ${saldo} BasePepe`;
+    }
+
+    // Lógica de Blackjack
     let deck = [], dealerHand = [], playerHand = [];
     const suits = ['♠️','♥️','♦️','♣️'];
     const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -231,11 +128,21 @@
       const playerScore = calculateScore(playerHand);
       const dealerScore = calculateScore(dealerHand);
       let msg = '';
-      if (playerScore > 21) msg = '¡Te pasaste! Dealer gana.';
-      else if (dealerScore > 21) msg = '¡Dealer se pasó! Tú ganas.';
-      else if (dealerScore >= playerScore) msg = 'Dealer gana.';
-      else msg = '¡Tú ganas!';
+      if (playerScore > 21) {
+        msg = '¡Te pasaste! Dealer gana.';
+        saldo -= 100; // El jugador pierde 100 BasePepe
+      } else if (dealerScore > 21) {
+        msg = '¡Dealer se pasó! Tú ganas.';
+        saldo += 100; // El jugador gana 100 BasePepe
+      } else if (dealerScore >= playerScore) {
+        msg = 'Dealer gana.';
+        saldo -= 100; // El jugador pierde 100 BasePepe
+      } else {
+        msg = '¡Tú ganas!';
+        saldo += 100; // El jugador gana 100 BasePepe
+      }
       document.getElementById('message').textContent = msg;
+      updateSaldo(); // Actualiza el saldo después de cada partida
     }
 
     function startGame() {
