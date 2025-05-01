@@ -16,6 +16,9 @@
             background-size: cover;
             background-position: center;
             color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         #header {
@@ -47,6 +50,7 @@
             position: relative;
             z-index: 1;
             flex-direction: column;
+            padding-bottom: 100px; /* Espacio para los botones */
         }
 
         #gameArea {
@@ -60,6 +64,15 @@
             margin-bottom: 20px;
         }
 
+        .button-container {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
         .button {
             background-color: black;
             color: yellow;
@@ -68,7 +81,6 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px;
         }
 
         .button:hover {
@@ -114,6 +126,26 @@
             font-size: 18px;
         }
 
+        /* Estilos para la imagen y el mensaje */
+        #sideImage {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 200px;
+            height: auto;
+            z-index: 5;
+        }
+
+        #message {
+            position: fixed;
+            right: 20px;
+            top: 300px;
+            font-size: 18px;
+            color: yellow;
+            text-align: center;
+            width: 200px;
+        }
+
     </style>
 </head>
 <body>
@@ -129,10 +161,6 @@
             <p>Tokens disponibles: <span id="tokenBalance">1000</span> BasePepe</p>
             <input type="number" id="betAmount" placeholder="Apostar BasePepe" min="1" max="1000">
             <br>
-            <button class="button" onclick="startGame()">Iniciar Juego</button>
-            <button class="button" onclick="hit()">Pedir Carta</button>
-            <button class="button" onclick="stand()">Plantarse</button>
-            
             <div id="dealerHand">
                 <h3>Mano del Crupier</h3>
                 <div id="dealerValue">Valor: 0</div>
@@ -146,6 +174,20 @@
             <p id="gameResult"></p>
             <p id="betStatus"></p> <!-- Mostrar la apuesta y resultado -->
         </div>
+    </div>
+
+    <!-- Botones abajo de la mesa -->
+    <div class="button-container">
+        <button class="button" onclick="startGame()">Iniciar Juego</button>
+        <button class="button" onclick="hit()">Pedir Carta</button>
+        <button class="button" onclick="stand()">Plantarse</button>
+    </div>
+
+    <!-- Imagen y mensaje lateral -->
+    <img id="sideImage" src="carta.png" alt="Cartas BasePepe">
+    <div id="message">
+        <p>¡Pronto estará listo el pack completo de cartas de BasePepe!</p>
+        <p>¡Mantente atento para integrarlo y mejorar tu juego!</p>
     </div>
 
     <script>
