@@ -205,13 +205,14 @@
         let deck = [], playerHand = [], dealerHand = [], bet = 0;
         let playerBalance = 1000;
 
+        // Función para iniciar el juego
         function startGame() {
             bet = parseInt(document.getElementById("betAmount").value);
             if (isNaN(bet) || bet <= 0 || bet > playerBalance) {
                 alert("Ingresa una apuesta válida.");
                 return;
             }
-            playerBalance -= bet;
+            playerBalance -= bet; // Reducir la apuesta del saldo del jugador
             document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
             document.getElementById("tokenBalance").innerText = playerBalance;
 
@@ -226,6 +227,7 @@
             document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
         }
 
+        // Crear el mazo de cartas
         function createDeck() {
             const suits = ["♠", "♥", "♣", "♦"];
             const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -238,6 +240,7 @@
             return d;
         }
 
+        // Mezclar el mazo
         function shuffle(deck) {
             for (let i = deck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -245,16 +248,19 @@
             }
         }
 
+        // Sacar una carta del mazo
         function drawCard() {
             return deck.pop();
         }
 
+        // Calcular el valor de la carta
         function getCardValue(card) {
             if (card.value === "A") return 11;
             if (["K", "Q", "J"].includes(card.value)) return 10;
             return parseInt(card.value);
         }
 
+        // Calcular el valor total de la mano
         function getPoints(hand) {
             let points = 0;
             let aceCount = 0;
@@ -269,6 +275,7 @@
             return points;
         }
 
+        // Mostrar las manos y los puntos
         function renderHands() {
             let playerHTML = "";
             let dealerHTML = "";
@@ -286,6 +293,7 @@
             document.getElementById("dealerValue").innerText = `Valor: ${getPoints(dealerHand)}`;
         }
 
+        // Función para pedir carta
         function hit() {
             playerHand.push(drawCard());
             renderHands();
@@ -296,6 +304,7 @@
             }
         }
 
+        // Función para plantarse
         function stand() {
             while (getPoints(dealerHand) < 17) {
                 dealerHand.push(drawCard());
@@ -304,6 +313,7 @@
             checkGameOver();
         }
 
+        // Comprobar si alguien ha ganado
         function checkGameOver() {
             const playerPoints = getPoints(playerHand);
             const dealerPoints = getPoints(dealerHand);
@@ -331,6 +341,7 @@
             endGame();
         }
 
+        // Terminar el juego y reiniciar
         function endGame() {
             document.getElementById("tokenBalance").innerText = playerBalance;
             document.getElementById("saldo").innerText = `Saldo: ${playerBalance}`;
@@ -339,5 +350,6 @@
             dealerHand = [];
         }
     </script>
+
 </body>
 </html>
