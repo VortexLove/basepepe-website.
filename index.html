@@ -106,18 +106,12 @@
   <script>
     let saldo = 1000; // Saldo inicial del jugador
     let apuesta = 100; // Apuesta inicial
-
-    // Mostrar el saldo en la interfaz
-    function updateSaldo() {
-      document.getElementById('saldo').textContent = `Saldo: ${saldo} BasePepe`;
-    }
-
-    // Lógica de Blackjack
     let deck = [], dealerHand = [], playerHand = [];
 
     const suits = ['♠️','♥️','♦️','♣️'];
     const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
+    // Función para crear y barajar el mazo
     function createDeck() {
       deck = [];
       suits.forEach(suit => {
@@ -135,12 +129,14 @@
       }
     }
 
+    // Función para repartir cartas
     function dealCard(hand) {
       const card = deck.pop();
       hand.push(card);
       return card;
     }
 
+    // Mostrar cartas en la mano
     function displayHand(hand, isDealer = false) {
       const handDiv = isDealer ? document.getElementById('dealer-cards') : document.getElementById('player-cards');
       handDiv.innerHTML = '';
@@ -152,6 +148,7 @@
       });
     }
 
+    // Calcular puntaje de la mano
     function calculateScore(hand) {
       let score = 0;
       let aceCount = 0;
@@ -172,9 +169,24 @@
       return score;
     }
 
+    // Actualizar el puntaje en la interfaz
+    function updateScores() {
+      const playerScore = calculateScore(playerHand);
+      const dealerScore = calculateScore(dealerHand);
+      document.getElementById('player-score').textContent = playerScore;
+      document.getElementById('dealer-score').textContent = dealerScore;
+    }
+
+    // Función para empezar el juego
     function startGame() {
+      if (apuesta > saldo) {
+        alert("No tienes suficientes monedas para esa apuesta.");
+        return;
+      }
+
       saldo -= apuesta;
       updateSaldo();
+
       dealerHand = [];
       playerHand = [];
       createDeck();
@@ -183,14 +195,18 @@
       dealCard(playerHand);
       displayHand(dealerHand, true);
       displayHand(playerHand);
+      updateScores(); // Mostrar puntaje inicial
+
       document.getElementById('hit-btn').disabled = false;
       document.getElementById('stand-btn').disabled = false;
       document.getElementById('bet-btn').disabled = true;
     }
 
+    // Función para pedir carta
     function hit() {
       dealCard(playerHand);
       displayHand(playerHand);
+      updateScores(); // Actualizar puntaje después de pedir carta
       const playerScore = calculateScore(playerHand);
       if (playerScore > 21) {
         document.getElementById('message').textContent = '¡Te has pasado! Has perdido.';
@@ -198,6 +214,7 @@
       }
     }
 
+    // Función para plantarse
     function stand() {
       let dealerScore = calculateScore(dealerHand);
       while (dealerScore < 17) {
@@ -205,6 +222,8 @@
         dealerScore = calculateScore(dealerHand);
       }
       displayHand(dealerHand, true);
+      updateScores(); // Actualizar puntaje después de plantarse
+
       const playerScore = calculateScore(playerHand);
       if (dealerScore > 21 || playerScore > dealerScore) {
         document.getElementById('message').textContent = '¡Ganaste!';
@@ -215,14 +234,21 @@
         document.getElementById('message').textContent = '¡Empate!';
         saldo += apuesta;
       }
+
       updateSaldo();
       endGame();
     }
 
+    // Función para finalizar el juego
     function endGame() {
       document.getElementById('hit-btn').disabled = true;
       document.getElementById('stand-btn').disabled = true;
       document.getElementById('bet-btn').disabled = false;
+    }
+
+    // Actualizar saldo
+    function updateSaldo() {
+      document.getElementById('saldo').textContent = `Saldo: ${saldo} BasePepe`;
     }
 
     // Eventos
@@ -232,8 +258,6 @@
     document.getElementById('bet-amount').addEventListener('input', function () {
       apuesta = parseInt(document.getElementById('bet-amount').value);
     });
-
-    updateSaldo();
   </script>
 </body>
 </html>
