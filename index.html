@@ -190,6 +190,7 @@
         displayHand(playerHand);
         document.getElementById('hit-btn').disabled = false;
         document.getElementById('stand-btn').disabled = false;
+        document.getElementById('bet-btn').disabled = true; // Deshabilitar el botón de apostar
       } else {
         document.getElementById('message').textContent = 'La apuesta debe ser mayor a 100 monedas.';
       }
