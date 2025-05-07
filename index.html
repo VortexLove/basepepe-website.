@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BasePepe Casino</title>
+  <!-- Estilos y otros metadatos necesarios -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venta Preventa y Juego BasePepe</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
@@ -267,6 +271,70 @@
     document.getElementById('bet-amount').addEventListener('input', function () {
       apuesta = parseInt(document.getElementById('bet-amount').value);
     });
+    
+  <!-- Botón de conexión con MetaMask -->
+  <button id="connect-btn" class="btn">Conectar MetaMask</button>
+
+  <!-- Sección donde se mostrará la cuenta conectada -->
+  <div id="account-info"></div>
+
+  <!-- Aquí iría tu contenido de preventa o blackjack -->
+  <div id="preventa" style="display:none;">
+    <!-- Tu contenido de preventa aquí -->
+  </div>
+
+  <div id="blackjack" style="display:none;">
+    <!-- Tu contenido de blackjack aquí -->
+  </div>
+
+  <!-- Agrega tus scripts al final -->
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+  <script>
+    // Verifica si MetaMask está instalado
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask está instalado');
+    } else {
+      alert('Por favor, instala MetaMask para conectar con la blockchain.');
+    }
+
+    // Conectar con MetaMask
+    document.getElementById('connect-btn').addEventListener('click', async () => {
+      try {
+        // Solicitar la conexión con MetaMask
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        
+        // Obtener la dirección de la cuenta conectada
+        const account = accounts[0];
+
+        // Mostrar la cuenta conectada en la UI
+        document.getElementById('account-info').textContent = `Conectado: ${account}`;
+
+        // Mostrar o cambiar la vista a la preventa o blackjack
+        document.getElementById('preventa').style.display = 'block'; // O lo que corresponda en tu flujo
+        document.getElementById('blackjack').style.display = 'none'; // O lo que corresponda
+
+        // Opcional: Hacer más cosas como verificar el saldo de la cuenta o permitir la compra de tokens
+
+      } catch (error) {
+        console.error('Error al conectar MetaMask:', error);
+        alert('Ocurrió un error al conectar con MetaMask.');
+      }
+    });
+
+    // Escuchar cambios de cuenta
+    ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length > 0) {
+        document.getElementById('account-info').textContent = `Conectado: ${accounts[0]}`;
+      } else {
+        document.getElementById('account-info').textContent = 'No conectado';
+      }
+    });
+
+    // Escuchar cambios de red
+    ethereum.on('chainChanged', (chainId) => {
+      window.location.reload();
+    });
+
   </script>
 </body>
 </html>
