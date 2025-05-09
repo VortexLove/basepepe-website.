@@ -61,6 +61,8 @@
     <h1>¡Bienvenido a la Preventa de BasePepe!</h1>
     <p>Únete al salto de Pepe hacia la red Base. Aprovecha esta oferta limitada y apoya al token meme más épico de la blockchain.</p>
     <button class="btn" onclick="document.getElementById('presale').scrollIntoView({ behavior: 'smooth' });">Comprar Ahora</button>
+    <button class="btn" id="connectWalletBtn" style="margin-left: 10px;">Conectar Wallet</button>
+<span id="walletAddress" style="color: white; margin-left: 10px;"></span>
   </section>
 
   <section id="blackjack">
@@ -268,5 +270,25 @@
       apuesta = parseInt(document.getElementById('bet-amount').value);
     });
   </script>
+  <script>
+  let userAccount = null;
+
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAccount = accounts[0];
+        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0, 6)}...${userAccount.slice(-4)}`;
+        console.log('Conectado a MetaMask:', userAccount);
+      } catch (error) {
+        console.error('Error al conectar MetaMask:', error);
+      }
+    } else {
+      alert('MetaMask no está instalado. Por favor, instálalo para continuar.');
+    }
+  }
+
+  document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+</script>
 </body>
 </html>
