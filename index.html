@@ -7,190 +7,188 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background-color: #0b0b0b; color: #39ff14; font-family: 'Press Start 2P', cursive; line-height: 1.4; }
-    header { display: flex; align-items: center; justify-content: space-between; padding: 20px; }
-    header img { height: 60px; }
-    nav a { color: #39ff14; text-decoration: none; margin-left: 20px; font-size: 14px; }
-    section { padding: 60px 20px; }
-    #hero { text-align: center; padding: 80px 20px; }
-    #hero h1 { font-size: 48px; margin-bottom: 20px; }
-    #hero p { max-width: 600px; margin: 0 auto 30px; font-size: 14px; }
-    .btn { display: inline-block; padding: 15px 30px; border: 2px solid #39ff14; text-transform: uppercase; font-size: 14px; cursor: pointer; transition: background 0.2s; background: transparent; color: #39ff14; }
-    .btn:hover { background-color: #39ff14; color: #0b0b0b; }
-    #presale { background: rgba(0,0,0,0.8); border: 2px solid #39ff14; border-radius: 8px; margin: 40px auto; max-width: 400px; padding: 20px; }
-    #presale input { width: calc(100% - 32px); padding: 10px; margin-bottom: 10px; background: #000; color: #39ff14; border: 1px solid #39ff14; font-family: 'Press Start 2P', cursive; }
-    #presale-status { margin-top: 10px; font-size: 12px; }
-    #blackjack { background: url('basepepe-dealer.png') center/cover no-repeat; padding: 80px 20px; border-radius: 8px; }
-    #blackjack h2 { text-align: center; margin-bottom: 20px; }
-    .game-area { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
-    .hand { background: rgba(0,0,0,0.6); border: 2px solid #39ff14; padding: 10px; width: 45%; min-height: 120px; }
-    .hand h3 { margin-bottom: 10px; font-size: 16px; }
+    body { background-color: #0b0b0b; color: #39ff14; font-family: 'Press Start 2P', cursive; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 20px; }
+    nav a { margin-left: 20px; color: #39ff14; text-decoration: none; }
+    section { padding: 40px 20px; max-width: 800px; margin: auto; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    .btn { display: inline-block; padding: 10px 20px; border: 2px solid #39ff14; background: transparent; color: #39ff14; cursor: pointer; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn:hover:not(:disabled) { background: #39ff14; color: #0b0b0b; }
+    #presale, #blackjack { background: rgba(0,0,0,0.8); padding: 20px; border: 2px solid #39ff14; border-radius: 8px; margin-bottom: 40px; }
+    .input-field { width: calc(100% - 24px); padding: 10px; margin-bottom: 10px; background: #000; color: #39ff14; border: 1px solid #39ff14; }
+    .game-area { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .hand { background: rgba(0,0,0,0.6); border: 2px solid #39ff14; padding: 10px; width: 48%; }
     .cards { display: flex; flex-wrap: wrap; }
-    .card { width: 40px; height: 60px; border: 1px solid #39ff14; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-right: 5px; margin-bottom: 5px; font-size: 12px; background: rgba(0,0,0,0.8); }
-    .controls { text-align: center; margin-bottom: 20px; }
-    .message { text-align: center; font-size: 14px; min-height: 20px; }
-    footer { text-align: center; padding: 40px 20px; font-size: 12px; }
-    footer a { color: #39ff14; text-decoration: none; margin: 0 10px; }
-    .saldo { font-size: 16px; text-align: center; margin-top: 20px; }
-    .roadmap, .lore { text-align: center; margin-top: 40px; }
-    .roadmap h3, .lore h2 { font-size: 24px; color: #39ff14; }
-    .roadmap ul { list-style: none; padding: 0; }
-    .roadmap li { font-size: 18px; color: #39ff14; margin-bottom: 10px; }
-    .lore p { font-size: 16px; color: #fff; }
+    .card { width: 40px; height: 60px; border: 1px solid #39ff14; display: flex; align-items: center; justify-content: center; margin: 2px; }
+    .controls { text-align: center; margin-bottom: 10px; }
+    .message, #presale-status { text-align: center; margin-top: 10px; }
+    #saldo { text-align: center; margin-top: 10px; }
   </style>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-638G5JVWG1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);} gtag('js', new Date());
-    gtag('config', 'G-638G5JVWG1');
-  </script>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo BasePepe">
+    <div><img src="logo.png" alt="Logo BasePepe" height="50"></div>
     <nav>
-      <a href="#hero">Inicio</a>
-      <a href="#lore">Lore</a>
-      <a href="#roadmap">Roadmap</a>
       <a href="#presale">Preventa</a>
       <a href="#blackjack">Blackjack</a>
     </nav>
   </header>
 
-  <section id="hero">
-    <h1>¡Bienvenido a BasePepe!</h1>
-    <p>Únete al salto de Pepe hacia la red Base. Explora nuestro casino y participa en la preventa de $PEPEBLACKJACK.</p>
-    <button class="btn" onclick="scrollToSection('presale')">Preventa 🍀</button>
-    <button class="btn" id="connectWalletBtn">Conectar Wallet</button>
-    <span id="walletAddress" style="color: #fff; margin-left: 10px;"></span>
-  </section>
-
   <section id="presale">
     <h2>🚀 Preventa $PEPEBLACKJACK</h2>
-    <p>1 ETH = 1,000,000 PBJ<br>Min: 0.01 ETH | Max: 2 ETH</p>
-    <input type="number" id="ethAmount" step="0.01" min="0.01" max="2" placeholder="Cantidad en ETH">
-    <button class="btn" onclick="buyPresale()">Comprar PBJ</button>
-    <p id="presale-status"></p>
+    <button class="btn" id="connectWalletBtn">Conectar Wallet</button>
+    <span id="walletAddress" style="margin-left:10px;"></span>
+    <div style="margin-top:20px;">
+      <input type="number" id="ethAmount" class="input-field" min="0.01" max="2" step="0.01" placeholder="Cantidad en ETH (hasta 2)">
+      <button class="btn" id="buyBtn">Comprar PBJ</button>
+      <p id="presale-status"></p>
+    </div>
   </section>
 
   <section id="blackjack">
-    <h2>¡Juega Blackjack con BasePepe!</h2>
-    <div class="saldo" id="saldo">Saldo: 1000 BasePepe</div>
+    <h2>🃏 Blackjack BasePepe</h2>
     <div class="game-area">
-      <div class="hand" id="dealer-hand">
+      <div class="hand">
         <h3>Dealer</h3>
         <div class="cards" id="dealer-cards"></div>
         <p>Puntaje: <span id="dealer-score">0</span></p>
       </div>
-      <div class="hand" id="player-hand">
+      <div class="hand">
         <h3>Jugador</h3>
         <div class="cards" id="player-cards"></div>
         <p>Puntaje: <span id="player-score">0</span></p>
       </div>
     </div>
     <div class="controls">
-      <label for="bet-amount">Apostar:</label>
-      <input type="number" id="bet-amount" value="100" min="1" max="1000">
+      <input type="number" id="bet-amount" class="input-field" value="100" min="1" placeholder="Apuesta">
       <button class="btn" id="bet-btn">Apostar</button>
       <button class="btn" id="hit-btn" disabled>Pedir Carta</button>
       <button class="btn" id="stand-btn" disabled>Plantarse</button>
     </div>
-    <div class="message" id="message"></div>
+    <p class="message" id="message"></p>
+    <p id="saldo">Saldo: 1000 PBJ</p>
   </section>
 
-  <section id="lore" class="lore">
-    <h2>BasePepe como Crupier</h2>
-    <p>Desde sus humildes orígenes como un simple meme, BasePepe se convirtió en el crupier más famoso de la blockchain. Ahora reparte cartas y premios en su casino descentralizado.</p>
-  </section>
-
-  <section id="roadmap" class="roadmap">
-    <h3>Roadmap de BasePepe</h3>
-    <ul>
-      <li><strong>Mayo 2025:</strong> Lanzamiento de $PEPEBLACKJACK + preventa</li>
-      <li><strong>Junio 2025:</strong> Blackjack en web + NFT Cards</li>
-      <li><strong>Julio 2025:</strong> Slots memes + ranking</li>
-      <li><strong>Agosto 2025:</strong> Ruleta Pepe + referidos</li>
-      <li><strong>Septiembre 2025:</strong> App móvil + torneos</li>
-      <li><strong>Q4 2025:</strong> Más juegos y partnerships</li>
-    </ul>
-  </section>
-
-  <footer>
-    <p>Sigue a BasePepe en redes:</p>
-    <a href="#">Twitter</a> |
-    <a href="#">Discord</a> |
-    <a href="#">Telegram</a>
-  </footer>
-
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
   <script>
-    let provider, signer, userAccount;
-    const contractAddress = '0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56'; // Reemplaza con tu dirección
-    const contractABI = [
-      "function buyTokens() public payable",
-      "receive() external payable"
-    ];
+    document.addEventListener('DOMContentLoaded', () => {
+      // MetaMask & Presale
+      const connectBtn = document.getElementById('connectWalletBtn');
+      const buyBtn = document.getElementById('buyBtn');
+      const walletAddr = document.getElementById('walletAddress');
+      const presaleStatus = document.getElementById('presale-status');
+      let provider, signer;
 
-    // Scroll suave
-    function scrollToSection(id) {
-      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Conectar Wallet
-    async function connectWallet() {
-      if (window.ethereum) {
+      connectBtn.addEventListener('click', async () => {
+        if (!window.ethereum) return alert('Instala MetaMask');
         provider = new ethers.providers.Web3Provider(window.ethereum);
         await provider.send('eth_requestAccounts', []);
         signer = provider.getSigner();
-        userAccount = await signer.getAddress();
-        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0,6)}...${userAccount.slice(-4)}`;
-      } else {
-        alert('Instala MetaMask para continuar');
-      }
-    }
-    document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+        const acct = await signer.getAddress();
+        walletAddr.textContent = `${acct.slice(0,6)}...${acct.slice(-4)}`;
+        buyBtn.disabled = false;
+      });
+      buyBtn.disabled = true;
 
-    // Comprar Preventa
-    async function buyPresale() {
-      if (!signer) return alert('Conecta tu wallet primero');
-      const ethAmount = document.getElementById('ethAmount').value;
-      if (!ethAmount || ethAmount < 0.00001 || ethAmount > 40) return alert('Ingresa entre 0.01 y 2 ETH');
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      try {
-        const tx = await signer.sendTransaction({
-          to: contractAddress,
-          value: ethers.utils.parseEther(ethAmount)
+      buyBtn.addEventListener('click', async () => {
+        const amt = document.getElementById('ethAmount').value;
+        if (!amt || amt <= 0 || amt > 2) return alert('Ingrese cantidad válida (0 < ETH ≤ 2)');
+        presaleStatus.textContent = '⏳ Enviando transacción...';
+        try {
+          const tx = await signer.sendTransaction({
+            to: '0xTU_CONTRATO_EN_BASE',
+            value: ethers.utils.parseEther(amt)
+          });
+          await tx.wait();
+          presaleStatus.textContent = '✅ Compra exitosa';
+        } catch (err) {
+          console.error(err);
+          presaleStatus.textContent = '❌ Error en la transacción';
+        }
+      });
+
+      // Blackjack Logic
+      let deck = [], playerHand = [], dealerHand = [];
+      let saldo = 1000, apuesta = 0;
+      const suits = ['♠️','♥️','♦️','♣️'], values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+      const dealerCards = document.getElementById('dealer-cards');
+      const playerCards = document.getElementById('player-cards');
+      const playerScoreEl = document.getElementById('player-score');
+      const dealerScoreEl = document.getElementById('dealer-score');
+      const messageEl = document.getElementById('message');
+      const saldoEl = document.getElementById('saldo');
+
+      function createDeck() {
+        deck = [];
+        suits.forEach(s => values.forEach(v => deck.push({ v, s }))); 
+        shuffleDeck();
+      }
+      function shuffleDeck() {
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+      }
+      function dealCard(hand) {
+        hand.push(deck.pop());
+      }
+      function calc(hand) {
+        let total = 0, aces = 0;
+        hand.forEach(c => {
+          if (c.v === 'A') { aces++; total += 11; }
+          else if (['J','Q','K'].includes(c.v)) total += 10;
+          else total += parseInt(c.v);
         });
-        document.getElementById('presale-status').textContent = '⏳ Esperando confirmación...';
-        await tx.wait();
-        document.getElementById('presale-status').textContent = '✅ Compra exitosa.';
-      } catch (err) {
-        console.error(err);
-        document.getElementById('presale-status').textContent = '❌ Error en la transacción.';
+        while (total > 21 && aces > 0) { total -= 10; aces--; }
+        return total;
       }
-    }
+      function renderHands() {
+        [ ['dealer', dealerHand], ['player', playerHand] ].forEach(([role, hand]) => {
+          const div = document.getElementById(`${role}-cards`);
+          div.innerHTML = '';
+          hand.forEach(c => {
+            const el = document.createElement('div'); el.className = 'card'; el.textContent = c.v + c.s;
+            div.appendChild(el);
+          });
+          document.getElementById(`${role}-score`).textContent = calc(hand);
+        });
+      }
+      function updateSaldo() { saldoEl.textContent = `Saldo: ${saldo} PBJ`; }
 
-    // Blackjack Logic
-    let saldo = 1000, apuesta = 100;
-    let deck = [], playerHand = [], dealerHand = [];
-    const suits = ['♠️','♥️','♦️','♣️'], values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-    function createDeck() { deck=[]; suits.forEach(s=>values.forEach(v=>deck.push({suit:s,value:v}))); shuffleDeck(); }
-    function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} }
-    function dealCard(hand){const c=deck.pop();hand.push(c);return c;}
-    function displayHand(hand, dealer=false){const div=document.getElementById(dealer? 'dealer-cards':'player-cards');div.innerHTML='';hand.forEach(c=>{const d=document.createElement('div');d.className='card';d.textContent=`${c.value}${c.suit}`;div.appendChild(d);});}
-    function calc(h){let s=0,aces=0;h.forEach(c=>{if(c.value==='A'){aces++;s+=11;}else if(['J','Q','K'].includes(c.value))s+=10;else s+=+c.value;});while(s>21&&aces>0){s-=10;aces--;}return s; }
-    function updateScores(){document.getElementById('player-score').textContent=calc(playerHand);document.getElementById('dealer-score').textContent=calc(dealerHand);}
-    function updateSaldo(){document.getElementById('saldo').textContent=`Saldo: ${saldo} BasePepe`;}
-    function startGame(){if(apuesta>saldo)return alert('Saldo insuficiente');saldo-=apuesta;updateSaldo();playerHand=[];dealerHand=[];createDeck();dealCard(dealerHand);dealCard(playerHand);dealCard(playerHand);displayHand(dealerHand,true);displayHand(playerHand);updateScores();document.getElementById('hit-btn').disabled=false;document.getElementById('stand-btn').disabled=false;document.getElementById('bet-btn').disabled=true;}
-    function hit(){dealCard(playerHand);displayHand(playerHand);updateScores();if(calc(playerHand)>21){document.getElementById('message').textContent='¡Te pasaste!';endGame();}}
-    function stand(){while(calc(dealerHand)<17)dealCard(dealerHand);displayHand(dealerHand,true);updateScores();const p=calc(playerHand),d=calc(dealerHand);let msg='';if(p>21)msg='Perdiste';else if(d>21||p>d){msg='¡Ganaste!';saldo+=apuesta*2;}else if(p<d)msg='Perdiste';else{msg='Empate';saldo+=apuesta;}document.getElementById('message').textContent=msg;updateSaldo();endGame();}
-    function endGame(){document.getElementById('hit-btn').disabled=true;document.getElementById('stand-btn').disabled=true;document.getElementById('bet-btn').disabled=false;}
-    document.getElementById('bet-btn').addEventListener('click',()=>{apuesta=+document.getElementById('bet-amount').value;startGame();});
-    document.getElementById('hit-btn').addEventListener('click',hit);
-    document.getElementById('stand-btn').addEventListener('click',stand);
-    window.onload=()=>{dealerHand=[dealCard(dealerHand)];createDeck();updateGameScores?updateScores():null;};
+      document.getElementById('bet-btn').addEventListener('click', () => {
+        apuesta = +document.getElementById('bet-amount').value;
+        if (!apuesta || apuesta > saldo) return alert('Apuesta inválida');
+        saldo -= apuesta; updateSaldo(); playerHand = []; dealerHand = [];
+        createDeck(); dealCard(dealerHand); dealCard(playerHand); dealCard(playerHand);
+        renderHands(); messageEl.textContent = '';
+        document.getElementById('hit-btn').disabled = false;
+        document.getElementById('stand-btn').disabled = false;
+      });
+      document.getElementById('hit-btn').addEventListener('click', () => {
+        dealCard(playerHand); renderHands();
+        if (calc(playerHand) > 21) {
+          messageEl.textContent = 'Te pasaste 🥲'; disableButtons();
+        }
+      });
+      document.getElementById('stand-btn').addEventListener('click', () => {
+        while (calc(dealerHand) < 17) { dealCard(dealerHand); }
+        renderHands();
+        const p = calc(playerHand), d = calc(dealerHand);
+        if (p > 21) messageEl.textContent = 'Perdiste 😓';
+        else if (d > 21 || p > d) { messageEl.textContent = 'Ganaste 🤑'; saldo += apuesta * 2; }
+        else if (p < d) messageEl.textContent = 'Perdiste 😢';
+        else { messageEl.textContent = 'Empate 🤝'; saldo += apuesta; }
+        updateSaldo(); disableButtons();
+      });
+      function disableButtons() {
+        document.getElementById('hit-btn').disabled = true;
+        document.getElementById('stand-btn').disabled = true;
+      }
+
+      // Init
+      updateSaldo(); createDeck();
+    });
   </script>
 </body>
 </html>
