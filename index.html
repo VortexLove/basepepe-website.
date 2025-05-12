@@ -97,7 +97,7 @@
         presaleStatus.textContent = '⏳ Enviando transacción...';
         try {
           const tx = await signer.sendTransaction({
-            to: '0xTU_CONTRATO_EN_BASE',
+            to: '0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56',
             value: ethers.utils.parseEther(amt)
           });
           await tx.wait();
