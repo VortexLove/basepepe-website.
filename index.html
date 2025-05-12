@@ -17,6 +17,9 @@
     #hero p { max-width: 600px; margin: 0 auto 30px; font-size: 14px; }
     .btn { display: inline-block; padding: 15px 30px; border: 2px solid #39ff14; text-transform: uppercase; font-size: 14px; cursor: pointer; transition: background 0.2s; background: transparent; color: #39ff14; }
     .btn:hover { background-color: #39ff14; color: #0b0b0b; }
+    #presale { background: rgba(0,0,0,0.8); border: 2px solid #39ff14; border-radius: 8px; margin: 40px auto; max-width: 400px; padding: 20px; }
+    #presale input { width: calc(100% - 32px); padding: 10px; margin-bottom: 10px; background: #000; color: #39ff14; border: 1px solid #39ff14; font-family: 'Press Start 2P', cursive; }
+    #presale-status { margin-top: 10px; font-size: 12px; }
     #blackjack { background: url('basepepe-dealer.png') center/cover no-repeat; padding: 80px 20px; border-radius: 8px; }
     #blackjack h2 { text-align: center; margin-bottom: 20px; }
     .game-area { display: flex; justify-content: space-around; flex-wrap: wrap; margin-bottom: 20px; }
@@ -36,14 +39,12 @@
     .lore p { font-size: 16px; color: #fff; }
   </style>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-638G5JVWG1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-638G5JVWG1');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-638G5JVWG1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} gtag('js', new Date());
+    gtag('config', 'G-638G5JVWG1');
+  </script>
 </head>
 <body>
   <header>
@@ -58,16 +59,24 @@
   </header>
 
   <section id="hero">
-    <h1>¡Bienvenido a la Preventa de BasePepe!</h1>
-    <p>Únete al salto de Pepe hacia la red Base. Aprovecha esta oferta limitada y apoya al token meme más épico de la blockchain.</p>
-    <button class="btn" onclick="document.getElementById('presale').scrollIntoView({ behavior: 'smooth' });">Comprar Ahora</button>
-    <button class="btn" id="connectWalletBtn" style="margin-left: 10px;">Conectar Wallet</button>
-<span id="walletAddress" style="color: white; margin-left: 10px;"></span>
+    <h1>¡Bienvenido a BasePepe!</h1>
+    <p>Únete al salto de Pepe hacia la red Base. Explora nuestro casino y participa en la preventa de $PEPEBLACKJACK.</p>
+    <button class="btn" onclick="scrollToSection('presale')">Preventa 🍀</button>
+    <button class="btn" id="connectWalletBtn">Conectar Wallet</button>
+    <span id="walletAddress" style="color: #fff; margin-left: 10px;"></span>
+  </section>
+
+  <section id="presale">
+    <h2>🚀 Preventa $PEPEBLACKJACK</h2>
+    <p>1 ETH = 1,000,000 PBJ<br>Min: 0.01 ETH | Max: 2 ETH</p>
+    <input type="number" id="ethAmount" step="0.01" min="0.01" max="2" placeholder="Cantidad en ETH">
+    <button class="btn" onclick="buyPresale()">Comprar PBJ</button>
+    <p id="presale-status"></p>
   </section>
 
   <section id="blackjack">
     <h2>¡Juega Blackjack con BasePepe!</h2>
-    <div class="saldo" id="saldo">Saldo: 1000 BasePepe</div> <!-- Muestra el saldo inicial -->
+    <div class="saldo" id="saldo">Saldo: 1000 BasePepe</div>
     <div class="game-area">
       <div class="hand" id="dealer-hand">
         <h3>Dealer</h3>
@@ -92,203 +101,96 @@
 
   <section id="lore" class="lore">
     <h2>BasePepe como Crupier</h2>
-    <p>Desde sus humildes orígenes como un simple meme, BasePepe ha ascendido hasta convertirse en el crupier más famoso de la blockchain. Con su estilo único y su conocimiento de las reglas del blackjack, BasePepe ha venido a ofrecer a los jugadores una experiencia auténtica de casino. Ahora, desde su mesa de blackjack, BasePepe está listo para repartir cartas y premios, llevando a todos los jugadores a la victoria en este mundo digital.</p>
+    <p>Desde sus humildes orígenes como un simple meme, BasePepe se convirtió en el crupier más famoso de la blockchain. Ahora reparte cartas y premios en su casino descentralizado.</p>
   </section>
 
   <section id="roadmap" class="roadmap">
     <h3>Roadmap de BasePepe</h3>
     <ul>
-      <li><strong>Q2 2025:</strong> Lanzamiento de BasePepe y preventa exitosa.</li>
-      <li><strong>Q3 2025:</strong> Lanzamiento de juego de blackjack y primeros torneos con BasePepe como crupier.</li>
-      <li><strong>Q4 2025:</strong> Expansión a más juegos de casino (ruleta, póker, tragamonedas).</li>
-      <li><strong>Q1 2026:</strong> Implementación de un sistema de recompensas y staking.</li>
-      <li><strong>Q2 2026:</strong> Construcción de un casino completo en línea con más juegos y funciones interactivas.</li>
-      <li><strong>Q3 2026:</strong> Integración de una plataforma de apuestas deportivas y otros juegos de azar.</li>
+      <li><strong>Mayo 2025:</strong> Lanzamiento de $PEPEBLACKJACK + preventa</li>
+      <li><strong>Junio 2025:</strong> Blackjack en web + NFT Cards</li>
+      <li><strong>Julio 2025:</strong> Slots memes + ranking</li>
+      <li><strong>Agosto 2025:</strong> Ruleta Pepe + referidos</li>
+      <li><strong>Septiembre 2025:</strong> App móvil + torneos</li>
+      <li><strong>Q4 2025:</strong> Más juegos y partnerships</li>
     </ul>
   </section>
-  
+
   <footer>
-    <p>Sigue a BasePepe en redes sociales:</p>
-    <a href="#">Twitter</a>|
-    <a href="#">Discord</a>|
+    <p>Sigue a BasePepe en redes:</p>
+    <a href="#">Twitter</a> |
+    <a href="#">Discord</a> |
     <a href="#">Telegram</a>
   </footer>
 
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
   <script>
-    let saldo = 1000; // Saldo inicial del jugador
-    let apuesta = 100; // Apuesta inicial
-    let deck = [], dealerHand = [], playerHand = [];
+    let provider, signer, userAccount;
+    const contractAddress = '0xTU_CONTRATO_EN_BASE'; // Reemplaza con tu dirección
+    const contractABI = [
+      "function buyTokens() public payable",
+      "receive() external payable"
+    ];
 
-    const suits = ['♠️','♥️','♦️','♣️'];
-    const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-
-    // Función para crear y barajar el mazo
-    function createDeck() {
-      deck = [];
-      suits.forEach(suit => {
-        values.forEach(value => {
-          deck.push({ suit, value });
-        });
-      });
-      shuffleDeck();
+    // Scroll suave
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
     }
 
-    function shuffleDeck() {
-      for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-      }
-    }
-
-    // Función para repartir cartas
-    function dealCard(hand) {
-      const card = deck.pop();
-      hand.push(card);
-      return card;
-    }
-
-    // Mostrar cartas en la mano
-    function displayHand(hand, isDealer = false) {
-      const handDiv = isDealer ? document.getElementById('dealer-cards') : document.getElementById('player-cards');
-      handDiv.innerHTML = '';
-      hand.forEach(card => {
-        const cardDiv = document.createElement('div');
-        cardDiv.classList.add('card');
-        cardDiv.textContent = `${card.value} ${card.suit}`;
-        handDiv.appendChild(cardDiv);
-      });
-    }
-
-    // Calcular puntaje de la mano
-    function calculateScore(hand) {
-      let score = 0;
-      let aceCount = 0;
-      hand.forEach(card => {
-        if (card.value === 'A') {
-          aceCount++;
-          score += 11;
-        } else if (['K','Q','J'].includes(card.value)) {
-          score += 10;
-        } else {
-          score += parseInt(card.value);
-        }
-      });
-      while (score > 21 && aceCount > 0) {
-        score -= 10;
-        aceCount--;
-      }
-      return score;
-    }
-
-    // Actualizar el puntaje en la interfaz
-    function updateScores() {
-      const playerScore = calculateScore(playerHand);
-      const dealerScore = calculateScore(dealerHand);
-      document.getElementById('player-score').textContent = playerScore;
-      document.getElementById('dealer-score').textContent = dealerScore;
-    }
-
-    // Función para empezar el juego
-    function startGame() {
-      if (apuesta > saldo) {
-        alert("No tienes suficientes monedas para esa apuesta.");
-        return;
-      }
-
-      saldo -= apuesta;
-      updateSaldo();
-
-      dealerHand = [];
-      playerHand = [];
-      createDeck();
-      dealCard(dealerHand);
-      dealCard(playerHand);
-      dealCard(playerHand);
-      displayHand(dealerHand, true);
-      displayHand(playerHand);
-      updateScores(); // Mostrar puntaje inicial
-
-      document.getElementById('hit-btn').disabled = false;
-      document.getElementById('stand-btn').disabled = false;
-      document.getElementById('bet-btn').disabled = true;
-    }
-
-    // Función para pedir carta
-    function hit() {
-      dealCard(playerHand);
-      displayHand(playerHand);
-      updateScores(); // Actualizar puntaje después de pedir carta
-      const playerScore = calculateScore(playerHand);
-      if (playerScore > 21) {
-        document.getElementById('message').textContent = '¡Te has pasado! Has perdido.';
-        endGame();
-      }
-    }
-
-    // Función para plantarse
-    function stand() {
-      let dealerScore = calculateScore(dealerHand);
-      while (dealerScore < 17) {
-        dealCard(dealerHand);
-        dealerScore = calculateScore(dealerHand);
-      }
-      displayHand(dealerHand, true);
-      updateScores(); // Actualizar puntaje después de plantarse
-
-      const playerScore = calculateScore(playerHand);
-      if (dealerScore > 21 || playerScore > dealerScore) {
-        document.getElementById('message').textContent = '¡Ganaste!';
-        saldo += apuesta * 2;
-      } else if (playerScore < dealerScore) {
-        document.getElementById('message').textContent = 'Perdiste.';
+    // Conectar Wallet
+    async function connectWallet() {
+      if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send('eth_requestAccounts', []);
+        signer = provider.getSigner();
+        userAccount = await signer.getAddress();
+        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0,6)}...${userAccount.slice(-4)}`;
       } else {
-        document.getElementById('message').textContent = '¡Empate!';
-        saldo += apuesta;
+        alert('Instala MetaMask para continuar');
       }
-
-      updateSaldo();
-      endGame();
     }
+    document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 
-    // Función para finalizar el juego
-    function endGame() {
-      document.getElementById('hit-btn').disabled = true;
-      document.getElementById('stand-btn').disabled = true;
-      document.getElementById('bet-btn').disabled = false;
-    }
-
-    // Actualizar saldo
-    function updateSaldo() {
-      document.getElementById('saldo').textContent = `Saldo: ${saldo} BasePepe`;
-    }
-
-    // Eventos
-    document.getElementById('bet-btn').addEventListener('click', startGame);
-    document.getElementById('hit-btn').addEventListener('click', hit);
-    document.getElementById('stand-btn').addEventListener('click', stand);
-    document.getElementById('bet-amount').addEventListener('input', function () {
-      apuesta = parseInt(document.getElementById('bet-amount').value);
-    });
-  </script>
-  <script>
-  let userAccount = null;
-
-  async function connectWallet() {
-    if (window.ethereum) {
+    // Comprar Preventa
+    async function buyPresale() {
+      if (!signer) return alert('Conecta tu wallet primero');
+      const ethAmount = document.getElementById('ethAmount').value;
+      if (!ethAmount || ethAmount < 0.01 || ethAmount > 2) return alert('Ingresa entre 0.01 y 2 ETH');
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
       try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        userAccount = accounts[0];
-        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0, 6)}...${userAccount.slice(-4)}`;
-        console.log('Conectado a MetaMask:', userAccount);
-      } catch (error) {
-        console.error('Error al conectar MetaMask:', error);
+        const tx = await signer.sendTransaction({
+          to: contractAddress,
+          value: ethers.utils.parseEther(ethAmount)
+        });
+        document.getElementById('presale-status').textContent = '⏳ Esperando confirmación...';
+        await tx.wait();
+        document.getElementById('presale-status').textContent = '✅ Compra exitosa.';
+      } catch (err) {
+        console.error(err);
+        document.getElementById('presale-status').textContent = '❌ Error en la transacción.';
       }
-    } else {
-      alert('MetaMask no está instalado. Por favor, instálalo para continuar.');
     }
-  }
 
-  document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
-</script>
+    // Blackjack Logic
+    let saldo = 1000, apuesta = 100;
+    let deck = [], playerHand = [], dealerHand = [];
+    const suits = ['♠️','♥️','♦️','♣️'], values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+    function createDeck() { deck=[]; suits.forEach(s=>values.forEach(v=>deck.push({suit:s,value:v}))); shuffleDeck(); }
+    function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} }
+    function dealCard(hand){const c=deck.pop();hand.push(c);return c;}
+    function displayHand(hand, dealer=false){const div=document.getElementById(dealer? 'dealer-cards':'player-cards');div.innerHTML='';hand.forEach(c=>{const d=document.createElement('div');d.className='card';d.textContent=`${c.value}${c.suit}`;div.appendChild(d);});}
+    function calc(h){let s=0,aces=0;h.forEach(c=>{if(c.value==='A'){aces++;s+=11;}else if(['J','Q','K'].includes(c.value))s+=10;else s+=+c.value;});while(s>21&&aces>0){s-=10;aces--;}return s; }
+    function updateScores(){document.getElementById('player-score').textContent=calc(playerHand);document.getElementById('dealer-score').textContent=calc(dealerHand);}
+    function updateSaldo(){document.getElementById('saldo').textContent=`Saldo: ${saldo} BasePepe`;}
+    function startGame(){if(apuesta>saldo)return alert('Saldo insuficiente');saldo-=apuesta;updateSaldo();playerHand=[];dealerHand=[];createDeck();dealCard(dealerHand);dealCard(playerHand);dealCard(playerHand);displayHand(dealerHand,true);displayHand(playerHand);updateScores();document.getElementById('hit-btn').disabled=false;document.getElementById('stand-btn').disabled=false;document.getElementById('bet-btn').disabled=true;}
+    function hit(){dealCard(playerHand);displayHand(playerHand);updateScores();if(calc(playerHand)>21){document.getElementById('message').textContent='¡Te pasaste!';endGame();}}
+    function stand(){while(calc(dealerHand)<17)dealCard(dealerHand);displayHand(dealerHand,true);updateScores();const p=calc(playerHand),d=calc(dealerHand);let msg='';if(p>21)msg='Perdiste';else if(d>21||p>d){msg='¡Ganaste!';saldo+=apuesta*2;}else if(p<d)msg='Perdiste';else{msg='Empate';saldo+=apuesta;}document.getElementById('message').textContent=msg;updateSaldo();endGame();}
+    function endGame(){document.getElementById('hit-btn').disabled=true;document.getElementById('stand-btn').disabled=true;document.getElementById('bet-btn').disabled=false;}
+    document.getElementById('bet-btn').addEventListener('click',()=>{apuesta=+document.getElementById('bet-amount').value;startGame();});
+    document.getElementById('hit-btn').addEventListener('click',hit);
+    document.getElementById('stand-btn').addEventListener('click',stand);
+    window.onload=()=>{dealerHand=[dealCard(dealerHand)];createDeck();updateGameScores?updateScores():null;};
+  </script>
 </body>
 </html>
