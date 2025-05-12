@@ -132,15 +132,24 @@
       document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
     }
 
-    async function connectWallet() {
-      if (!window.ethereum) return alert('Instala MetaMask');
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-      signer = provider.getSigner();
-      userAccount = await signer.getAddress();
-      document.getElementById('walletAddress').innerText = `✔ ${userAccount}`;
+      let userAccount = null;
+
+  async function connectWallet() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAccount = accounts[0];
+        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0, 6)}...${userAccount.slice(-4)}`;
+        console.log('Conectado a MetaMask:', userAccount);
+      } catch (error) {
+        console.error('Error al conectar MetaMask:', error);
+      }
+    } else {
+      alert('MetaMask no está instalado. Por favor, instálalo para continuar.');
     }
-    document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+  }
+
+  document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 
     async function buyPresale() {
       if (!signer) return alert('Conecta tu wallet');
