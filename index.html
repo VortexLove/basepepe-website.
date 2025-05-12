@@ -2,9 +2,6 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>PepeBlackJack Presale</title>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Venta Preventa y Juego BasePepe</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -49,17 +46,6 @@
 </script>
 </head>
 <body>
-  <body style="font-family: monospace; background-color: #000; color: #0f0; text-align: center; padding: 2em;">
-  <h1>💸 PepeBlackJack Presale 💸</h1>
-  <p>1 ETH = 1,000,000 PBJ</p>
-  <p>Min: 0.01 ETH – Max: 2 ETH</p>
-
-  <button onclick="connectWallet()">🔌 Connect Wallet</button><br><br>
-  
-  <input type="number" id="ethAmount" step="0.01" min="0.01" max="2" placeholder="Amount in ETH">
-  <button onclick="buyPBJ()">🛒 Buy PBJ</button>
-
-  <p id="status"></p>
   <header>
     <img src="logo.png" alt="Logo BasePepe">
     <nav>
@@ -285,42 +271,24 @@
     });
   </script>
   <script>
-   let provider;
-    let signer;
-    const contractAddress = "0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56"; // <--- Reemplaza esto
+  let userAccount = null;
 
-    async function connectWallet() {
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
-        document.getElementById("status").innerText = "✅ Wallet connected!";
-      } else {
-        alert("Please install MetaMask");
-      }
-    }
-
-    async function buyPBJ() {
-      const ethValue = document.getElementById("ethAmount").value;
-      if (!ethValue || ethValue < 0.01 || ethValue > 2) {
-        return alert("Enter a valid amount between 0.01 and 2 ETH");
-      }
-
-      const tx = {
-        to: contractAddress,
-        value: ethers.utils.parseEther(ethValue)
-      };
-
+  async function connectWallet() {
+    if (window.ethereum) {
       try {
-        const txResponse = await signer.sendTransaction(tx);
-        document.getElementById("status").innerText = "⏳ Transaction sent: " + txResponse.hash;
-        await txResponse.wait();
-        document.getElementById("status").innerText = "✅ Success! Tokens should arrive soon.";
-      } catch (err) {
-        console.error(err);
-        document.getElementById("status").innerText = "❌ Error: " + err.message;
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAccount = accounts[0];
+        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0, 6)}...${userAccount.slice(-4)}`;
+        console.log('Conectado a MetaMask:', userAccount);
+      } catch (error) {
+        console.error('Error al conectar MetaMask:', error);
       }
+    } else {
+      alert('MetaMask no está instalado. Por favor, instálalo para continuar.');
     }
+  }
+
+  document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 </script>
 </body>
 </html>
