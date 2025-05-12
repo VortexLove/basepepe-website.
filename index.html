@@ -156,7 +156,7 @@
     async function buyPresale() {
       if (!signer) return alert('Conecta tu wallet primero');
       const ethAmount = document.getElementById('ethAmount').value;
-      if (!ethAmount || ethAmount < 0.01 || ethAmount > 2) return alert('Ingresa entre 0.01 y 2 ETH');
+      if (!ethAmount || ethAmount < 0.00001 || ethAmount > 40) return alert('Ingresa entre 0.01 y 2 ETH');
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
       try {
         const tx = await signer.sendTransaction({
