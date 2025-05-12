@@ -38,6 +38,7 @@
     .roadmap li { font-size: 18px; color: #39ff14; margin-bottom: 10px; }
     .lore p { font-size: 16px; color: #fff; }
   </style>
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-638G5JVWG1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -62,14 +63,14 @@
     <p>Únete al salto de Pepe hacia la red Base. Explora nuestro casino y participa en la preventa de $PEPEBLACKJACK.</p>
     <button class="btn" onclick="scrollToSection('presale')">Preventa 🍀</button>
     <button class="btn" id="connectWalletBtn">Conectar Wallet</button>
-    <span id="walletAddress"></span>
+    <span id="walletAddress" style="color: #fff; margin-left: 10px;"></span>
   </section>
 
   <section id="presale">
     <h2>🚀 Preventa $PEPEBLACKJACK</h2>
-    <p>1 ETH = 1,000,000 PBJ<br>Máximo: 2 ETH</p>
-    <input type="number" id="ethAmount" step="0.01" max="2" placeholder="Cantidad ETH">
-    <button class="btn" id="buyBtn">Comprar PBJ</button>
+    <p>1 ETH = 1,000,000 PBJ<br>Min: 0.01 ETH | Max: 2 ETH</p>
+    <input type="number" id="ethAmount" step="0.01" min="0.01" max="2" placeholder="Cantidad en ETH">
+    <button class="btn" onclick="buyPresale()">Comprar PBJ</button>
     <p id="presale-status"></p>
   </section>
 
@@ -117,75 +118,79 @@
 
   <footer>
     <p>Sigue a BasePepe en redes:</p>
-    <a href="#">Twitter</a> | <a href="#">Discord</a> | <a href="#">Telegram</a>
+    <a href="#">Twitter</a> |
+    <a href="#">Discord</a> |
+    <a href="#">Telegram</a>
   </footer>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
   <script>
     let provider, signer, userAccount;
-    const contractAddress = '0xTU_CONTRATO_EN_BASE';
+    const contractAddress = '0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56'; // Reemplaza con tu dirección
     const contractABI = [
-      "function buyTokens() payable"
+      "function buyTokens() public payable",
+      "receive() external payable"
     ];
 
+    // Scroll suave
     function scrollToSection(id) {
       document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
     }
 
-      let userAccount = null;
-
-  async function connectWallet() {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        userAccount = accounts[0];
-        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0, 6)}...${userAccount.slice(-4)}`;
-        console.log('Conectado a MetaMask:', userAccount);
-      } catch (error) {
-        console.error('Error al conectar MetaMask:', error);
+    // Conectar Wallet
+    async function connectWallet() {
+      if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send('eth_requestAccounts', []);
+        signer = provider.getSigner();
+        userAccount = await signer.getAddress();
+        document.getElementById('walletAddress').textContent = `✔ ${userAccount.slice(0,6)}...${userAccount.slice(-4)}`;
+      } else {
+        alert('Instala MetaMask para continuar');
       }
-    } else {
-      alert('MetaMask no está instalado. Por favor, instálalo para continuar.');
     }
-  }
+    document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
 
-  document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
-
+    // Comprar Preventa
     async function buyPresale() {
-      if (!signer) return alert('Conecta tu wallet');
+      if (!signer) return alert('Conecta tu wallet primero');
       const ethAmount = document.getElementById('ethAmount').value;
-      if (!ethAmount || ethAmount > 2) return alert('Ingresa hasta 2 ETH');
+      if (!ethAmount || ethAmount < 0.00001 || ethAmount > 40) return alert('Ingresa entre 0.01 y 2 ETH');
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
       try {
         const tx = await signer.sendTransaction({
           to: contractAddress,
           value: ethers.utils.parseEther(ethAmount)
         });
-        document.getElementById('presale-status').innerText = '⏳ Enviando...';
+        document.getElementById('presale-status').textContent = '⏳ Esperando confirmación...';
         await tx.wait();
-        document.getElementById('presale-status').innerText = '✅ Éxito';
-      } catch (e) {
-        document.getElementById('presale-status').innerText = '❌ Error';
+        document.getElementById('presale-status').textContent = '✅ Compra exitosa.';
+      } catch (err) {
+        console.error(err);
+        document.getElementById('presale-status').textContent = '❌ Error en la transacción.';
       }
     }
-    document.getElementById('buyBtn').addEventListener('click', buyPresale);
 
-    // Blackjack logic
-    let saldo = 1000, apuesta = 100; deck = [], playerHand = [], dealerHand = [];
+    // Blackjack Logic
+    let saldo = 1000, apuesta = 100;
+    let deck = [], playerHand = [], dealerHand = [];
     const suits = ['♠️','♥️','♦️','♣️'], values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-    function createDeck() { deck=[], suits.forEach(s=>values.forEach(v=>deck.push({suit:s,value:v}))); shuffleDeck(); }
+    function createDeck() { deck=[]; suits.forEach(s=>values.forEach(v=>deck.push({suit:s,value:v}))); shuffleDeck(); }
     function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];} }
     function dealCard(hand){const c=deck.pop();hand.push(c);return c;}
-    function displayHand(hand, d=false){const div=document.getElementById(d?'dealer-cards':'player-cards');div.innerHTML='';hand.forEach(c=>{let el=document.createElement('div');el.className='card';el.textContent=`${c.value}${c.suit}`;div.appendChild(el);});}
-    function calc(h){let s=0, ac=0;h.forEach(c=>{if(c.value==='A'){ac++;s+=11;}else if(['J','Q','K'].includes(c.value))s+=10;else s+=+c.value;});while(s>21&&ac>0){s-=10;ac--;}return s;}
-    function updateScores(){document.getElementById('player-score').innerText=calc(playerHand);document.getElementById('dealer-score').innerText=calc(dealerHand);}  
-    function updateSaldo(){document.getElementById('saldo').innerText=`Saldo: ${saldo} BasePepe`;}  
-    function startGame(){if(apuesta>saldo)return alert('Saldo insuficiente');saldo-=apuesta;updateSaldo();playerHand=[];dealerHand=[];createDeck();dealCard(dealerHand);dealCard(playerHand);dealCard(playerHand);displayHand(dealerHand,true);displayHand(playerHand);updateScores();document.getElementById('hit-btn').disabled=false;document.getElementById('stand-btn').disabled=false;document.getElementById('bet-btn').disabled=true;}    
-    function hit(){dealCard(playerHand);displayHand(playerHand);updateScores();if(calc(playerHand)>21){document.getElementById('message').innerText='¡Te pasaste!';endGame();}}    
-    function stand(){while(calc(dealerHand)<17)dealCard(dealerHand);displayHand(dealerHand,true);updateScores();let p=calc(playerHand), d=calc(dealerHand), m='';if(p>21)m='Perdiste';else if(d>21||p>d){m='¡Ganaste!';saldo+=apuesta*2;}else if(p<d)m='Perdiste';else{m='Empate';saldo+=apuesta;}document.getElementById('message').innerText=m;updateSaldo();endGame();}    
-    function endGame(){document.getElementById('hit-btn').disabled=true;document.getElementById('stand-btn').disabled=true;document.getElementById('bet-btn').disabled=false;}    
+    function displayHand(hand, dealer=false){const div=document.getElementById(dealer? 'dealer-cards':'player-cards');div.innerHTML='';hand.forEach(c=>{const d=document.createElement('div');d.className='card';d.textContent=`${c.value}${c.suit}`;div.appendChild(d);});}
+    function calc(h){let s=0,aces=0;h.forEach(c=>{if(c.value==='A'){aces++;s+=11;}else if(['J','Q','K'].includes(c.value))s+=10;else s+=+c.value;});while(s>21&&aces>0){s-=10;aces--;}return s; }
+    function updateScores(){document.getElementById('player-score').textContent=calc(playerHand);document.getElementById('dealer-score').textContent=calc(dealerHand);}
+    function updateSaldo(){document.getElementById('saldo').textContent=`Saldo: ${saldo} BasePepe`;}
+    function startGame(){if(apuesta>saldo)return alert('Saldo insuficiente');saldo-=apuesta;updateSaldo();playerHand=[];dealerHand=[];createDeck();dealCard(dealerHand);dealCard(playerHand);dealCard(playerHand);displayHand(dealerHand,true);displayHand(playerHand);updateScores();document.getElementById('hit-btn').disabled=false;document.getElementById('stand-btn').disabled=false;document.getElementById('bet-btn').disabled=true;}
+    function hit(){dealCard(playerHand);displayHand(playerHand);updateScores();if(calc(playerHand)>21){document.getElementById('message').textContent='¡Te pasaste!';endGame();}}
+    function stand(){while(calc(dealerHand)<17)dealCard(dealerHand);displayHand(dealerHand,true);updateScores();const p=calc(playerHand),d=calc(dealerHand);let msg='';if(p>21)msg='Perdiste';else if(d>21||p>d){msg='¡Ganaste!';saldo+=apuesta*2;}else if(p<d)msg='Perdiste';else{msg='Empate';saldo+=apuesta;}document.getElementById('message').textContent=msg;updateSaldo();endGame();}
+    function endGame(){document.getElementById('hit-btn').disabled=true;document.getElementById('stand-btn').disabled=true;document.getElementById('bet-btn').disabled=false;}
     document.getElementById('bet-btn').addEventListener('click',()=>{apuesta=+document.getElementById('bet-amount').value;startGame();});
     document.getElementById('hit-btn').addEventListener('click',hit);
     document.getElementById('stand-btn').addEventListener('click',stand);
+    window.onload=()=>{dealerHand=[dealCard(dealerHand)];createDeck();updateGameScores?updateScores():null;};
   </script>
 </body>
 </html>
