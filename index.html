@@ -61,7 +61,13 @@
     <h1>¡Bienvenido a la Preventa de BasePepe!</h1>
     <p>Únete al salto de Pepe hacia la red Base. Aprovecha esta oferta limitada y apoya al token meme más épico de la blockchain.</p>
     <button class="btn" onclick="document.getElementById('presale').scrollIntoView({ behavior: 'smooth' });">Comprar Ahora</button>
+    <button id="precompra-btn">Precomprar tokens</button>
     <button class="btn" id="connectWalletBtn" style="margin-left: 10px;">Conectar Wallet</button>
+    <form>
+    <label for="monto-eth">Monto de ETH:</label>
+    <input type="number" id="monto-eth" name="monto-eth">
+    <button id="precompra-btn" onclick="precomprarTokens()">Precomprar tokens</button>
+</form>
 <span id="walletAddress" style="color: white; margin-left: 10px;"></span>
   </section>
 
@@ -89,7 +95,7 @@
     </div>
     <div class="message" id="message"></div>
   </section>
-
+  
   <section id="lore" class="lore">
     <h2>BasePepe como Crupier</h2>
     <p>Desde sus humildes orígenes como un simple meme, BasePepe ha ascendido hasta convertirse en el crupier más famoso de la blockchain. Con su estilo único y su conocimiento de las reglas del blackjack, BasePepe ha venido a ofrecer a los jugadores una experiencia auténtica de casino. Ahora, desde su mesa de blackjack, BasePepe está listo para repartir cartas y premios, llevando a todos los jugadores a la victoria en este mundo digital.</p>
@@ -115,6 +121,20 @@
   </footer>
 
   <script>
+
+    const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/YOUR_PROJECT_ID'));
+const contrato = new web3.eth.Contract(abi, '0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56');
+
+// función para precomprar tokens
+async function precomprarTokens() {
+    const cuenta = await web3.eth.getAccounts();
+    const monto = document.getElementById('monto-eth').value;
+    const precioToken = await contrato.methods.getPrecioToken().call();
+    const cantidadTokens = monto / precioToken;
+    await contrato.methods.precompra().send({ from: cuenta[0], value: web3.utils.toWei(monto, 'ether') });
+    console.log(`Se han precomprado ${cantidadTokens} tokens`);
+}
+    
     let saldo = 1000; // Saldo inicial del jugador
     let apuesta = 100; // Apuesta inicial
     let deck = [], dealerHand = [], playerHand = [];
