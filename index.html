@@ -127,13 +127,19 @@ const contrato = new web3.eth.Contract(abi, '0x1EfBF9BaD1419c6DE7a0BF28158f563Fa
 
 // función para precomprar tokens
 async function precomprarTokens() {
-    const cuenta = await web3.eth.getAccounts();
-    const monto = document.getElementById('monto-eth').value;
-    const precioToken = await contrato.methods.getPrecioToken().call();
-    const cantidadTokens = monto / precioToken;
-    await contrato.methods.precompra().send({ from: cuenta[0], value: web3.utils.toWei(monto, 'ether') });
-    console.log(`Se han precomprado ${cantidadTokens} tokens`);
+  console.log('Precomprar tokens...');
+  const cuenta = await web3.eth.getAccounts();
+  console.log('Cuenta:', cuenta);
+  const monto = document.getElementById('monto-eth').value;
+  console.log('Monto:', monto);
+  const precioToken = await contrato.methods.getPrecioToken().call();
+  console.log('Precio token:', precioToken);
+  const cantidadTokens = monto / precioToken;
+  console.log('Cantidad tokens:', cantidadTokens);
+  await contrato.methods.precompra().send({ from: cuenta[0], value: web3.utils.toWei(monto, 'ether') });
+  console.log('Precompra realizada...');
 }
+
     
     let saldo = 1000; // Saldo inicial del jugador
     let apuesta = 100; // Apuesta inicial
