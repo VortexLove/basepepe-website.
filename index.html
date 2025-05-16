@@ -99,18 +99,30 @@
           return;
         }
 
-        const overrides = {
-          value: ethers.utils.parseEther(ethAmount.toString()),
-        };
+        const value = ethers.utils.parseEther(ethAmount.toString());
+
+        // Obtener balance del usuario
+        const signerAddress = await signer.getAddress();
+        const balance = await provider.getBalance(signerAddress);
 
         // Estimar gas
-        const gasEstimate = await contract.estimateGas.buyTokens(overrides);
-        console.log('Gas estimado:', gasEstimate.toString());
+        const gasEstimate = await contract.estimateGas.buyTokens({ value });
+
+        // Obtener precio gas actual
+        const gasPrice = await provider.getGasPrice();
+
+        const totalCost = value.add(gasEstimate.mul(gasPrice));
+
+        if (balance.lt(totalCost)) {
+          alert(`Fondos insuficientes.\nBalance: ${ethers.utils.formatEther(balance)} ETH\nNecesitas al menos: ${ethers.utils.formatEther(totalCost)} ETH (ETH a enviar + gas)`);
+          statusDiv.innerText = 'Fondos insuficientes para esta compra.';
+          return;
+        }
 
         statusDiv.innerText = 'Enviando transacción...';
 
         const tx = await contract.buyTokens({
-          ...overrides,
+          value,
           gasLimit: gasEstimate.mul(2) // margen para gas
         });
 
