@@ -29,12 +29,7 @@
   <script>
     const contractAddress = '0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56';
     const abi = [
-      'function buyTokens() payable',
-      'function presaleActive() view returns (bool)',
-      'function presaleEnd() view returns (uint256)',
-      'function rate() view returns (uint256)',
-      'function minBuy() view returns (uint256)',
-      'function maxBuy() view returns (uint256)'
+      'function buyTokens() payable'
     ];
 
     let provider;
@@ -65,75 +60,30 @@
 
     buyButton.onclick = async () => {
       if (!contract) {
-        alert('Primero conecta la wallet');
+        statusDiv.innerText = 'Primero conecta la wallet.';
         return;
       }
 
       try {
         const ethAmount = parseFloat(ethAmountInput.value);
         if (isNaN(ethAmount) || ethAmount <= 0) {
-          alert('Introduce un valor válido de ETH');
-          return;
-        }
-
-        // Obtener valores del contrato
-        const presaleActive = await contract.presaleActive();
-        const presaleEnd = await contract.presaleEnd();
-        const minBuy = await contract.minBuy();
-        const maxBuy = await contract.maxBuy();
-
-        const now = Math.floor(Date.now() / 1000);
-
-        if (!presaleActive || now > presaleEnd) {
-          alert('La preventa ha finalizado');
-          return;
-        }
-
-        if (ethAmount < parseFloat(ethers.utils.formatEther(minBuy))) {
-          alert(`Cantidad mínima de compra: ${ethers.utils.formatEther(minBuy)} ETH`);
-          return;
-        }
-
-        if (ethAmount > parseFloat(ethers.utils.formatEther(maxBuy))) {
-          alert(`Cantidad máxima de compra: ${ethers.utils.formatEther(maxBuy)} ETH`);
+          statusDiv.innerText = 'Introduce un valor válido de ETH';
           return;
         }
 
         const value = ethers.utils.parseEther(ethAmount.toString());
 
-        // Obtener balance del usuario
-        const signerAddress = await signer.getAddress();
-        const balance = await provider.getBalance(signerAddress);
+        statusDiv.innerText = 'Abre MetaMask para confirmar la transacción...';
 
-        // Estimar gas
-        const gasEstimate = await contract.estimateGas.buyTokens({ value });
-
-        // Obtener precio gas actual
-        const gasPrice = await provider.getGasPrice();
-
-        const totalCost = value.add(gasEstimate.mul(gasPrice));
-
-        if (balance.lt(totalCost)) {
-          alert(`Fondos insuficientes.\nBalance: ${ethers.utils.formatEther(balance)} ETH\nNecesitas al menos: ${ethers.utils.formatEther(totalCost)} ETH (ETH a enviar + gas)`);
-          statusDiv.innerText = 'Fondos insuficientes para esta compra.';
-          return;
-        }
-
-        statusDiv.innerText = 'Enviando transacción...';
-
-        const tx = await contract.buyTokens({
-          value,
-          gasLimit: gasEstimate.mul(2) // margen para gas
-        });
-
+        const tx = await contract.buyTokens({ value });
         statusDiv.innerText = 'Transacción enviada: ' + tx.hash;
+
         await tx.wait();
+
         statusDiv.innerText = 'Compra exitosa 🎉 TxHash: ' + tx.hash;
       } catch (error) {
-        console.error('Error detallado:', error);
-        let message = error.data?.message || error.message || 'Error desconocido';
-        alert('Error al comprar tokens: ' + message);
-        statusDiv.innerText = 'Error: ' + message;
+        console.error(error);
+        statusDiv.innerText = 'Error: ' + (error.data?.message || error.message || 'Error desconocido');
       }
     };
   </script>
