@@ -19,7 +19,7 @@
 
   <script>
     window.onload = function () {
-      const contractAddress = "REEMPLAZAR_CON_TU_CONTRATO";
+      const contractAddress = "0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56";
       const abi = [
         "function buyTokens() payable",
         "function presaleActive() view returns (bool)",
@@ -29,51 +29,66 @@
       var provider, signer, contract;
 
       async function switchToBase() {
+        if (!window.ethereum) {
+          alert("MetaMask no detectado.");
+          return;
+        }
         try {
           await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: '0x2105' }]
           });
+          document.getElementById("status").innerText = "Red cambiada a Base.";
         } catch (err) {
           if (err.code === 4902) {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: '0x2105',
-                chainName: 'Base Mainnet',
-                nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-                rpcUrls: ['https://mainnet.base.org'],
-                blockExplorerUrls: ['https://basescan.org']
-              }]
-            });
+            try {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0x2105',
+                  chainName: 'Base Mainnet',
+                  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                  rpcUrls: ['https://mainnet.base.org'],
+                  blockExplorerUrls: ['https://basescan.org']
+                }]
+              });
+              document.getElementById("status").innerText = "Red Base añadida y seleccionada.";
+            } catch (addError) {
+              document.getElementById("status").innerText = "Error al añadir red: " + addError.message;
+            }
           } else {
-            document.getElementById("status").innerText = "Error al cambiar de red: " + err.message;
+            document.getElementById("status").innerText = "Error al cambiar red: " + err.message;
           }
         }
       }
 
       window.connectWallet = async function () {
-        if (window.ethereum) {
-          try {
-            await window.ethereum.request({ method: "eth_requestAccounts" });
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            contract = new ethers.Contract(contractAddress, abi, signer);
-            const address = await signer.getAddress();
-            document.getElementById("status").innerText = "Conectado: " + address;
-            document.getElementById("buyButton").disabled = false;
-          } catch (err) {
-            document.getElementById("status").innerText = "Error: " + err.message;
-          }
-        } else {
+        if (!window.ethereum) {
           alert("Instala MetaMask para continuar.");
+          return;
+        }
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          if (!accounts.length) throw new Error("No se detectaron cuentas");
+
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+
+          // Tomamos la dirección directamente sin resolver ENS
+          const address = accounts[0];
+
+          document.getElementById("status").innerText = "Conectado: " + address;
+          document.getElementById("buyButton").disabled = false;
+        } catch (err) {
+          document.getElementById("status").innerText = "Error: " + err.message;
         }
       };
 
       window.buyPBJ = async function () {
         const ethValue = parseFloat(document.getElementById("ethAmount").value);
         if (!ethValue || ethValue < 0.01 || ethValue > 2) {
-          alert("Ingresa entre 0.01 y 2 ETH.");
+          alert("Ingresa un valor entre 0.01 y 2 ETH.");
           return;
         }
 
