@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Compra de PBJ - Preventa</title>
+  
+  <!-- Cargar Ethers.js desde CDN -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js"></script>
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,10 +23,13 @@
 <body>
   <h1>Comprar PepeBlackJack (PBJ)</h1>
   <p>Conecta tu MetaMask y participa en la preventa</p>
+  
   <button onclick="connectWallet()">Conectar Wallet</button>
   <br>
+  
   <input type="number" id="ethAmount" placeholder="Cantidad en ETH (0.01 - 2)" step="0.01" min="0.01" max="2">
   <br>
+  
   <button onclick="buyPBJ()">Comprar Tokens</button>
   <p id="status"></p>
 
@@ -38,22 +44,22 @@
     let provider, signer, contract;
 
     async function connectWallet() {
-  if (window.ethereum) {
-    try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      provider = new ethers.BrowserProvider(window.ethereum);
-      signer = await provider.getSigner();
-      contract = new ethers.Contract(contractAddress, abi, signer);
-      const address = await signer.getAddress();
-      document.getElementById("status").innerText = "Wallet conectada: " + address;
-    } catch (error) {
-      console.error("Conexión rechazada o error inesperado:", error);
-      document.getElementById("status").innerText = "Error: " + error.message;
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          provider = new ethers.BrowserProvider(window.ethereum);
+          signer = await provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+          const address = await signer.getAddress();
+          document.getElementById("status").innerText = "Wallet conectada: " + address;
+        } catch (error) {
+          console.error("Conexión rechazada o error inesperado:", error);
+          document.getElementById("status").innerText = "Error: " + error.message;
+        }
+      } else {
+        alert("MetaMask no está instalado. Instálalo desde https://metamask.io/");
+      }
     }
-  } else {
-    alert("MetaMask no está instalado. Instálalo desde https://metamask.io/");
-  }
-}
 
     async function buyPBJ() {
       const ethInput = document.getElementById("ethAmount").value;
@@ -67,22 +73,4 @@
       try {
         const active = await contract.presaleActive();
         const presaleEnd = await contract.presaleEnd();
-        const now = Math.floor(Date.now() / 1000);
-
-        if (!active || now > presaleEnd) {
-          document.getElementById("status").innerText = "La preventa ha finalizado.";
-          return;
-        }
-
-        const tx = await contract.buyTokens({ value: ethers.parseEther(ethInput) });
-        document.getElementById("status").innerText = "Transacción enviada. Esperando confirmación...";
-        await tx.wait();
-        document.getElementById("status").innerText = "¡Compra realizada con éxito!";
-      } catch (error) {
-        console.error(error);
-        document.getElementById("status").innerText = "Error al comprar tokens.";
-      }
-    }
-  </script>
-</body>
-</html>
+        con
