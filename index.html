@@ -1,18 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Compra de Tokens PBJ</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
   <h1>Compra de Tokens PBJ</h1>
+
   <button id="connectButton">Conectar MetaMask</button>
-  <div id="status"></div>
+  <div id="status" style="margin: 10px 0; font-weight: bold;"></div>
+
   <div>
-    <label for="ethAmount">Cantidad de ETH:</label>
-    <input type="number" id="ethAmount" min="0.01" max="2" step="0.01" value="0.01">
+    <label for="ethAmount">Cantidad de ETH (0.01 - 2):</label>
+    <input
+      type="number"
+      id="ethAmount"
+      min="0.01"
+      max="2"
+      step="0.01"
+      value="0.01"
+      style="width: 80px;"
+    />
     <button id="buyButton" disabled>Comprar Tokens</button>
   </div>
 
@@ -31,56 +41,89 @@
     let signer;
     let contract;
 
-    document.getElementById('connectButton').addEventListener('click', async () => {
+    const connectButton = document.getElementById('connectButton');
+    const buyButton = document.getElementById('buyButton');
+    const statusDiv = document.getElementById('status');
+    const ethAmountInput = document.getElementById('ethAmount');
+
+    connectButton.onclick = async () => {
       if (typeof window.ethereum !== 'undefined') {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send('eth_requestAccounts', []);
-        signer = provider.getSigner();
-        contract = new ethers.Contract(contractAddress, abi, signer);
-        document.getElementById('status').innerText = 'Conectado a MetaMask';
-        document.getElementById('buyButton').disabled = false;
+        try {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send('eth_requestAccounts', []);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+          statusDiv.innerText = 'MetaMask conectado ✅';
+          buyButton.disabled = false;
+        } catch (error) {
+          statusDiv.innerText = 'Error al conectar MetaMask: ' + error.message;
+        }
       } else {
-        document.getElementById('status').innerText = 'MetaMask no detectado';
+        statusDiv.innerText = 'MetaMask no detectado. Por favor, instala MetaMask.';
       }
-    });
+    };
 
-    document.getElementById('buyButton').addEventListener('click', async () => {
-      const ethAmount = parseFloat(document.getElementById('ethAmount').value);
-      const minBuy = await contract.minBuy();
-      const maxBuy = await contract.maxBuy();
-      const rate = await contract.rate();
-      const presaleActive = await contract.presaleActive();
-      const presaleEnd = await contract.presaleEnd();
-
-      if (!presaleActive) {
-        alert('La preventa ha finalizado');
+    buyButton.onclick = async () => {
+      if (!contract) {
+        alert('Primero conecta la wallet');
         return;
       }
 
-      if (Date.now() / 1000 > presaleEnd) {
-        alert('La preventa ha terminado');
-        return;
+      try {
+        const ethAmount = parseFloat(ethAmountInput.value);
+        if (isNaN(ethAmount) || ethAmount <= 0) {
+          alert('Introduce un valor válido de ETH');
+          return;
+        }
+
+        // Obtener valores del contrato
+        const presaleActive = await contract.presaleActive();
+        const presaleEnd = await contract.presaleEnd();
+        const minBuy = await contract.minBuy();
+        const maxBuy = await contract.maxBuy();
+
+        const now = Math.floor(Date.now() / 1000);
+
+        if (!presaleActive || now > presaleEnd) {
+          alert('La preventa ha finalizado');
+          return;
+        }
+
+        if (ethAmount < parseFloat(ethers.utils.formatEther(minBuy))) {
+          alert(`Cantidad mínima de compra: ${ethers.utils.formatEther(minBuy)} ETH`);
+          return;
+        }
+
+        if (ethAmount > parseFloat(ethers.utils.formatEther(maxBuy))) {
+          alert(`Cantidad máxima de compra: ${ethers.utils.formatEther(maxBuy)} ETH`);
+          return;
+        }
+
+        const overrides = {
+          value: ethers.utils.parseEther(ethAmount.toString()),
+        };
+
+        // Estimar gas
+        const gasEstimate = await contract.estimateGas.buyTokens(overrides);
+        console.log('Gas estimado:', gasEstimate.toString());
+
+        statusDiv.innerText = 'Enviando transacción...';
+
+        const tx = await contract.buyTokens({
+          ...overrides,
+          gasLimit: gasEstimate.mul(2) // margen para gas
+        });
+
+        statusDiv.innerText = 'Transacción enviada: ' + tx.hash;
+        await tx.wait();
+        statusDiv.innerText = 'Compra exitosa 🎉 TxHash: ' + tx.hash;
+      } catch (error) {
+        console.error('Error detallado:', error);
+        let message = error.data?.message || error.message || 'Error desconocido';
+        alert('Error al comprar tokens: ' + message);
+        statusDiv.innerText = 'Error: ' + message;
       }
-
-      if (ethAmount < ethers.utils.formatEther(minBuy)) {
-        alert('La cantidad mínima de compra es ' + ethers.utils.formatEther(minBuy) + ' ETH');
-        return;
-      }
-
-      if (ethAmount > ethers.utils.formatEther(maxBuy)) {
-        alert('La cantidad máxima de compra es ' + ethers.utils.formatEther(maxBuy) + ' ETH');
-        return;
-      }
-
-      const tokenAmount = ethers.utils.parseUnits((ethAmount * rate).toString(), 18);
-      const tx = await contract.buyTokens({
-        value: ethers.utils.parseEther(ethAmount.toString())
-      });
-
-      document.getElementById('status').innerText = 'Transacción enviada: ' + tx.hash;
-      await tx.wait();
-      document.getElementById('status').innerText = 'Compra exitosa: ' + tx.hash;
-    });
+    };
   </script>
 </body>
 </html>
