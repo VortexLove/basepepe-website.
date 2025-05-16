@@ -38,21 +38,22 @@
     let provider, signer, contract;
 
     async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          provider = new ethers.BrowserProvider(window.ethereum);
-          signer = await provider.getSigner();
-          contract = new ethers.Contract(contractAddress, abi, signer);
-          document.getElementById("status").innerText = "Wallet conectada.";
-        } catch (error) {
-          console.error(error);
-          document.getElementById("status").innerText = "Error al conectar wallet.";
-        }
-      } else {
-        alert("MetaMask no está instalado");
-      }
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+      contract = new ethers.Contract(contractAddress, abi, signer);
+      const address = await signer.getAddress();
+      document.getElementById("status").innerText = "Wallet conectada: " + address;
+    } catch (error) {
+      console.error("Conexión rechazada o error inesperado:", error);
+      document.getElementById("status").innerText = "Error: " + error.message;
     }
+  } else {
+    alert("MetaMask no está instalado. Instálalo desde https://metamask.io/");
+  }
+}
 
     async function buyPBJ() {
       const ethInput = document.getElementById("ethAmount").value;
