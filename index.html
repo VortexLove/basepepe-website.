@@ -1,134 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Comprar PBJ - Preventa</title>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>Preventa PBJ</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 30px;
-      text-align: center;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px;
-    }
-    #status {
-      margin-top: 20px;
-      color: #333;
-    }
+    body { font-family: sans-serif; text-align: center; padding: 40px; }
+    input, button { padding: 10px; font-size: 16px; margin: 10px; }
   </style>
 </head>
 <body>
-
-  <h1>Comprar PepeBlackJack (PBJ)</h1>
-  <button onclick="switchToBase()">Cambiar a red Base</button>
-  <button onclick="connectWallet()">Conectar Wallet</button>
-
-  <br><br>
-  <input type="number" id="ethAmount" step="0.01" placeholder="ETH (0.01 - 2)" min="0.01" max="2">
-  <br>
-  <button onclick="buyPBJ()">Comprar Tokens</button>
-
+  <h2>Comprar PepeBlackJack (PBJ)</h2>
+  <button onclick="switchToBase()">Cambiar a Base</button>
+  <button onclick="connectWallet()">Conectar Wallet</button><br>
+  <input type="number" id="ethAmount" step="0.01" placeholder="ETH (0.01 - 2)" min="0.01" max="2"><br>
+  <button id="buyButton" onclick="buyPBJ()" disabled>Comprar Tokens</button>
   <p id="status"></p>
 
   <script>
-    const contractAddress = "0x1EfBF9BaD1419c6DE7a0BF28158f563FafC7ab56"; // ← ⚠️ CAMBIA ESTO
+    window.onload = function () {
+      const contractAddress = "REEMPLAZAR_CON_TU_CONTRATO";
+      const abi = [
+        "function buyTokens() payable",
+        "function presaleActive() view returns (bool)",
+        "function presaleEnd() view returns (uint256)"
+      ];
 
-    const abi = [
-      "function buyTokens() payable",
-      "function presaleActive() view returns (bool)",
-      "function presaleEnd() view returns (uint256)"
-    ];
+      var provider, signer, contract;
 
-    let provider, signer, contract;
-
-    async function switchToBase() {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x2105' }] // Base Mainnet (8453)
-        });
-      } catch (switchError) {
-        if (switchError.code === 4902) {
-          // Red no está agregada
+      async function switchToBase() {
+        try {
           await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: '0x2105',
-              chainName: 'Base Mainnet',
-              nativeCurrency: {
-                name: 'Ether',
-                symbol: 'ETH',
-                decimals: 18
-              },
-              rpcUrls: ['https://mainnet.base.org'],
-              blockExplorerUrls: ['https://basescan.org']
-            }]
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x2105' }]
           });
-        } else {
-          document.getElementById("status").innerText = "Error al cambiar de red: " + switchError.message;
+        } catch (err) {
+          if (err.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x2105',
+                chainName: 'Base Mainnet',
+                nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                rpcUrls: ['https://mainnet.base.org'],
+                blockExplorerUrls: ['https://basescan.org']
+              }]
+            });
+          } else {
+            document.getElementById("status").innerText = "Error al cambiar de red: " + err.message;
+          }
         }
       }
-    }
 
-    // Versión v5
-let provider, signer, contract;
+      window.connectWallet = async function () {
+        if (window.ethereum) {
+          try {
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            contract = new ethers.Contract(contractAddress, abi, signer);
+            const address = await signer.getAddress();
+            document.getElementById("status").innerText = "Conectado: " + address;
+            document.getElementById("buyButton").disabled = false;
+          } catch (err) {
+            document.getElementById("status").innerText = "Error: " + err.message;
+          }
+        } else {
+          alert("Instala MetaMask para continuar.");
+        }
+      };
 
-async function connectWallet() {
-  if (window.ethereum) {
-    try {
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      signer = provider.getSigner();
-      contract = new ethers.Contract(contractAddress, abi, signer);
-      const address = await signer.getAddress();
-      document.getElementById("status").innerText = "Wallet conectada: " + address;
-      document.getElementById("buyButton").disabled = false;
-    } catch (err) {
-      document.getElementById("status").innerText = "Error al conectar wallet: " + (err?.message || err);
-    }
-  } else {
-    alert("MetaMask no está instalada.");
-  }
-}
-
-    async function buyPBJ() {
-      const ethInput = document.getElementById("ethAmount").value;
-      const ethValue = parseFloat(ethInput);
-
-      if (!ethValue || ethValue < 0.01 || ethValue > 2) {
-        alert("Ingresa una cantidad válida entre 0.01 y 2 ETH.");
-        return;
-      }
-
-      if (!contract) {
-        alert("Primero conecta la wallet.");
-        return;
-      }
-
-      try {
-        const active = await contract.presaleActive();
-        const presaleEnd = await contract.presaleEnd();
-        const now = Math.floor(Date.now() / 1000);
-
-        if (!active || now > presaleEnd) {
-          document.getElementById("status").innerText = "La preventa ha finalizado.";
+      window.buyPBJ = async function () {
+        const ethValue = parseFloat(document.getElementById("ethAmount").value);
+        if (!ethValue || ethValue < 0.01 || ethValue > 2) {
+          alert("Ingresa entre 0.01 y 2 ETH.");
           return;
         }
 
-        const tx = await contract.buyTokens({ value: ethers.parseEther(ethInput) });
-        document.getElementById("status").innerText = "Transacción enviada. Esperando confirmación...";
-        await tx.wait();
-        document.getElementById("status").innerText = "¡Compra completada con éxito!";
-      } catch (error) {
-        console.error(error);
-        document.getElementById("status").innerText = "Error al comprar tokens: " + (error?.reason || error?.message || "desconocido");
-      }
-    }
-  </script>
+        if (!contract) {
+          alert("Conecta la wallet primero.");
+          return;
+        }
 
+        try {
+          const active = await contract.presaleActive();
+          const end = await contract.presaleEnd();
+          const now = Math.floor(Date.now() / 1000);
+
+          if (!active || now > end) {
+            document.getElementById("status").innerText = "La preventa ha finalizado.";
+            return;
+          }
+
+          const tx = await contract.buyTokens({ value: ethers.utils.parseEther(ethValue.toString()) });
+          document.getElementById("status").innerText = "Transacción enviada...";
+          await tx.wait();
+          document.getElementById("status").innerText = "¡Compra realizada con éxito!";
+        } catch (err) {
+          console.error(err);
+          document.getElementById("status").innerText = "Error: " + (err?.reason || err.message);
+        }
+      };
+    };
+  </script>
 </body>
 </html>
