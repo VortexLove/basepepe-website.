@@ -224,12 +224,12 @@
         hand.push(card);
         const isRed = card.s === '♥' || card.s === '♦';
         const el = document.createElement('div');
-        el.className = card ${isRed ? 'red-suit' : 'black-suit'};
-        el.innerHTML = 
+        el.className = `card ${isRed ? 'red-suit' : 'black-suit'}`;
+        el.innerHTML = `
           <div class="corner top-left">${card.v}${card.s}</div>
           <div class="corner bottom-right">${card.v}${card.s}</div>
           ${card.v}${card.s}
-        ;
+        `;
         area.appendChild(el);
         setTimeout(() => el.classList.add('deal'), index * 150);
       }
@@ -343,7 +343,7 @@
           contract = new ethers.Contract(contractAddress, abi, signer);
           const addr = await signer.getAddress();
           const bal = await provider.getBalance(addr);
-          ethBalanceSpan.innerText = ${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH;
+          ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH`;
           statusDiv.innerText = '✅ Wallet conectada';
           buyButton.disabled = false;
         } catch (err) {
@@ -361,7 +361,7 @@
           const value = ethers.utils.parseEther(ethVal.toString());
           statusDiv.innerText = '⌛ Confirmar en MetaMask';
           const tx = await contract.buyTokens({ value });
-          statusDiv.innerText = 📨 Tx enviada: ${tx.hash.slice(0,10)}...;
+          statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0,10)}...`;
           await tx.wait();
           statusDiv.innerText = '✅ Compra exitosa';
         } catch (e) {
@@ -392,7 +392,7 @@
     await provider.send("eth_requestAccounts", []);
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
-    document.getElementById("status").textContent = Conectado: ${userAddress};
+    document.getElementById("status").textContent = `Conectado: ${userAddress}`;
 
     pbjContract = new ethers.Contract(PBJ_CONTRACT_ADDRESS, PBJ_ABI, provider);
     updatePBJBalance();
