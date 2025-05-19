@@ -6,14 +6,19 @@
     <title>Pepe Blackjack (PBJ) - DApp</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- tsParticles para fondo animado -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
     <!-- Pixel Art Font -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     <style>
       html, body, * { font-family: 'Press Start 2P', cursive !important; }
-      body {
-        background-image: url('https://www.transparenttextures.com/patterns/pixel-weave.png');
-        background-color: #000;
-        background-repeat: repeat;
+      #tsparticles {
+        position: fixed;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
       }
       .card {
         position: relative;
@@ -57,6 +62,7 @@
     </style>
   </head>
   <body class="text-white min-h-screen">
+    <div id="tsparticles"></div>
     <div class="max-w-4xl mx-auto p-4 space-y-8">
       <header class="flex justify-between items-center py-4 border-b border-gray-700">
         <h1 class="text-3xl font-bold text-green-400">Pepe Blackjack (PBJ)</h1>
@@ -78,7 +84,7 @@
           <div class="absolute top-44 left-1/2 transform -translate-x-1/2 text-sm text-center">Crupier Puntos: <span id="dealerScore">0</span></div>
 
           <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
-          <div class="absolute bottom-40 left-1/2 transform -translate-x-1/2 text-sm text-center">Jugador Puntos: <span id="playerScore">0</span></div>
+          <div class="absolute bottom-36 left-1/2 transform -translate-x-1/2 text-sm text-center">Jugador Puntos: <span id="playerScore">0</span></div>
         </div>
 
         <div class="mt-4 flex space-x-2">
@@ -90,6 +96,27 @@
         <div id="resultMsg" class="mt-4 text-lg font-semibold text-center"></div>
       </section>
     </div>
+
+    <script>
+      tsParticles.load("tsparticles", {
+        background: { color: { value: "#000" } },
+        fpsLimit: 60,
+        interactivity: {
+          events: { onHover: { enable: true, mode: "repulse" }, resize: true },
+          modes: { repulse: { distance: 100, duration: 0.4 } }
+        },
+        particles: {
+          color: { value: "#00ff99" },
+          links: { enable: true, color: "#00ff99", distance: 150 },
+          move: { enable: true, speed: 2 },
+          number: { value: 60 },
+          opacity: { value: 0.5 },
+          shape: { type: "circle" },
+          size: { value: { min: 1, max: 3 } }
+        },
+        detectRetina: true
+      });
+    </script>
 
     <script>
       const suits=['♠','♥','♦','♣'], vals=[2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
