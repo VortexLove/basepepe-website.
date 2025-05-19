@@ -6,17 +6,20 @@
     <title>Pepe Blackjack (PBJ) - DApp</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pixel Art Font -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     <style>
-      body { font-family: 'Press Start 2P', cursive; }
+      html, body, * {
+        font-family: 'Press Start 2P', cursive !important;
+      }
     </style>
   </head>
-  <body class="bg-gray-950 text-white min-h-screen font-sans">
+  <body class="bg-gray-950 text-white min-h-screen">
     <div class="max-w-4xl mx-auto p-4 space-y-8">
       <!-- Header -->
       <header class="flex justify-between items-center py-4 border-b border-gray-700">
         <h1 class="text-3xl font-bold text-green-400">Pepe Blackjack (PBJ)</h1>
-        <button id="connectButton" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white font-semibold">Conectar Wallet</button>
+        <button id="connectButton" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white">Conectar Wallet</button>
       </header>
 
       <div id="status" class="text-center text-lg"></div>
@@ -40,7 +43,7 @@
           </div>
         </div>
         <div class="text-right">
-          <button id="buyButton" disabled class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded text-white font-semibold">Comprar</button>
+          <button id="buyButton" disabled class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded text-white">Comprar</button>
         </div>
       </section>
 
@@ -93,7 +96,7 @@
         <div class="text-gray-300 space-y-4">
           <div>
             <h3 class="font-semibold">¿Cómo compro PBJ?</h3>
-            <p>Conecta tu wallet, ajusta la cantidad en ETH y haz clic en "Comprar".</p>
+            <p>Conecta tu wallet, ingresa la cantidad en ETH o PBJ y presiona "Comprar".</p>
           </div>
           <div>
             <h3 class="font-semibold">¿Cuál es el mínimo de compra?</h3>
@@ -117,35 +120,44 @@
       const buyButton = document.getElementById('buyButton');
       const statusDiv = document.getElementById('status');
       const ethAmountInput = document.getElementById('ethAmount');
-      const pbjEstimateSpan = document.getElementById('pbjEstimate');
+      const pbjAmountInput = document.getElementById('pbjAmount');
       const ethBalanceSpan = document.getElementById('ethBalance');
 
-      connectButton.onclick = async () => {
-        if (window.ethereum) {
-          try {
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send('eth_requestAccounts', []);
-            signer = provider.getSigner();
-            contract = new ethers.Contract(contractAddress, abi, signer);
-            const addr = await signer.getAddress();
-            const bal = await provider.getBalance(addr);
-            ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH`;
-            statusDiv.innerText = '✅ Wallet conectada';
-            buyButton.disabled = false;
-          } catch (err) {
-            statusDiv.innerText = 'Error: ' + err.message;
-          }
-        } else {
-          statusDiv.innerText = 'MetaMask no detectado';
-        }
-      };
-
-      ethAmountInput.oninput = () => {
+      function updateEstimate() {
         const ethVal = parseFloat(ethAmountInput.value) || 0;
-        pbjEstimateSpan.innerText = `${(ethVal * rate).toLocaleString('fullwide', { useGrouping:false })} PBJ`;
-      };
+        const pbjVal = parseFloat(pbjAmountInput.value) || 0;
+        // If ETH changed, update PBJ
+        if (document.activeElement === ethAmountInput) {
+          pbjAmountInput.value = (ethVal * rate).toFixed(0);
+        } else {
+          ethAmountInput.value = (pbjVal / rate).toFixed(6);
+        }
+      }
 
-      buyButton.onclick = async () => {
+      ethAmountInput.addEventListener('input', updateEstimate);
+      pbjAmountInput.addEventListener('input', updateEstimate);
+
+      connectButton.addEventListener('click', async () => {
+        if (!window.ethereum) {
+          statusDiv.innerText = 'MetaMask no detectado';
+          return;
+        }
+        try {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send('eth_requestAccounts', []);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+          const addr = await signer.getAddress();
+          const bal = await provider.getBalance(addr);
+          ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH`;
+          statusDiv.innerText = '✅ Wallet conectada';
+          buyButton.disabled = false;
+        } catch (err) {
+          statusDiv.innerText = 'Error: ' + err.message;
+        }
+      });
+
+      buyButton.addEventListener('click', async () => {
         if (!contract) {
           statusDiv.innerText = 'Primero conecta la wallet';
           return;
@@ -161,9 +173,9 @@
         } catch (e) {
           statusDiv.innerText = '❌ ' + (e.data?.message || e.message);
         }
-      };
+      });
 
-      // Inicializar
+      // Initialize estimate
       ethAmountInput.dispatchEvent(new Event('input'));
     </script>
   </body>
