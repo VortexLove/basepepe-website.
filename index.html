@@ -28,14 +28,16 @@
           <span>Saldo de ETH:</span>
           <span id="ethBalance" class="font-mono">- ETH</span>
         </div>
-        <!-- Input ETH -->
-        <div class="flex items-center justify-between mb-4">
-          <label for="ethAmount" class="text-sm">Cantidad en ETH:</label>
-          <input type="number" id="ethAmount" min="0.01" step="0.01" value="0.01" class="w-32 p-2 rounded bg-gray-800 text-white border border-gray-600" />
-        </div>
-        <div class="mb-4">
-          <span class="text-sm">Equivale a:</span>
-          <span id="pbjEstimate" class="font-mono">0 PBJ</span>
+        <!-- Inputs ETH & PBJ -->
+        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+          <div class="flex items-center justify-between">
+            <label for="ethAmount">ETH:</label>
+            <input type="number" id="ethAmount" min="0.01" step="0.01" value="0.01" class="w-32 p-2 rounded bg-gray-800 text-white border border-gray-600" />
+          </div>
+          <div class="flex items-center justify-between">
+            <label for="pbjAmount">PBJ:</label>
+            <input type="number" id="pbjAmount" min="10000" step="10000" value="10000" class="w-32 p-2 rounded bg-gray-800 text-white border border-gray-600" />
+          </div>
         </div>
         <div class="text-right">
           <button id="buyButton" disabled class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded text-white font-semibold">Comprar</button>
