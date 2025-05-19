@@ -3,184 +3,168 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pepe Blackjack (PBJ) - DApp</title>
+    <title>Pepe Blackjack (PBJ) - Compra de Tokens</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
       body { font-family: 'Press Start 2P', cursive; }
     </style>
   </head>
-  <body class="bg-gray-900 text-gray-100 min-h-screen">
-    <div class="max-w-4xl mx-auto p-6 space-y-8">
+  <body class="bg-gradient-to-br from-purple-900 via-pink-900 to-purple-800 text-white min-h-screen">
+    <div class="max-w-4xl mx-auto p-4 space-y-8">
       <!-- Header -->
-      <header class="flex justify-between items-center py-4 border-b border-gray-700">
-        <h1 class="text-3xl font-bold text-green-400">Pepe Blackjack (PBJ)</h1>
-        <button id="connectButton" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Conectar Wallet</button>
+      <header class="flex justify-between items-center py-4 border-b border-pink-500">
+        <h1 class="text-3xl font-bold text-pink-400">Pepe Blackjack (PBJ)</h1>
+        <button id="connectButton" class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded text-white">Conectar Wallet</button>
       </header>
+
       <div id="status" class="text-center text-xs"></div>
 
-      <!-- Saldo y Compra -->
-      <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
-        <h2 class="text-2xl text-green-300 mb-4">💰 Saldo y Compra de Tokens</h2>
-        <div class="flex justify-between text-sm mb-2">
-          <div>ETH: <span id="ethBalance">-</span></div>
-          <div>PBJ: <span id="pbjBalance">-</span></div>
+      <!-- Componente de Compra -->
+      <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl">
+        <h2 class="text-2xl mb-4 text-pink-400">🚀 Compra de Tokens</h2>
+        <div class="mb-4 flex justify-between text-xs">
+          <span>Saldo de ETH:</span>
+          <span id="ethBalance">- ETH</span>
         </div>
-        <div class="flex gap-2 mb-4 text-sm">
-          <input type="number" id="ethAmount" placeholder="ETH" min="0.01" step="0.01" class="flex-1 p-2 rounded bg-gray-700 text-gray-100" />
-          <div class="p-2 bg-gray-700 rounded flex-1 text-center text-gray-100" id="pbjEstimate">0 PBJ</div>
+        <!-- Selector ETH / PBJ -->
+        <div class="flex gap-2 mb-4 text-xs">
+          <button id="modeEth" class="flex-1 py-2 rounded bg-pink-600 hover:bg-pink-700">Pagar con ETH</button>
+          <button id="modePbj" class="flex-1 py-2 rounded bg-pink-600 hover:bg-pink-700">Pagar con PBJ</button>
         </div>
-        <button id="buyButton" disabled class="w-full bg-green-600 hover:bg-green-500 py-2 rounded">Comprar PBJ</button>
-      </section>
-
-      <!-- Blackjack Game Container -->
-      <section id="blackjackGame" class="bg-gray-800 p-6 rounded-xl shadow-lg">
-        <h2 class="text-2xl text-green-300 mb-4">🃏 Blackjack en Pepe Casino</h2>
-        <div class="flex flex-col md:flex-row md:space-x-6">
-          <!-- Game Info -->
-          <div class="md:w-1/3 space-y-4 text-sm">
-            <div>Saldo PBJ: <span id="gameBalance">0</span></div>
-            <div class="flex items-center space-x-2">
-              <label for="betAmount">Apuesta (PBJ):</label>
-              <input type="number" id="betAmount" min="1" step="1" value="100" class="w-24 p-2 rounded bg-gray-700 text-gray-100" />
-            </div>
-            <div class="flex space-x-2">
-              <button id="betButton" class="flex-1 bg-green-600 hover:bg-green-500 py-2 rounded">Apostar</button>
-              <button id="hitButton" disabled class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded">Pedir Carta</button>
-              <button id="standButton" disabled class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded">Plantarse</button>
-            </div>
-            <div id="message" class="text-sm"></div>
+        <!-- Inputs -->
+        <div class="space-y-4 text-xs">
+          <div class="flex items-center justify-between">
+            <label for="ethAmount">ETH:</label>
+            <input type="number" id="ethAmount" min="0.01" step="0.01" value="0.01" class="w-24 p-2 rounded bg-purple-800 text-white text-xs" />
           </div>
-          <!-- Cards Display -->
-          <div class="md:w-2/3">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-gray-700 p-4 rounded">
-                <h3 class="font-bold text-green-200 mb-2">Crupier</h3>
-                <div id="dealerCards" class="flex flex-wrap gap-1 mb-2"></div>
-                <div>Puntos: <span id="dealerScore">0</span></div>
-              </div>
-              <div class="bg-gray-700 p-4 rounded">
-                <h3 class="font-bold text-green-200 mb-2">Jugador</h3>
-                <div id="playerCards" class="flex flex-wrap gap-1 mb-2"></div>
-                <div>Puntos: <span id="playerScore">0</span></div>
-              </div>
-            </div>
+          <div class="flex items-center justify-between">
+            <label for="pbjAmount">PBJ:</label>
+            <input type="number" id="pbjAmount" min="10000" step="10000" class="w-24 p-2 rounded bg-purple-800 text-white text-xs" />
           </div>
+        </div>
+        <div class="text-right">
+          <button id="buyButton" disabled class="mt-4 bg-pink-500 hover:bg-pink-600 px-6 py-2 rounded text-xs">Comprar</button>
         </div>
       </section>
 
-      <!-- Other sections omitted -->
+      <!-- Lore -->
+      <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl text-xs">
+        <h2 class="text-xl mb-2 text-pink-400">📖 Lore</h2>
+        <p>
+          Pepe Blackjack (PBJ) nace en las mesas digitales del ciber-casino de las ranas legendarias. Fusiona el espíritu meme con la adrenalina del blackjack,
+          brindando una experiencia Web3 única de riesgo y recompensa.
+        </p>
+      </section>
+
+      <!-- Roadmap -->
+      <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl text-xs">
+        <h2 class="text-xl mb-2 text-pink-400">🗺️ Roadmap</h2>
+        <ul class="list-decimal list-inside space-y-2">
+          <li><strong>Fase 1 (Q2 2025):</strong> Preventa en Base y lanzamiento del token PBJ.</li>
+          <li><strong>Fase 2 (Q3 2025):</strong> Listado en DEX y staking de PBJ con recompensas exclusivas.</li>
+          <li><strong>Fase 3 (Q4 2025):</strong> Lanzamiento del Blackjack Web3: mesas públicas y privadas.</li>
+          <li><strong>Fase 4 (Q1 2026):</strong> Integración de Slots, Ruleta y Dados: la segunda tanda de juegos.</li>
+          <li><strong>Fase 5 (Q2 2026):</strong> Lanzamiento de Poker y Lotería Blockchain con jackpots progresivos.</li>
+          <li><strong>Fase 6 (Q3 2026):</strong> Modo Casino Social: torneos, chat y sistema de niveles para jugadores.</li>
+          <li><strong>Fase 7 (Q4 2026):</strong> Integración NFT: compra y personalización de avatares y mesas.</li>
+          <li><strong>Fase 8 (Q1 2027):</strong> Expansión Metaverso: casino en entorno 3D VR con mundos temáticos.</li>
+          <li><strong>Fase 9 (Q2 2027):</strong> Alianzas y eventos globales: torneos con criptomonedas y tokens de socios.</li>
+        </ul>
+      </section>
+
+      <!-- Tokenomics -->
+      <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl text-xs">
+        <h2 class="text-xl mb-2 text-pink-400">📊 Tokenomics</h2>
+        <ul class="space-y-1">
+          <li><strong>Símbolo:</strong> PBJ</li>
+          <li><strong>Red:</strong> Base</li>
+          <li><strong>Supply total:</strong> 1,000,000,000 PBJ</li>
+          <li><strong>Precio:</strong> 1 ETH = 1,000,000 PBJ</li>
+          <li><strong>Contrato:</strong> <a href="https://basescan.org/address/0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57" class="text-pink-300 underline" target="_blank">0x3Bcc...0C57</a></li>
+        </ul>
+      </section>
+
+      <!-- Equipo y Enlaces -->
+      <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl text-xs">
+        <h2 class="text-xl mb-2 text-pink-400">👥 Equipo y Enlaces</h2>
+        <ul class="space-y-1">
+          <li><strong>Equipo Clave:</strong> Jane Doe (Dev), John Smith (Marketing), CryptoFrogDAO (Comunidad)</li>
+          <li><strong>Sitio oficial:</strong> <a href="#" class="text-pink-300 underline">www.pepeblackjack.io</a></li>
+          <li><strong>Twitter:</strong> <a href="https://twitter.com/pepeblackjack" class="text-pink-300 underline">@pepeblackjack</a></li>
+          <li><strong>Telegram:</strong> <a href="https://t.me/pepeblackjack" class="text-pink-300 underline">@pepeblackjack</a></li>
+        </ul>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl text-xs">
+        <h2 class="text-xl mb-2 text-pink-400">❓ FAQ</h2>
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-bold">¿Cómo compro PBJ?</h3>
+            <p>Conecta tu wallet, elige ETH o PBJ, ajusta la cantidad y haz clic en "Comprar".</p>
+          </div>
+          <div>
+            <h3 class="font-bold">¿Monto mínimo?</h3>
+            <p>0.01 ETH (10,000 PBJ).</p>
+          </div>
+          <div>
+            <h3 class="font-bold">¿Qué pasa al finalizar la preventa?</h3>
+            <p>Se llama <code>endPresale()</code>, habilitando solo intercambios en DEX.</p>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script>
-      // Ethers.js & Token
-      const contractAddr = '0x3Bcc79d679d900b78684f44ff7dacc286fab0c57';
-      const tokenAbi = ['function buyTokens() payable','function balanceOf(address)view returns(uint256)'];
+      const contractAddress = '0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57';
+      const abi = ['function buyTokens() payable'];
       const rate = 1000000;
       let provider, signer, contract;
-
-      // UI Elements
-      const connectBtn = document.getElementById('connectButton');
+      const connectButton = document.getElementById('connectButton');
+      const buyButton = document.getElementById('buyButton');
       const statusDiv = document.getElementById('status');
-      const ethBalSpan = document.getElementById('ethBalance');
-      const pbjBalSpan = document.getElementById('pbjBalance');
-      const ethIn = document.getElementById('ethAmount');
-      const pbjEst = document.getElementById('pbjEstimate');
-      const buyBtn = document.getElementById('buyButton');
-
-      const gameBalSpan = document.getElementById('gameBalance');
-      const betIn = document.getElementById('betAmount');
-      const betBtn = document.getElementById('betButton');
-      const hitBtn = document.getElementById('hitButton');
-      const standBtn = document.getElementById('standButton');
-      const msgDiv = document.getElementById('message');
-      const dealerCardsDiv = document.getElementById('dealerCards');
-      const playerCardsDiv = document.getElementById('playerCards');
-      const dealerScoreSpan = document.getElementById('dealerScore');
-      const playerScoreSpan = document.getElementById('playerScore');
-
-      let userAddr, gameBalance;
-      let deck, dealerHand, playerHand;
-
-      // Connect Wallet
-      connectBtn.onclick = async () => {
-        if (!window.ethereum) return statusDiv.innerText = 'Instala MetaMask';
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send('eth_requestAccounts', []);
-        signer = provider.getSigner();
-        userAddr = await signer.getAddress();
-        contract = new ethers.Contract(contractAddr, tokenAbi, signer);
-        const ethBal = await provider.getBalance(userAddr);
-        const pbjBal = await contract.balanceOf(userAddr);
-        ethBalSpan.innerText = `${parseFloat(ethers.utils.formatEther(ethBal)).toFixed(4)} ETH`;
-        pbjBalSpan.innerText = `${ethers.utils.formatUnits(pbjBal, 18)} PBJ`;
-        gameBalance = parseInt(ethers.utils.formatUnits(pbjBal, 18));
-        gameBalSpan.innerText = gameBalance;
-        statusDiv.innerText = '✅ Wallet conectada';
-        buyBtn.disabled = false;
+      const ethAmountInput = document.getElementById('ethAmount');
+      const pbjAmountInput = document.getElementById('pbjAmount');
+      const modeEth = document.getElementById('modeEth');
+      const modePbj = document.getElementById('modePbj');
+      const ethBalanceSpan = document.getElementById('ethBalance');
+      let buyMode = 'ETH';
+      function updateEstimate() {
+        const ethVal = parseFloat(ethAmountInput.value) || 0;
+        const pbjVal = parseFloat(pbjAmountInput.value) || 0;
+        if (buyMode === 'ETH') pbjAmountInput.value = (ethVal * rate).toFixed(0);
+        else ethAmountInput.value = (pbjVal / rate).toFixed(6);
+      }
+      modeEth.onclick = () => { buyMode = 'ETH'; modeEth.classList.add('bg-pink-700'); modePbj.classList.remove('bg-pink-700'); ethAmountInput.removeAttribute('disabled'); pbjAmountInput.setAttribute('disabled', true); updateEstimate(); };
+      modePbj.onclick = () => { buyMode = 'PBJ'; modePbj.classList.add('bg-pink-700'); modeEth.classList.remove('bg-pink-700'); pbjAmountInput.removeAttribute('disabled'); ethAmountInput.setAttribute('disabled', true); updateEstimate(); };
+      ethAmountInput.addEventListener('input', updateEstimate);
+      pbjAmountInput.addEventListener('input', updateEstimate);
+      connectButton.onclick = async () => {
+        if (window.ethereum) {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send('eth_requestAccounts', []);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+          const addr = await signer.getAddress();
+          const bal = await provider.getBalance(addr);
+          ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH`;
+          statusDiv.innerText = '✅ Wallet conectada';
+          buyButton.disabled = false;
+        } else statusDiv.innerText = 'MetaMask no detectado';
       };
-
-      // Token purchase estimate
-      ethIn.oninput = () => pbjEst.innerText = `${(parseFloat(ethIn.value) || 0) * rate} PBJ`;
-      buyBtn.onclick = async () => {
-        const val = ethers.utils.parseEther((parseFloat(ethIn.value)||0).toString());
-        statusDiv.innerText = 'Confirma en MetaMask';
-        const tx = await contract.buyTokens({ value: val }); await tx.wait();
-        statusDiv.innerText = '✅ Compra exitosa';
+      buyButton.onclick = async () => {
+        try {
+          const ethVal = buyMode === 'ETH' ? parseFloat(ethAmountInput.value) : parseFloat(ethAmountInput.value);
+          const value = ethers.utils.parseEther(ethVal.toString());
+          statusDiv.innerText = '⌛ Confirma en MetaMask';
+          const tx = await contract.buyTokens({ value });
+          statusDiv.innerText = `📨 Tx: ${tx.hash.slice(0,10)}...`;
+          await tx.wait(); statusDiv.innerText = '✅ Compra exitosa';
+        } catch (e) { statusDiv.innerText = '❌ ' + (e.data?.message || e.message); }
       };
-
-      // Blackjack logic
-      const suits = ['♠️','♥️','♦️','♣️'];
-      const values = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-      function createDeck() {
-        deck = [];
-        suits.forEach(s => values.forEach(v => deck.push({s,v})));
-        deck.sort(() => Math.random() - 0.5);
-      }
-      function dealCard(hand) { const c = deck.pop(); hand.push(c); return c; }
-      function displayHand(hand, container, scoreSpan) {
-        container.innerHTML = '';
-        hand.forEach(c => {
-          const d = document.createElement('div');
-          d.className = 'p-1 bg-gray-700 rounded text-sm';
-          d.innerText = `${c.v}${c.s}`;
-          container.appendChild(d);
-        });
-        scoreSpan.innerText = calculateScore(hand);
-      }
-      function calculateScore(hand) {
-        let sum=0, aces=0;
-        hand.forEach(c => {
-          if(c.v==='A'){ aces++; sum+=11; }
-          else if(['J','Q','K'].includes(c.v)) sum+=10;
-          else sum+=parseInt(c.v);
-        });
-        while(sum>21&&aces>0){ sum-=10; aces--; }
-        return sum;
-      }
-      function startGame() {
-        const bet = parseInt(betIn.value)||0;
-        if(bet>gameBalance) return alert('Fondos insuficientes');
-        gameBalance-=bet; gameBalSpan.innerText=gameBalance;
-        dealerHand=[]; playerHand=[];
-        createDeck(); dealCard(dealerHand); dealCard(playerHand); dealCard(playerHand);
-        displayHand(dealerHand,dealerCardsDiv,dealerScoreSpan);
-        displayHand(playerHand,playerCardsDiv,playerScoreSpan);
-        hitBtn.disabled=standBtn.disabled=false;
-        betBtn.disabled=true; msgDiv.innerText='';
-      }
-      function hit() { dealCard(playerHand); displayHand(playerHand,playerCardsDiv,playerScoreSpan); if(calculateScore(playerHand)>21) endGame(); }
-      function stand() { while(calculateScore(dealerHand)<17) dealCard(dealerHand); displayHand(dealerHand,dealerCardsDiv,dealerScoreSpan); endGame(); }
-      function endGame() {
-        const p=calculateScore(playerHand), d=calculateScore(dealerHand);
-        let result='Empate';
-        if(p>21) result='Perdiste';
-        else if(d>21||p>d){ result='Ganaste'; gameBalance+=parseInt(betIn.value)*2; }
-        msgDiv.innerText=result; gameBalSpan.innerText=gameBalance;
-        hitBtn.disabled=standBtn.disabled=true; betBtn.disabled=false;
-      }
-      betBtn.onclick=startGame; hitBtn.onclick=hit; standBtn.onclick=stand;
+      modeEth.click();
     </script>
   </body>
 </html>
