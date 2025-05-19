@@ -58,6 +58,32 @@
         </p>
       </section>
 
+       <section id="blackjack">
+    <h2>¡Juega Blackjack con BasePepe!</h2>
+    <div class="saldo" id="saldo">Saldo: 1000 BasePepe</div> <!-- Muestra el saldo inicial -->
+    <div class="game-area">
+      <div class="hand" id="dealer-hand">
+        <h3>Dealer</h3>
+        <div class="cards" id="dealer-cards"></div>
+        <p>Puntaje: <span id="dealer-score">0</span></p>
+      </div>
+      <div class="hand" id="player-hand">
+        <h3>Jugador</h3>
+        <div class="cards" id="player-cards"></div>
+        <p>Puntaje: <span id="player-score">0</span></p>
+      </div>
+    </div>
+    <div class="controls">
+      <label for="bet-amount">Apostar:</label>
+      <input type="number" id="bet-amount" value="100" min="1" max="1000">
+      <button class="btn" id="bet-btn">Apostar</button>
+      <button class="btn" id="hit-btn" disabled>Pedir Carta</button>
+      <button class="btn" id="stand-btn" disabled>Plantarse</button>
+    </div>
+    <div class="message" id="message"></div>
+  </section>
+
+
       <!-- Roadmap -->
       <section class="bg-purple-900 bg-opacity-70 p-6 rounded-xl shadow-2xl text-xs">
         <h2 class="text-xl mb-2 text-pink-400">🗺️ Roadmap</h2>
