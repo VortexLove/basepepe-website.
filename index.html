@@ -14,6 +14,12 @@
       html, body, * {
         font-family: 'Press Start 2P', cursive !important;
       }
+      /* Quita flechas de inputs number */
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
       #tsparticles {
         position: fixed;
         z-index: -1;
@@ -55,107 +61,117 @@
         right: 6px;
         transform: rotate(180deg);
       }
-      .red-suit {
-        color: red;
-      }
-      .black-suit {
-        color: black;
-      }
+      .red-suit { color: red; }
+      .black-suit { color: black; }
     </style>
   </head>
   <body class="bg-gray-950 text-white min-h-screen">
     <div id="tsparticles"></div>
     <div class="max-w-4xl mx-auto p-4 space-y-8">
-      <header class="flex justify-between items-center py-4 border-b border-gray-700">
-        <h1 class="text-3xl font-bold text-green-400">Pepe Blackjack (PBJ)</h1>
-        <button id="connectButton" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white">Conectar Wallet</button>
+
+      <!-- Header -->
+      <header class="flex flex-col md:flex-row justify-between items-center py-4 border-b border-gray-700">
+        <h1 class="text-2xl sm:text-3xl font-bold text-green-400 mb-4 md:mb-0">Pepe Blackjack (PBJ)</h1>
+        <button
+          id="connectButton"
+          class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white w-full sm:w-auto text-center"
+        >Conectar Wallet</button>
       </header>
-      <div id="status" class="text-center text-lg"></div>
+      <div id="status" class="text-center text-base sm:text-lg"></div>
 
-     <!-- Componente de Compra -->
-      <!-- Componente de Compra estilo Uniswap adaptado a tu tema -->
-<section class="bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md mx-auto">
-  <h2 class="text-2xl font-semibold text-green-400 mb-6">Compra de Tokens</h2>
+      <!-- Componente de Compra -->
+      <section class="bg-gray-800 rounded-2xl shadow-2xl p-6 w-full sm:max-w-md mx-auto">
+        <h2 class="text-xl sm:text-2xl font-semibold text-green-400 mb-6">Compra de Tokens</h2>
 
-  <!-- Saldo -->
-  <div class="flex justify-between text-sm text-gray-400 mb-4">
-    <span>Saldo de ETH</span>
-    <span id="ethBalance" class="font-mono text-white">0.0003 ETH</span>
-  </div>
+        <!-- Saldo -->
+        <div class="flex justify-between text-xs sm:text-sm text-gray-400 mb-4">
+          <span>Saldo de ETH</span>
+          <span id="ethBalance" class="font-mono text-white">0.0000 ETH</span>
+        </div>
 
-  <!-- Inputs -->
-  <div class="space-y-4 mb-6">
-    <!-- ETH → PBJ -->
-    <div class="flex items-center space-x-3">
-      <input
-        type="number"
-        id="ethAmount"
-        min="0.01"
-        step="0.0001"
-        value="0.0001"
-        class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400"
-        placeholder="0.0 ETH"
-      />
-      <span class="text-gray-300 font-medium">ETH</span>
-    </div>
-
-    <!-- Flecha SVG -->
-    <div class="flex justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
-    </div>
-
-    <!-- PBJ -->
-    <div class="flex items-center space-x-3">
-      <input
-        type="number"
-        id="pbjAmount"
-        min="10000"
-        step="10000"
-        value="100"
-        class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400"
-        placeholder="0 PBJ"
-      />
-      <span class="text-gray-300 font-medium">PBJ</span>
-    </div>
-  </div>
-
-  <!-- Botón principal -->
-  <button
-    id="buyButton"
-    disabled
-    class="w-full py-3 rounded-lg bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold hover:from-green-600 hover:to-green-800 disabled:opacity-50"
-  >
-    Comprar
-  </button>
-</section>
-      
-      <!-- Aquí podrías insertar el componente del juego si lo deseas -->
-       <section id="blackjackGame" class="bg-gray-900 p-6 rounded-xl shadow-xl">
-        <h2 class="text-2xl font-bold text-green-400 mb-4">🃏 Juego de Blackjack</h2>
-        <div class="mb-4 text-sm flex items-center space-x-8">
-          <div>Saldo PBJ: <span id="pbjBalance" class="font-mono">100000</span></div>
+        <!-- Inputs -->
+        <div class="space-y-4 mb-6">
+          <!-- ETH → PBJ -->
           <div class="flex items-center space-x-2">
-            <label for="betAmount">Apuesta:</label>
-            <input type="number" id="betAmount" min="1" step="1" value="1000" class="w-24 p-1 rounded bg-gray-800 text-white text-sm" />
+            <input
+              type="number"
+              id="ethAmount"
+              min="0.01"
+              step="0.0001"
+              value="0.01"
+              class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
+              placeholder="0.0 ETH"
+            />
+            <span class="text-gray-300 font-medium text-sm">ETH</span>
+          </div>
+
+          <!-- Flecha SVG -->
+          <div class="flex justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          <!-- PBJ -->
+          <div class="flex items-center space-x-2">
+            <input
+              type="number"
+              id="pbjAmount"
+              min="10000"
+              step="10000"
+              value="10000"
+              class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
+              placeholder="0 PBJ"
+            />
+            <span class="text-gray-300 font-medium text-sm">PBJ</span>
           </div>
         </div>
-        <div class="relative" style="height: 420px;">
-          <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-3"></div>
-          <div class="absolute top-44 left-1/2 transform -translate-x-1/2 text-sm text-center">Crupier Puntos: <span id="dealerScore">0</span></div>
 
-          <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
-          <div class="absolute bottom-40 left-1/2 transform -translate-x-1/2 text-sm text-center">Jugador Puntos: <span id="playerScore">0</span></div>
+        <!-- Botón principal -->
+        <button
+          id="buyButton"
+          disabled
+          class="w-full py-2 sm:py-3 rounded-lg bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold hover:from-green-600 hover:to-green-800 disabled:opacity-50 text-sm sm:text-base"
+        >Comprar</button>
+      </section>
+
+      <!-- Juego Blackjack -->
+      <section id="blackjackGame" class="bg-gray-900 p-4 sm:p-6 rounded-xl shadow-xl">
+        <h2 class="text-xl sm:text-2xl font-bold text-green-400 mb-4">🃏 Juego de Blackjack</h2>
+        <div class="mb-4 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center sm:space-x-8 space-y-2 sm:space-y-0">
+          <div>Saldo PBJ: <span id="pbjBalance" class="font-mono">0</span></div>
+          <div class="flex items-center space-x-2">
+            <label for="betAmount" class="text-sm">Apuesta:</label>
+            <input
+              type="number"
+              id="betAmount"
+              min="1"
+              step="1"
+              value="1000"
+              class="w-20 px-2 py-1 rounded bg-gray-800 text-white text-sm"
+            />
+          </div>
         </div>
 
-        <div class="mt-4 flex space-x-2">
-          <button id="dealBtn" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Repartir</button>
-          <button id="hitBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded" disabled>Pedir</button>
-          <button id="standBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded" disabled>Plantarse</button>
+        <div class="relative h-64 sm:h-96 mb-4">
+          <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 overflow-x-auto"></div>
+          <div class="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm text-center">
+            Crupier Puntos: <span id="dealerScore">0</span>
+          </div>
+
+          <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 overflow-x-auto"></div>
+          <div class="absolute bottom-20 sm:bottom-24 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm text-center">
+            Jugador Puntos: <span id="playerScore">0</span>
+          </div>
         </div>
 
-        <div id="resultMsg" class="mt-4 text-lg font-semibold text-center"></div>
+        <div class="mt-4 flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+          <button id="dealBtn" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded flex-1">Repartir</button>
+          <button id="hitBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded flex-1" disabled>Pedir</button>
+          <button id="standBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded flex-1" disabled>Plantarse</button>
+        </div>
+
+        <div id="resultMsg" class="mt-4 text-base sm:text-lg font-semibold text-center"></div>
       </section>
 
       <!-- Lore -->
