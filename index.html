@@ -12,8 +12,8 @@
       html, body, * { font-family: 'Press Start 2P', cursive !important; }
       .card {
         position: relative;
-        width: 100px;
-        height: 140px;
+        width: 120px;
+        height: 160px;
         background: white;
         color: black;
         border: 2px solid #222;
@@ -22,9 +22,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 2rem;
         font-weight: bold;
-        transform: translateY(-30px) scale(0.9);
         opacity: 0;
         transition: transform 0.4s ease, opacity 0.4s ease;
       }
@@ -34,7 +33,7 @@
       }
       .card .corner {
         position: absolute;
-        font-size: 0.6rem;
+        font-size: 0.8rem;
       }
       .card .top-left {
         top: 4px;
@@ -49,17 +48,14 @@
   </head>
   <body class="bg-gray-950 text-white min-h-screen">
     <div class="max-w-4xl mx-auto p-4 space-y-8">
-      <!-- Header -->
       <header class="flex justify-between items-center py-4 border-b border-gray-700">
         <h1 class="text-3xl font-bold text-green-400">Pepe Blackjack (PBJ)</h1>
         <button id="connectButton" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Conectar Wallet</button>
       </header>
       <div id="status" class="text-center text-lg"></div>
 
-      <!-- Blackjack Game -->
       <section id="blackjackGame" class="bg-gray-900 p-6 rounded-xl shadow-xl">
         <h2 class="text-2xl font-bold text-green-400 mb-4">🃏 Juego de Blackjack</h2>
-        <!-- Balance y Apuesta -->
         <div class="mb-4 text-sm flex items-center space-x-8">
           <div>Saldo PBJ: <span id="pbjBalance" class="font-mono">100000</span></div>
           <div class="flex items-center space-x-2">
@@ -67,23 +63,20 @@
             <input type="number" id="betAmount" min="1" step="1" value="1000" class="w-24 p-1 rounded bg-gray-800 text-white text-sm" />
           </div>
         </div>
-        <!-- Área de Cartas con separaciones mayores -->
-        <div class="space-y-4 relative h-48">
-          <div id="dealerArea" class="absolute top-6 left-1/2 transform -translate-x-1/2 flex space-x-6"></div>
-          <div id="playerArea" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-6"></div>
+        <div class="relative" style="height: 360px;">
+          <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-3"></div>
+          <div class="absolute top-40 left-1/2 transform -translate-x-1/2 text-sm">Crupier Puntos: <span id="dealerScore">0</span></div>
+
+          <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-3"></div>
+          <div class="absolute bottom-32 left-1/2 transform -translate-x-1/2 text-sm">Jugador Puntos: <span id="playerScore">0</span></div>
         </div>
-        <!-- Puntuación debajo de cada fila -->
-        <div class="flex justify-between text-sm mb-4">
-          <div>Crupier Puntos: <span id="dealerScore">0</span></div>
-          <div class="text-right">Jugador Puntos: <span id="playerScore">0</span></div>
-        </div>
-        <!-- Controles -->
+
         <div class="mt-4 flex space-x-2">
           <button id="dealBtn" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Repartir</button>
           <button id="hitBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded" disabled>Pedir</button>
           <button id="standBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded" disabled>Plantarse</button>
         </div>
-        <!-- Mensaje de resultado -->
+
         <div id="resultMsg" class="mt-4 text-lg font-semibold text-center"></div>
       </section>
     </div>
@@ -96,7 +89,7 @@
 
       function shuffle() {
         deck = [];
-        suits.forEach(s => vals.forEach(v => deck.push({s,v}))); 
+        suits.forEach(s => vals.forEach(v => deck.push({s,v})));
         deck.sort(() => Math.random() - 0.5);
       }
 
@@ -108,15 +101,19 @@
         el.innerHTML = `
           <div class="corner top-left">${card.v}${card.s}</div>
           <div class="corner bottom-right">${card.v}${card.s}</div>
+          ${card.v}${card.s}
         `;
         area.appendChild(el);
         setTimeout(() => el.classList.add('deal'), index * 150);
       }
 
       function updateScores() {
-        document.getElementById('playerScore').innerText = calc(playerHand);
-        document.getElementById('dealerScore').innerText = calc(dealerHand);
-        if(calc(playerHand) > 21) {
+        const p = calc(playerHand);
+        const d = calc(dealerHand);
+        document.getElementById('playerScore').innerText = p;
+        document.getElementById('dealerScore').innerText = d;
+
+        if(p > 21) {
           document.getElementById('resultMsg').innerText = 'Has perdido';
           document.getElementById('hitBtn').disabled = true;
           document.getElementById('standBtn').disabled = true;
@@ -156,7 +153,13 @@
 
       document.getElementById('hitBtn').onclick = () => {
         dealCard(playerHand, document.getElementById('playerArea'), playerHand.length);
-        setTimeout(updateScores, 500);
+        setTimeout(() => {
+          updateScores();
+          if (calc(playerHand) > 21) {
+            document.getElementById('hitBtn').disabled = true;
+            document.getElementById('standBtn').disabled = true;
+          }
+        }, 500);
       };
 
       document.getElementById('standBtn').onclick = () => {
