@@ -21,7 +21,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-left: -40px;
         font-size: 1.2rem;
         font-weight: bold;
         transform: translateY(-30px) scale(0.9);
@@ -56,8 +55,8 @@
         </div>
         <!-- Área de Cartas -->
         <div class="space-y-4 relative h-48">
-          <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-[-30px]"></div>
-          <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-[-30px]"></div>
+          <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-4"></div>
+          <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-4"></div>
         </div>
         <!-- Puntuación debajo de cada fila -->
         <div class="flex justify-between text-sm mb-4">
@@ -100,6 +99,12 @@
       function updateScores() {
         document.getElementById('playerScore').innerText = calc(playerHand);
         document.getElementById('dealerScore').innerText = calc(dealerHand);
+        // Auto end if player busts
+        if(calc(playerHand) > 21) {
+          document.getElementById('resultMsg').innerText = 'Has perdido';
+          document.getElementById('hitBtn').disabled = true;
+          document.getElementById('standBtn').disabled = true;
+        }
       }
 
       function calc(hand) {
