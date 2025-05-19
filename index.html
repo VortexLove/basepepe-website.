@@ -5,41 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Compra de Tokens PBJ</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: auto; padding: 20px; }
+    input { width: 100%; padding: 8px; margin: 6px 0; font-size: 1em; }
+    button { padding: 10px; font-size: 1em; width: 100%; }
+    .section { margin-top: 20px; }
+    .label { font-weight: bold; margin-top: 10px; }
+  </style>
 </head>
 <body>
-  <h1>Compra de Tokens PBJ</h1>
+  <h2>Compra de Tokens PBJ</h2>
 
   <button id="connectButton">Conectar MetaMask</button>
-  <div id="status" style="margin: 10px 0; font-weight: bold;"></div>
+  <div id="status" class="section"></div>
 
-  <div>
-    <label for="ethAmount">Cantidad de ETH (0.01 - 2):</label>
-    <input
-      type="number"
-      id="ethAmount"
-      min="0.01"
-      max="2"
-      step="0.01"
-      value="0.01"
-      style="width: 80px;"
-    />
+  <div class="section" id="balances" style="display:none;">
+    <div><strong>Tu saldo:</strong></div>
+    <div>ETH: <span id="ethBalance">-</span></div>
+    <div>PBJ: <span id="pbjBalance">-</span></div>
+  </div>
+
+  <div class="section">
+    <label class="label">Cantidad en ETH (0.01 - 2):</label>
+    <input type="number" id="ethInput" min="0.01" max="2" step="0.01" />
+
+    <label class="label">Cantidad en PBJ:</label>
+    <input type="number" id="pbjInput" min="10000" step="10000" />
+
     <button id="buyButton" disabled>Comprar Tokens</button>
   </div>
 
   <script>
     const contractAddress = '0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57';
     const abi = [
-      'function buyTokens() payable'
+      'function buyTokens() payable',
+      'function balanceOf(address) view returns (uint256)',
+      'function decimals() view returns (uint8)'
     ];
 
-    let provider;
-    let signer;
-    let contract;
+    const tokenRate = 1_000_000; // 1 ETH = 1,000,000 PBJ
+    let provider, signer, contract, userAddress;
 
     const connectButton = document.getElementById('connectButton');
     const buyButton = document.getElementById('buyButton');
     const statusDiv = document.getElementById('status');
-    const ethAmountInput = document.getElementById('ethAmount');
+    const ethInput = document.getElementById('ethInput');
+    const pbjInput = document.getElementById('pbjInput');
+    const ethBalanceSpan = document.getElementById('ethBalance');
+    const pbjBalanceSpan = document.getElementById('pbjBalance');
+    const balancesDiv = document.getElementById('balances');
 
     connectButton.onclick = async () => {
       if (typeof window.ethereum !== 'undefined') {
@@ -47,43 +61,65 @@
           provider = new ethers.providers.Web3Provider(window.ethereum);
           await provider.send('eth_requestAccounts', []);
           signer = provider.getSigner();
+          userAddress = await signer.getAddress();
           contract = new ethers.Contract(contractAddress, abi, signer);
+
           statusDiv.innerText = 'MetaMask conectado ✅';
           buyButton.disabled = false;
-        } catch (error) {
-          statusDiv.innerText = 'Error al conectar MetaMask: ' + error.message;
+          balancesDiv.style.display = 'block';
+
+          updateBalances();
+        } catch (err) {
+          statusDiv.innerText = 'Error al conectar MetaMask: ' + err.message;
         }
       } else {
-        statusDiv.innerText = 'MetaMask no detectado. Por favor, instala MetaMask.';
+        statusDiv.innerText = 'MetaMask no detectado.';
       }
+    };
+
+    async function updateBalances() {
+      const ethBalance = await provider.getBalance(userAddress);
+      ethBalanceSpan.innerText = ethers.utils.formatEther(ethBalance);
+
+      const pbjBalance = await contract.balanceOf(userAddress);
+      pbjBalanceSpan.innerText = ethers.utils.formatUnits(pbjBalance, 18);
+    }
+
+    // ETH to PBJ
+    ethInput.oninput = () => {
+      const ethValue = parseFloat(ethInput.value);
+      pbjInput.value = ethValue > 0 ? ethValue * tokenRate : '';
+    };
+
+    // PBJ to ETH
+    pbjInput.oninput = () => {
+      const pbjValue = parseFloat(pbjInput.value);
+      ethInput.value = pbjValue > 0 ? pbjValue / tokenRate : '';
     };
 
     buyButton.onclick = async () => {
       if (!contract) {
-        statusDiv.innerText = 'Primero conecta la wallet.';
+        statusDiv.innerText = 'Primero conecta MetaMask.';
         return;
       }
 
       try {
-        const ethAmount = parseFloat(ethAmountInput.value);
-        if (isNaN(ethAmount) || ethAmount <= 0) {
-          statusDiv.innerText = 'Introduce un valor válido de ETH';
+        const ethAmount = parseFloat(ethInput.value);
+        if (isNaN(ethAmount) || ethAmount < 0.01 || ethAmount > 2) {
+          statusDiv.innerText = 'El monto debe estar entre 0.01 y 2 ETH';
           return;
         }
 
-        const value = ethers.utils.parseEther(ethAmount.toString());
-
-        statusDiv.innerText = 'Abre MetaMask para confirmar la transacción...';
-
-        const tx = await contract.buyTokens({ value });
-        statusDiv.innerText = 'Transacción enviada: ' + tx.hash;
-
+        const tx = await contract.buyTokens({ value: ethers.utils.parseEther(ethAmount.toString()) });
+        statusDiv.innerText = 'Esperando confirmación de la transacción...';
         await tx.wait();
-
         statusDiv.innerText = 'Compra exitosa 🎉 TxHash: ' + tx.hash;
-      } catch (error) {
-        console.error(error);
-        statusDiv.innerText = 'Error: ' + (error.data?.message || error.message || 'Error desconocido');
+
+        updateBalances();
+      } catch (err) {
+        console.error(err);
+        const msg = err.data?.message || err.message || 'Error desconocido';
+        statusDiv.innerText = 'Error al comprar tokens: ' + msg;
       }
     };
   </script>
