@@ -224,12 +224,12 @@
         hand.push(card);
         const isRed = card.s === '♥' || card.s === '♦';
         const el = document.createElement('div');
-        el.className = `card ${isRed ? 'red-suit' : 'black-suit'}`;
-        el.innerHTML = `
+        el.className = card ${isRed ? 'red-suit' : 'black-suit'};
+        el.innerHTML = 
           <div class="corner top-left">${card.v}${card.s}</div>
           <div class="corner bottom-right">${card.v}${card.s}</div>
           ${card.v}${card.s}
-        `;
+        ;
         area.appendChild(el);
         setTimeout(() => el.classList.add('deal'), index * 150);
       }
@@ -308,94 +308,109 @@
       };
     </script>
     <script>
-  // --- Configuración inicial ---
-  const PRESALE_ADDRESS = '0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57';
-  const PRESALE_ABI = ['function buyTokens() payable'];
-  const PBJ_ADDRESS    = '0xE31Ee1462aCF2eE7b930D340B3e49DC921034A4F';
-  const PBJ_ABI        = ['function balanceOf(address) view returns (uint256)'];
-  const RATE = 1_000_000; // 1 ETH = 1,000,000 PBJ
+      const contractAddress = '0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57';
+      const abi = ['function buyTokens() payable'];
+      const rate = 1000000;
+      let provider, signer, contract;
+      const connectButton = document.getElementById('connectButton');
+      const buyButton = document.getElementById('buyButton');
+      const statusDiv = document.getElementById('status');
+      const ethAmountInput = document.getElementById('ethAmount');
+      const pbjAmountInput = document.getElementById('pbjAmount');
+      const ethBalanceSpan = document.getElementById('ethBalance');
 
-  let provider, signer, userAddress;
-  let presaleContract, pbjContract;
+      function updateEstimate() {
+        const ethVal = parseFloat(ethAmountInput.value) || 0;
+        const pbjVal = parseFloat(pbjAmountInput.value) || 0;
+        if (document.activeElement === ethAmountInput) {
+          pbjAmountInput.value = (ethVal * rate).toFixed(0);
+        } else {
+          ethAmountInput.value = (pbjVal / rate).toFixed(6);
+        }
+      }
+      ethAmountInput.addEventListener('input', updateEstimate);
+      pbjAmountInput.addEventListener('input', updateEstimate);
 
-  // Elementos del DOM
-  const connectButton  = document.getElementById('connectButton');
-  const buyButton      = document.getElementById('buyButton');
-  const statusDiv      = document.getElementById('status');
-  const ethBalanceSpan = document.getElementById('ethBalance');
-  const pbjBalanceSpan = document.getElementById('pbjBalance');
-  const ethAmountInput = document.getElementById('ethAmount');
-  const pbjAmountInput = document.getElementById('pbjAmount');
+      connectButton.addEventListener('click', async () => {
+        if (!window.ethereum) {
+          statusDiv.innerText = 'MetaMask no detectado';
+          return;
+        }
+        try {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send('eth_requestAccounts', []);
+          signer = provider.getSigner();
+          contract = new ethers.Contract(contractAddress, abi, signer);
+          const addr = await signer.getAddress();
+          const bal = await provider.getBalance(addr);
+          ethBalanceSpan.innerText = ${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH;
+          statusDiv.innerText = '✅ Wallet conectada';
+          buyButton.disabled = false;
+        } catch (err) {
+          statusDiv.innerText = 'Error: ' + err.message;
+        }
+      });
 
-  // Actualiza los inputs ETH ⇄ PBJ
-  function updateEstimate() {
-    const ethVal = parseFloat(ethAmountInput.value) || 0;
-    if (document.activeElement === ethAmountInput) {
-      pbjAmountInput.value = (ethVal * RATE).toFixed(0);
-    } else {
-      ethAmountInput.value = (parseFloat(pbjAmountInput.value) / RATE).toFixed(6);
-    }
-  }
-  ethAmountInput .addEventListener('input', updateEstimate);
-  pbjAmountInput.addEventListener('input', updateEstimate);
+      buyButton.addEventListener('click', async () => {
+        if (!contract) {
+          statusDiv.innerText = 'Primero conecta la wallet';
+          return;
+        }
+        try {
+          const ethVal = parseFloat(ethAmountInput.value) || 0;
+          const value = ethers.utils.parseEther(ethVal.toString());
+          statusDiv.innerText = '⌛ Confirmar en MetaMask';
+          const tx = await contract.buyTokens({ value });
+          statusDiv.innerText = 📨 Tx enviada: ${tx.hash.slice(0,10)}...;
+          await tx.wait();
+          statusDiv.innerText = '✅ Compra exitosa';
+        } catch (e) {
+          statusDiv.innerText = '❌ ' + (e.data?.message || e.message);
+        }
+      });
 
-  // Conecta la wallet y configura contratos
-  connectButton.addEventListener('click', async () => {
-    if (!window.ethereum) {
-      statusDiv.innerText = 'MetaMask no detectado';
+      ethAmountInput.dispatchEvent(new Event('input'));
+    </script>
+    <script>
+  let provider;
+  let signer;
+  let userAddress;
+  let pbjContract;
+
+  const PBJ_CONTRACT_ADDRESS = "0xE31Ee1462aCF2eE7b930D340B3e49DC921034A4F";
+  const PBJ_ABI = [
+    "function balanceOf(address account) view returns (uint256)"
+  ];
+
+  async function connectWallet() {
+    if (typeof window.ethereum === "undefined") {
+      alert("MetaMask no está disponible");
       return;
     }
-    try {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-      signer = provider.getSigner();
-      userAddress = await signer.getAddress();
 
-      // Instancia contratos
-      presaleContract = new ethers.Contract(PRESALE_ADDRESS, PRESALE_ABI, signer);
-      pbjContract     = new ethers.Contract(PBJ_ADDRESS,    PBJ_ABI,     provider);
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    document.getElementById("status").textContent = Conectado: ${userAddress};
 
-      // Mostrar balances
-      await refreshBalances();
-
-      statusDiv.innerText = '✅ Wallet conectada: ' + userAddress.slice(0,6) + '…';
-      buyButton.disabled = false;
-    } catch (err) {
-      statusDiv.innerText = 'Error: ' + err.message;
-    }
-  });
-
-  // Refresca ETH y PBJ balances
-  async function refreshBalances() {
-    const [rawEth, rawPbj] = await Promise.all([
-      provider.getBalance(userAddress),
-      pbjContract.balanceOf(userAddress)
-    ]);
-    ethBalanceSpan.innerText = parseFloat(ethers.utils.formatEther(rawEth)).toFixed(4) + ' ETH';
-    pbjBalanceSpan.innerText = Number(ethers.utils.formatUnits(rawPbj,18)).toLocaleString() + ' PBJ';
+    pbjContract = new ethers.Contract(PBJ_CONTRACT_ADDRESS, PBJ_ABI, provider);
+    updatePBJBalance();
   }
 
-  // Manejador de compra
-  buyButton.addEventListener('click', async () => {
+  async function updatePBJBalance() {
+    if (!pbjContract || !userAddress) return;
     try {
-      const ethVal = parseFloat(ethAmountInput.value) || 0;
-      if (ethVal <= 0) throw new Error('Cantidad inválida');
-      const value = ethers.utils.parseEther(ethVal.toString());
-
-      statusDiv.innerText = '⌛ Confirma en MetaMask…';
-      const tx = await presaleContract.buyTokens({ value });
-      statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0,10)}…`;
-      await tx.wait();
-
-      statusDiv.innerText = '✅ Compra exitosa';
-      await refreshBalances();
-    } catch (e) {
-      statusDiv.innerText = '❌ ' + (e.data?.message || e.message);
+      const rawBalance = await pbjContract.balanceOf(userAddress);
+      const formatted = ethers.utils.formatUnits(rawBalance, 18); // asume 18 decimales
+      document.getElementById("pbjBalance").textContent = Number(formatted).toLocaleString();
+    } catch (err) {
+      console.error("Error al obtener balance:", err);
+      document.getElementById("pbjBalance").textContent = "Error";
     }
-  });
+  }
 
-  // Inicializa estimación
-  ethAmountInput.dispatchEvent(new Event('input'));
+  document.getElementById("connectButton").addEventListener("click", connectWallet);
 </script>
   </body>
 </html>
