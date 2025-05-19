@@ -11,6 +11,7 @@
     <style>
       html, body, * { font-family: 'Press Start 2P', cursive !important; }
       .card {
+        position: relative;
         width: 100px;
         height: 140px;
         background: white;
@@ -30,6 +31,19 @@
       .card.deal {
         transform: translateY(0) scale(1);
         opacity: 1;
+      }
+      .card .corner {
+        position: absolute;
+        font-size: 0.6rem;
+      }
+      .card .top-left {
+        top: 4px;
+        left: 6px;
+      }
+      .card .bottom-right {
+        bottom: 4px;
+        right: 6px;
+        transform: rotate(180deg);
       }
     </style>
   </head>
@@ -53,10 +67,10 @@
             <input type="number" id="betAmount" min="1" step="1" value="1000" class="w-24 p-1 rounded bg-gray-800 text-white text-sm" />
           </div>
         </div>
-        <!-- Área de Cartas -->
+        <!-- Área de Cartas con separaciones mayores -->
         <div class="space-y-4 relative h-48">
-          <div id="dealerArea" class="absolute top-8 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
-          <div id="playerArea" class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
+          <div id="dealerArea" class="absolute top-6 left-1/2 transform -translate-x-1/2 flex space-x-6"></div>
+          <div id="playerArea" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-6"></div>
         </div>
         <!-- Puntuación debajo de cada fila -->
         <div class="flex justify-between text-sm mb-4">
@@ -91,7 +105,10 @@
         hand.push(card);
         const el = document.createElement('div');
         el.className = 'card';
-        el.innerText = `${card.v}${card.s}`;
+        el.innerHTML = `
+          <div class="corner top-left">${card.v}${card.s}</div>
+          <div class="corner bottom-right">${card.v}${card.s}</div>
+        `;
         area.appendChild(el);
         setTimeout(() => el.classList.add('deal'), index * 150);
       }
@@ -99,7 +116,6 @@
       function updateScores() {
         document.getElementById('playerScore').innerText = calc(playerHand);
         document.getElementById('dealerScore').innerText = calc(dealerHand);
-        // Auto end if player busts
         if(calc(playerHand) > 21) {
           document.getElementById('resultMsg').innerText = 'Has perdido';
           document.getElementById('hitBtn').disabled = true;
@@ -123,13 +139,11 @@
         const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
         dArea.innerHTML = ''; pArea.innerHTML = '';
 
-        // Apuesta
         const bet = parseInt(document.getElementById('betAmount').value) || 0;
         if(bet > pbjBalance) { alert('Saldo insuficiente'); return; }
         pbjBalance -= bet;
         pbjBalSpan.innerText = pbjBalance;
 
-        // Reparto inicial
         dealCard(dealerHand, dArea, 0);
         dealCard(playerHand, pArea, 1);
         dealCard(playerHand, pArea, 2);
@@ -152,7 +166,6 @@
             setTimeout(updateScores, 500);
           } else {
             clearInterval(interval);
-            // Resultado
             const p = calc(playerHand), d = calc(dealerHand);
             const bet = parseInt(document.getElementById('betAmount').value) || 0;
             let msg = 'Empate';
