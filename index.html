@@ -27,6 +27,7 @@
   </head>
   <body class="bg-gray-950 text-white min-h-screen">
     <div class="max-w-4xl mx-auto p-4 space-y-8">
+      <!-- Header -->
       <header class="flex justify-between items-center py-4 border-b border-gray-700">
         <h1 class="text-3xl font-bold text-green-400">Pepe Blackjack (PBJ)</h1>
         <button id="connectButton" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded">Conectar Wallet</button>
@@ -38,21 +39,21 @@
         <h2 class="text-2xl font-bold text-green-400 mb-4">🃏 Juego de Blackjack</h2>
         <!-- Balance y Apuesta -->
         <div class="mb-4 text-sm flex items-center space-x-8">
-          <div>Saldo PBJ: <span id="pbjBalance">100000</span></div>
+          <div>Saldo PBJ: <span id="pbjBalance" class="font-mono">100000</span></div>
           <div class="flex items-center space-x-2">
             <label for="betAmount">Apuesta:</label>
             <input type="number" id="betAmount" min="1" step="1" value="1000" class="w-24 p-1 rounded bg-gray-800 text-white text-sm" />
           </div>
         </div>
-        <!-- Puntuaciones -->
-        <div class="mb-4 text-sm">
-          <span>Jugador Puntos: <span id="playerScore">0</span></span>
-          <span class="ml-6">Crupier Puntos: <span id="dealerScore">0</span></span>
-        </div>
         <!-- Área de Cartas -->
-        <div class="space-y-12 relative h-48">
+        <div class="space-y-4 relative h-48">
           <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-[-30px]"></div>
           <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-[-30px]"></div>
+        </div>
+        <!-- Puntuación debajo de cada fila -->
+        <div class="flex justify-between text-sm mb-4">
+          <div>Crupier Puntos: <span id="dealerScore">0</span></div>
+          <div class="text-right">Jugador Puntos: <span id="playerScore">0</span></div>
         </div>
         <!-- Controles -->
         <div class="mt-4 flex space-x-2">
@@ -60,53 +61,90 @@
           <button id="hitBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded" disabled>Pedir</button>
           <button id="standBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded" disabled>Plantarse</button>
         </div>
+        <!-- Mensaje de resultado -->
+        <div id="resultMsg" class="mt-4 text-lg font-semibold text-center"></div>
       </section>
     </div>
 
     <script>
       const suits=['♠','♥','♦','♣'], vals=[2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
       let deck=[], dealerHand=[], playerHand=[];
-      let pbjBalance=100000;
-      const pbjBalSpan=document.getElementById('pbjBalance');
-      function shuffle(){ deck=[]; suits.forEach(s=>vals.forEach(v=>deck.push({s,v}))); deck.sort(()=>Math.random()-0.5);}      
-      function dealCard(hand, area, index){ const card=deck.pop(); hand.push(card);
-        const el=document.createElement('div'); el.className='card'; el.innerText=`${card.v}${card.s}`;
-        area.appendChild(el);
-        setTimeout(()=>el.classList.add('deal'), index*150);
+      let pbjBalance = 100000;
+      const pbjBalSpan = document.getElementById('pbjBalance');
+
+      function shuffle() {
+        deck = [];
+        suits.forEach(s => vals.forEach(v => deck.push({s,v}))); 
+        deck.sort(() => Math.random() - 0.5);
       }
-      function updateScores(){ document.getElementById('playerScore').innerText=calc(playerHand); document.getElementById('dealerScore').innerText=calc(dealerHand);}      
-      function calc(hand){ let sum=0, aces=0; hand.forEach(c=>{ if(c.v==='A'){aces++;sum+=11;} else if(['J','Q','K'].includes(c.v)) sum+=10; else sum+=c.v; }); while(sum>21&&aces){sum-=10;aces--;} return sum;}      
-      document.getElementById('dealBtn').onclick=()=>{
-        shuffle(); dealerHand=[]; playerHand=[];
-        document.getElementById('dealerArea').innerHTML=''; document.getElementById('playerArea').innerHTML='';
-        // Decrease balance by bet
-        const bet= parseInt(document.getElementById('betAmount').value)||0;
-        if(bet>pbjBalance){ alert('Saldo insuficiente'); return; }
-        pbjBalance -= bet; pbjBalSpan.innerText = pbjBalance;
-        // Deal
-        dealCard(dealerHand, document.getElementById('dealerArea'), 0);
-        dealCard(playerHand, document.getElementById('playerArea'), 1);
-        dealCard(playerHand, document.getElementById('playerArea'), 2);
+
+      function dealCard(hand, area, index) {
+        const card = deck.pop();
+        hand.push(card);
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.innerText = `${card.v}${card.s}`;
+        area.appendChild(el);
+        setTimeout(() => el.classList.add('deal'), index * 150);
+      }
+
+      function updateScores() {
+        document.getElementById('playerScore').innerText = calc(playerHand);
+        document.getElementById('dealerScore').innerText = calc(dealerHand);
+      }
+
+      function calc(hand) {
+        let sum = 0, aces = 0;
+        hand.forEach(c => {
+          if(c.v === 'A') { aces++; sum += 11; }
+          else if(['J','Q','K'].includes(c.v)) sum += 10;
+          else sum += c.v;
+        });
+        while(sum > 21 && aces) { sum -= 10; aces--; }
+        return sum;
+      }
+
+      document.getElementById('dealBtn').onclick = () => {
+        shuffle(); dealerHand = []; playerHand = [];
+        const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
+        dArea.innerHTML = ''; pArea.innerHTML = '';
+
+        // Apuesta
+        const bet = parseInt(document.getElementById('betAmount').value) || 0;
+        if(bet > pbjBalance) { alert('Saldo insuficiente'); return; }
+        pbjBalance -= bet;
+        pbjBalSpan.innerText = pbjBalance;
+
+        // Reparto inicial
+        dealCard(dealerHand, dArea, 0);
+        dealCard(playerHand, pArea, 1);
+        dealCard(playerHand, pArea, 2);
         setTimeout(updateScores, 500);
-        document.getElementById('hitBtn').disabled=false;
-        document.getElementById('standBtn').disabled=false;
+
+        document.getElementById('hitBtn').disabled = false;
+        document.getElementById('standBtn').disabled = false;
+        document.getElementById('resultMsg').innerText = '';
       };
-      document.getElementById('hitBtn').onclick=()=>{
+
+      document.getElementById('hitBtn').onclick = () => {
         dealCard(playerHand, document.getElementById('playerArea'), playerHand.length);
         setTimeout(updateScores, 500);
       };
-      document.getElementById('standBtn').onclick=()=>{
-        let i=dealerHand.length;
-        const interval=setInterval(()=>{
-          if(calc(dealerHand)<17){ dealCard(dealerHand, document.getElementById('dealerArea'), i++); setTimeout(updateScores, 500); }
-          else {
+
+      document.getElementById('standBtn').onclick = () => {
+        const interval = setInterval(() => {
+          if(calc(dealerHand) < 17) {
+            dealCard(dealerHand, document.getElementById('dealerArea'), dealerHand.length);
+            setTimeout(updateScores, 500);
+          } else {
             clearInterval(interval);
-            // Determine result
-            const p=calc(playerHand), d=calc(dealerHand);
-            const bet = parseInt(document.getElementById('betAmount').value)||0;
-            if(p<=21 && (d>21 || p>d)) pbjBalance += bet*2;
-            else if(p===d) pbjBalance += bet;
-            // update balance
+            // Resultado
+            const p = calc(playerHand), d = calc(dealerHand);
+            const bet = parseInt(document.getElementById('betAmount').value) || 0;
+            let msg = 'Empate';
+            if(p <= 21 && (d > 21 || p > d)) { pbjBalance += bet * 2; msg = '¡Ganaste!'; }
+            else if(p > 21 || (d <= 21 && d > p)) msg = 'Has perdido';
+            document.getElementById('resultMsg').innerText = msg;
             pbjBalSpan.innerText = pbjBalance;
           }
         }, 600);
