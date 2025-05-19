@@ -3,9 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pepe Blackjack (PBJ) - Compra de Tokens</title>
+    <title>Pepe Blackjack (PBJ) - DApp</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+      body { font-family: 'Press Start 2P', cursive; }
+    </style>
   </head>
   <body class="bg-gray-950 text-white min-h-screen font-sans">
     <div class="max-w-4xl mx-auto p-4 space-y-8">
@@ -24,21 +28,14 @@
           <span>Saldo de ETH:</span>
           <span id="ethBalance" class="font-mono">- ETH</span>
         </div>
-        <!-- Selector ETH / PBJ -->
-        <div class="flex gap-4 mb-4">
-          <button id="modeEth" class="flex-1 py-2 rounded bg-gray-800 hover:bg-gray-700">Pagar con ETH</button>
-          <button id="modePbj" class="flex-1 py-2 rounded bg-gray-800 hover:bg-gray-700">Pagar con PBJ</button>
+        <!-- Input ETH -->
+        <div class="flex items-center justify-between mb-4">
+          <label for="ethAmount" class="text-sm">Cantidad en ETH:</label>
+          <input type="number" id="ethAmount" min="0.01" step="0.01" value="0.01" class="w-32 p-2 rounded bg-gray-800 text-white border border-gray-600" />
         </div>
-        <!-- Inputs -->
-        <div id="inputs" class="space-y-4">
-          <div class="flex items-center justify-between">
-            <label for="ethAmount" class="text-sm">Cantidad en ETH:</label>
-            <input type="number" id="ethAmount" min="0.01" step="0.01" value="0.01" class="w-32 p-2 rounded bg-gray-800 text-white border border-gray-600" />
-          </div>
-          <div class="flex items-center justify-between">
-            <label for="pbjAmount" class="text-sm">Cantidad en PBJ:</label>
-            <input type="number" id="pbjAmount" min="10000" step="10000" class="w-32 p-2 rounded bg-gray-800 text-white border border-gray-600" />
-          </div>
+        <div class="mb-4">
+          <span class="text-sm">Equivale a:</span>
+          <span id="pbjEstimate" class="font-mono">0 PBJ</span>
         </div>
         <div class="text-right">
           <button id="buyButton" disabled class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded text-white font-semibold">Comprar</button>
@@ -94,7 +91,7 @@
         <div class="text-gray-300 space-y-4">
           <div>
             <h3 class="font-semibold">¿Cómo compro PBJ?</h3>
-            <p>Conecta tu wallet, selecciona ETH o PBJ, establece la cantidad y haz clic en "Comprar".</p>
+            <p>Conecta tu wallet, ajusta la cantidad en ETH y haz clic en "Comprar".</p>
           </div>
           <div>
             <h3 class="font-semibold">¿Cuál es el mínimo de compra?</h3>
@@ -118,42 +115,8 @@
       const buyButton = document.getElementById('buyButton');
       const statusDiv = document.getElementById('status');
       const ethAmountInput = document.getElementById('ethAmount');
-      const pbjAmountInput = document.getElementById('pbjAmount');
-      const modeEth = document.getElementById('modeEth');
-      const modePbj = document.getElementById('modePbj');
+      const pbjEstimateSpan = document.getElementById('pbjEstimate');
       const ethBalanceSpan = document.getElementById('ethBalance');
-
-      let buyMode = 'ETH';
-
-      function updateEstimate() {
-        const ethVal = parseFloat(ethAmountInput.value) || 0;
-        const pbjVal = parseFloat(pbjAmountInput.value) || 0;
-        if (buyMode === 'ETH') {
-          pbjAmountInput.value = (ethVal * rate).toLocaleString('fullwide', {useGrouping:false});
-        } else {
-          ethAmountInput.value = (pbjVal / rate).toFixed(6);
-        }
-      }
-
-      modeEth.onclick = () => {
-        buyMode = 'ETH';
-        modeEth.classList.add('bg-gray-700');
-        modePbj.classList.remove('bg-gray-700');
-        ethAmountInput.removeAttribute('disabled');
-        pbjAmountInput.setAttribute('disabled', true);
-        updateEstimate();
-      };
-      modePbj.onclick = () => {
-        buyMode = 'PBJ';
-        modePbj.classList.add('bg-gray-700');
-        modeEth.classList.remove('bg-gray-700');
-        pbjAmountInput.removeAttribute('disabled');
-        ethAmountInput.setAttribute('disabled', true);
-        updateEstimate();
-      };
-
-      ethAmountInput.addEventListener('input', updateEstimate);
-      pbjAmountInput.addEventListener('input', updateEstimate);
 
       connectButton.onclick = async () => {
         if (window.ethereum) {
@@ -175,15 +138,18 @@
         }
       };
 
+      ethAmountInput.oninput = () => {
+        const ethVal = parseFloat(ethAmountInput.value) || 0;
+        pbjEstimateSpan.innerText = `${(ethVal * rate).toLocaleString('fullwide', { useGrouping:false })} PBJ`;
+      };
+
       buyButton.onclick = async () => {
         if (!contract) {
           statusDiv.innerText = 'Primero conecta la wallet';
           return;
         }
         try {
-          const ethVal = buyMode === 'ETH'
-            ? parseFloat(ethAmountInput.value)
-            : parseFloat(ethAmountInput.value); // no change
+          const ethVal = parseFloat(ethAmountInput.value) || 0;
           const value = ethers.utils.parseEther(ethVal.toString());
           statusDiv.innerText = '⌛ Confirmar en MetaMask';
           const tx = await contract.buyTokens({ value });
@@ -195,8 +161,8 @@
         }
       };
 
-      // Inicializar modo ETH
-      modeEth.click();
+      // Inicializar
+      ethAmountInput.dispatchEvent(new Event('input'));
     </script>
   </body>
 </html>
