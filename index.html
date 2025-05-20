@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pepe Blackjack (PBJ) - DApp</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     <script src="./cdn.tailwindcss.js"></script>
     <!-- tsParticles para fondo animado -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
@@ -430,110 +431,122 @@
         }, 600);
       };
     </script>
-    <script>
-      const contractAddress = '0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57';
-      const abi = ['function buyTokens() payable'];
-      const rate = 1000000;
-      let provider, signer, contract;
-      const connectButton = document.getElementById('connectButton');
-      const buyButton = document.getElementById('buyButton');
-      const statusDiv = document.getElementById('status');
-      const ethAmountInput = document.getElementById('ethAmount');
-      const pbjAmountInput = document.getElementById('pbjAmount');
-      const ethBalanceSpan = document.getElementById('ethBalance');
+<script>
+  const contractAddress = '0x3Bcc79d679d900b78684F44FF7DacC286fAb0C57'; // contrato de preventa
+  const pbjContractAddress = '0xE31Ee1462aCF2eE7b930D340B3e49DC921034A4F'; // contrato del token
+  const rate = 1000000;
+  const abi = ['function buyTokens() payable'];
+  const pbjAbi = ['function balanceOf(address) view returns (uint256)'];
 
-      function updateEstimate() {
-        const ethVal = parseFloat(ethAmountInput.value) || 0;
-        const pbjVal = parseFloat(pbjAmountInput.value) || 0;
-        if (document.activeElement === ethAmountInput) {
-          pbjAmountInput.value = (ethVal * rate).toFixed(0);
-        } else {
-          ethAmountInput.value = (pbjVal / rate).toFixed(6);
-        }
-      }
-      ethAmountInput.addEventListener('input', updateEstimate);
-      pbjAmountInput.addEventListener('input', updateEstimate);
+  let provider, signer, contract, pbjContract, userAddress;
 
-      connectButton.addEventListener('click', async () => {
-        if (!window.ethereum) {
-          statusDiv.innerText = 'MetaMask no detectado';
-          return;
-        }
-        try {
-          provider = new ethers.providers.Web3Provider(window.ethereum);
-          await provider.send('eth_requestAccounts', []);
-          signer = provider.getSigner();
-          contract = new ethers.Contract(contractAddress, abi, signer);
-          const addr = await signer.getAddress();
-          const bal = await provider.getBalance(addr);
-          ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(bal)).toFixed(4)} ETH`;
-          statusDiv.innerText = '✅ Wallet conectada';
-          buyButton.disabled = false;
-        } catch (err) {
-          statusDiv.innerText = 'Error: ' + err.message;
-        }
-      });
+  const connectButton = document.getElementById('connectButton');
+  const buyButton = document.getElementById('buyButton');
+  const statusDiv = document.getElementById('status');
+  const ethAmountInput = document.getElementById('ethAmount');
+  const pbjAmountInput = document.getElementById('pbjAmount');
+  const ethBalanceSpan = document.getElementById('ethBalance');
+  const pbjBalanceSpan = document.getElementById('pbjBalance');
 
-      buyButton.addEventListener('click', async () => {
-        if (!contract) {
-          statusDiv.innerText = 'Primero conecta la wallet';
-          return;
-        }
-        try {
-          const ethVal = parseFloat(ethAmountInput.value) || 0;
-          const value = ethers.utils.parseEther(ethVal.toString());
-          statusDiv.innerText = '⌛ Confirmar en MetaMask';
-          const tx = await contract.buyTokens({ value });
-          statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0,10)}...`;
-          await tx.wait();
-          statusDiv.innerText = '✅ Compra exitosa';
-        } catch (e) {
-          statusDiv.innerText = '❌ ' + (e.data?.message || e.message);
-        }
-      });
+  function updateEstimate() {
+    const ethVal = parseFloat(ethAmountInput.value) || 0;
+    const pbjVal = parseFloat(pbjAmountInput.value) || 0;
+    if (document.activeElement === ethAmountInput) {
+      pbjAmountInput.value = (ethVal * rate).toFixed(0);
+    } else {
+      ethAmountInput.value = (pbjVal / rate).toFixed(6);
+    }
+  }
 
-      ethAmountInput.dispatchEvent(new Event('input'));
-    </script>
-    <script>
-  let provider;
-  let signer;
-  let userAddress;
-  let pbjContract;
+  ethAmountInput.addEventListener('input', updateEstimate);
+  pbjAmountInput.addEventListener('input', updateEstimate);
 
-  const PBJ_CONTRACT_ADDRESS = "0xE31Ee1462aCF2eE7b930D340B3e49DC921034A4F";
-  const PBJ_ABI = [
-    "function balanceOf(address account) view returns (uint256)"
-  ];
-
-  async function connectWallet() {
-    if (typeof window.ethereum === "undefined") {
-      alert("MetaMask no está disponible");
+  connectButton.addEventListener('click', async () => {
+    if (!window.ethereum) {
+      statusDiv.innerText = '❌ MetaMask no detectado';
+      alert('MetaMask no detectado');
       return;
     }
 
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    signer = provider.getSigner();
-    userAddress = await signer.getAddress();
-    document.getElementById("status").textContent = `Conectado: ${userAddress}`;
+    try {
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send('eth_requestAccounts', []);
+      signer = provider.getSigner();
+      contract = new ethers.Contract(contractAddress, abi, signer);
+      pbjContract = new ethers.Contract(pbjContractAddress, pbjAbi, provider);
+      userAddress = await signer.getAddress();
 
-    pbjContract = new ethers.Contract(PBJ_CONTRACT_ADDRESS, PBJ_ABI, provider);
-    updatePBJBalance();
-  }
+      const network = await provider.getNetwork();
+      if (network.chainId !== 8453) {
+        statusDiv.innerText = '❌ Conéctate a la red Base';
+        alert('Por favor cambia a la red Base en MetaMask.');
+        return;
+      }
+
+      const balance = await provider.getBalance(userAddress);
+      ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(balance)).toFixed(4)} ETH`;
+      statusDiv.innerText = '✅ Wallet conectada';
+      buyButton.disabled = false;
+
+      updatePBJBalance();
+    } catch (err) {
+      console.error(err);
+      statusDiv.innerText = '❌ Error: ' + err.message;
+    }
+  });
 
   async function updatePBJBalance() {
     if (!pbjContract || !userAddress) return;
     try {
       const rawBalance = await pbjContract.balanceOf(userAddress);
-      const formatted = ethers.utils.formatUnits(rawBalance, 18); // asume 18 decimales
-      document.getElementById("pbjBalance").textContent = Number(formatted).toLocaleString();
+      const formatted = ethers.utils.formatUnits(rawBalance, 18);
+      pbjBalanceSpan.textContent = Number(formatted).toLocaleString();
     } catch (err) {
       console.error("Error al obtener balance:", err);
-      document.getElementById("pbjBalance").textContent = "Error";
+      pbjBalanceSpan.textContent = "Error";
     }
   }
 
-  document.getElementById("connectButton").addEventListener("click", connectWallet);
+  buyButton.addEventListener('click', async () => {
+    if (!contract) {
+      statusDiv.innerText = '❌ Primero conecta la wallet';
+      alert('Conecta tu wallet primero');
+      return;
+    }
+
+    const ethVal = parseFloat(ethAmountInput.value);
+    if (isNaN(ethVal) || ethVal <= 0) {
+      alert('Ingresa una cantidad válida de ETH');
+      return;
+    }
+
+    if (ethVal > 2) {
+      alert('El máximo de compra es 2 ETH por wallet');
+      return;
+    }
+
+    try {
+      const value = ethers.utils.parseEther(ethVal.toString());
+      statusDiv.innerText = '⌛ Confirmar en MetaMask...';
+      buyButton.disabled = true;
+
+      const tx = await contract.buyTokens({ value });
+      statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0,10)}...`;
+      await tx.wait();
+
+      statusDiv.innerText = '✅ Compra exitosa';
+      alert('¡Tokens comprados con éxito!');
+      updatePBJBalance();
+    } catch (e) {
+      console.error(e);
+      statusDiv.innerText = '❌ ' + (e.data?.message || e.message);
+      alert('Error en la compra: ' + (e.data?.message || e.message));
+    } finally {
+      buyButton.disabled = false;
+    }
+  });
+
+  ethAmountInput.dispatchEvent(new Event('input'));
 </script>
   </body>
 </html>
