@@ -63,8 +63,28 @@
       }
       .red-suit { color: red; }
       .black-suit { color: black; }
-      .form-presale input {
+      .form-presale.input {
           width: 70%;
+      }
+      .w-100 {
+        width: 100%;
+      }
+      .top-45 {
+        top: 10.5rem;
+      }
+      .bottom-45 {
+        bottom: 10.5rem;
+      }
+      .image-pepe-preventa {
+        height: 25rem;
+        width: auto;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      @media (max-width: 500px) {
+        .cartas-blackjack {
+          height: 25rem !important;
+        }
       }
     </style>
   </head>
@@ -81,6 +101,13 @@
         >Conectar Wallet</button>
       </header>
       <div id="status" class="text-center text-base sm:text-lg"></div>
+
+
+      <img
+      src="./preventa.png"
+      alt="preventa"
+      class="image-pepe-preventa rounded-lg border-0 border-gray-700 shadow-inner"
+    />
 
       <!-- Componente de Compra -->
       <section class="bg-gray-800 rounded-2xl shadow-2xl p-6 w-full sm:max-w-md mx-auto">
@@ -156,14 +183,14 @@
           </div>
         </div>
 
-        <div class="relative h-64 sm:h-96 mb-4">
+        <div class="relative h-64 sm:h-96 cartas-blackjack mb-4">
           <div id="dealerArea" class="absolute top-0 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 overflow-x-auto"></div>
-          <div class="absolute top-20 sm:top-40 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm text-center">
+          <div class="absolute top-45 w-100 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm text-center">
             Crupier Puntos: <span id="dealerScore">0</span>
           </div>
 
           <div id="playerArea" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 overflow-x-auto"></div>
-          <div class="absolute bottom-40 sm:bottom-40 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm text-center">
+          <div class="absolute bottom-45 w-100 left-1/2 transform -translate-x-1/2 text-xs sm:text-sm text-center">
             Jugador Puntos: <span id="playerScore">0</span>
           </div>
         </div>
@@ -185,7 +212,7 @@
     <img
       src="./carta.png"
       alt="Carta de BasePepe"
-      class="w-full h-auto rounded-lg border-2 border-gray-700 shadow-inner"
+      class="w-full h-auto rounded-lg border-0 border-gray-700 shadow-inner"
     />
   </div>
 
