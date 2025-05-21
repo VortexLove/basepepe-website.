@@ -505,8 +505,8 @@
       console.error("Error al obtener balance:", err);
       pbjBalanceSpan.textContent = "Error";
     }
+  }
   
-
   buyButton.addEventListener('click', async () => {
     if (!contract) {
       statusDiv.innerText = '❌ Primero conecta la wallet';
