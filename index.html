@@ -558,6 +558,55 @@ async function updatePBJBalance() {
 document.getElementById('dealBtn').onclick = async () => {
   const bet = parseFloat(document.getElementById('betAmount').value) || 0;
 
+  if (!userAddress) {
+    alert('Conecta tu wallet primero');
+    return;
+  }
+
+  if (bet <= 0) {
+    alert('Ingresa una apuesta válida');
+    return;
+  }
+
+  await updatePBJBalance();
+
+  if (bet > pbjBalance) {
+    alert('Saldo insuficiente');
+    return;
+  }
+
+  try {
+    await apostarConPBJ(bet);
+
+    // Si la apuesta on-chain fue exitosa, inicia el juego localmente:
+    pbjBalance -= bet;
+    pbjBalanceSpan.textContent = pbjBalance.toLocaleString(undefined, {maximumFractionDigits: 2});
+
+    shuffle();
+    dealerHand = [];
+    playerHand = [];
+
+    const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
+    dArea.innerHTML = '';
+    pArea.innerHTML = '';
+
+    dealCard(dealerHand, dArea, 0);
+    dealCard(playerHand, pArea, 1);
+    dealCard(playerHand, pArea, 2);
+
+    setTimeout(updateScores, 500);
+
+    document.getElementById('hitBtn').disabled = false;
+    document.getElementById('standBtn').disabled = false;
+    document.getElementById('resultMsg').innerText = '';
+
+  } catch (err) {
+    alert("No se pudo realizar la apuesta on-chain. Intenta de nuevo.");
+  }
+};
+
+  const bet = parseFloat(document.getElementById('betAmount').value) || 0;
+
   // Verifica si la wallet está conectada y saldo sincronizado
   if (!userAddress) {
     alert('Conecta tu wallet primero');
