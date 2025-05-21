@@ -337,143 +337,157 @@
       });
     </script>
     <script>
-
-       async function updatePBJBalance() {
-  if (!pbjContract || !userAddress) return;
-  try {
-    // 1. Captura de elementos (pueden no existir, por seguridad)
-    const headerSpan = document.getElementById('pbjBalanceHeader');
-    const gameSpan   = document.getElementById('pbjBalanceGame');
-
-    // 2. Lectura desde la blockchain
-    const raw     = await pbjContract.balanceOf(userAddress);
-    const dec     = await pbjContract.decimals();
-    const balance = ethers.utils.formatUnits(raw, dec);
-
-    // 3. Formateo
-    const formatted = parseFloat(balance).toFixed(2);
-
-    // 4. Asignación segura
-    if (headerSpan) headerSpan.innerText = formatted;
-    if (gameSpan)   gameSpan.innerText   = formatted;
-
-  } catch (err) {
-    console.error("Error al obtener PBJ balance:", err);
+  async function updatePBJBalance() {
+    if (!pbjContract || !userAddress) return;
+    try {
+      const headerSpan = document.getElementById('pbjBalanceHeader');
+      const gameSpan   = document.getElementById('pbjBalanceGame');
+      const raw     = await pbjContract.balanceOf(userAddress);
+      const dec     = await pbjContract.decimals();
+      const balance = ethers.utils.formatUnits(raw, dec);
+      const formatted = parseFloat(balance).toFixed(2);
+      if (headerSpan) headerSpan.innerText = formatted;
+      if (gameSpan)   gameSpan.innerText   = formatted;
+    } catch (err) {
+      console.error("Error al obtener PBJ balance:", err);
+    }
   }
-}
-      
-      const suits=['♠','♥','♦','♣'], vals=[2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
-      let deck=[], dealerHand=[], playerHand=[];
 
-      function shuffle() {
-        deck = [];
-        suits.forEach(s => vals.forEach(v => deck.push({s,v})));
-        deck.sort(() => Math.random() - 0.5);
+  const suits = ['♠','♥','♦','♣'], vals = [2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
+  let deck = [], dealerHand = [], playerHand = [];
+
+  function shuffle() {
+    deck = [];
+    suits.forEach(s => vals.forEach(v => deck.push({s,v})));
+    deck.sort(() => Math.random() - 0.5);
+  }
+
+  function dealCard(hand, area, index) {
+    const card = deck.pop();
+    hand.push(card);
+    const isRed = card.s === '♥' || card.s === '♦';
+    const el = document.createElement('div');
+    el.className = `card ${isRed ? 'red-suit' : 'black-suit'}`;
+    el.innerHTML = `
+      <div class="corner top-left">${card.v}${card.s}</div>
+      <div class="corner bottom-right">${card.v}${card.s}</div>
+      ${card.v}${card.s}
+    `;
+    area.appendChild(el);
+    setTimeout(() => el.classList.add('deal'), index * 150);
+  }
+
+  function calc(hand) {
+    let sum = 0, aces = 0;
+    hand.forEach(c => {
+      if (c.v === 'A') { aces++; sum += 11; }
+      else if (['J','Q','K'].includes(c.v)) sum += 10;
+      else sum += c.v;
+    });
+    while (sum > 21 && aces) { sum -= 10; aces--; }
+    return sum;
+  }
+
+  function updateScores() {
+    const p = calc(playerHand);
+    const d = calc(dealerHand);
+    document.getElementById('playerScore').innerText = p;
+    document.getElementById('dealerScore').innerText = d;
+    if (p > 21) {
+      document.getElementById('resultMsg').innerText = 'Has perdido';
+      document.getElementById('hitBtn').disabled = true;
+      document.getElementById('standBtn').disabled = true;
+    }
+  }
+
+  document.getElementById('dealBtn').onclick = async () => {
+    const bet = parseInt(document.getElementById('betAmount').value) || 0;
+
+    try {
+      const decimals = await pbjContract.decimals();
+      const betUnits = ethers.utils.parseUnits(bet.toString(), decimals);
+      const rawBalance = await pbjContract.balanceOf(userAddress);
+      const balance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
+
+      if (bet > balance) {
+        alert('Saldo insuficiente');
+        return;
       }
 
-      function dealCard(hand, area, index) {
-        const card = deck.pop();
-        hand.push(card);
-        const isRed = card.s === '♥' || card.s === '♦';
-        const el = document.createElement('div');
-        el.className = `card ${isRed ? 'red-suit' : 'black-suit'}`;
-        el.innerHTML = `
-          <div class="corner top-left">${card.v}${card.s}</div>
-          <div class="corner bottom-right">${card.v}${card.s}</div>
-          ${card.v}${card.s}
-        `;
-        area.appendChild(el);
-        setTimeout(() => el.classList.add('deal'), index * 150);
+      // 1. Aprobar el gasto de PBJ
+      const txApprove = await pbjContract.connect(signer).approve(casinoContract.address, betUnits);
+      await txApprove.wait();
+
+      // 2. Colocar la apuesta en el contrato
+      const txPlace = await casinoContract.placeBet(betUnits);
+      await txPlace.wait();
+
+      // 3. Repartir cartas en UI
+      shuffle(); dealerHand = []; playerHand = [];
+      const dArea = document.getElementById('dealerArea'),
+            pArea = document.getElementById('playerArea');
+      dArea.innerHTML = ''; pArea.innerHTML = '';
+      dealCard(dealerHand, dArea, 0);
+      dealCard(playerHand, pArea, 1);
+      dealCard(playerHand, pArea, 2);
+      setTimeout(updateScores, 500);
+
+      document.getElementById('hitBtn').disabled = false;
+      document.getElementById('standBtn').disabled = false;
+      document.getElementById('resultMsg').innerText = '';
+    } catch (err) {
+      console.error("Error al colocar la apuesta:", err);
+      alert("No se pudo colocar la apuesta: " + (err.data?.message || err.message));
+    }
+  };
+
+  document.getElementById('hitBtn').onclick = () => {
+    dealCard(playerHand, document.getElementById('playerArea'), playerHand.length);
+    setTimeout(() => {
+      updateScores();
+      if (calc(playerHand) > 21) {
+        document.getElementById('hitBtn').disabled = true;
+        document.getElementById('standBtn').disabled = true;
       }
+    }, 500);
+  };
 
-      function updateScores() {
-        const p = calc(playerHand);
-        const d = calc(dealerHand);
-        document.getElementById('playerScore').innerText = p;
-        document.getElementById('dealerScore').innerText = d;
+  document.getElementById('standBtn').onclick = async () => {
+    const interval = setInterval(async () => {
+      if (calc(dealerHand) < 17) {
+        dealCard(dealerHand, document.getElementById('dealerArea'), dealerHand.length);
+        setTimeout(updateScores, 500);
+      } else {
+        clearInterval(interval);
+        const p = calc(playerHand), d = calc(dealerHand);
+        let msg = 'Empate';
+        let playerWon = false;
+        let isDraw = false;
 
-        if(p > 21) {
-          document.getElementById('resultMsg').innerText = 'Has perdido';
-          document.getElementById('hitBtn').disabled = true;
-          document.getElementById('standBtn').disabled = true;
+        if (p <= 21 && (d > 21 || p > d)) {
+          msg = '¡Ganaste!';
+          playerWon = true;
+        } else if (p === d && p <= 21) {
+          msg = 'Empate';
+          isDraw = true;
+        } else {
+          msg = 'Has perdido';
+        }
+
+        document.getElementById('resultMsg').innerText = msg;
+
+        try {
+          const txResolve = await casinoContract.connect(signer).resolveBet(playerWon, isDraw);
+          await txResolve.wait();
+          updatePBJBalance();
+        } catch (err) {
+          console.error("Error al resolver la apuesta:", err);
+          alert("Error al resolver la apuesta on-chain.");
         }
       }
-
-      function calc(hand) {
-        let sum = 0, aces = 0;
-        hand.forEach(c => {
-          if(c.v === 'A') { aces++; sum += 11; }
-          else if(['J','Q','K'].includes(c.v)) sum += 10;
-          else sum += c.v;
-        });
-        while(sum > 21 && aces) { sum -= 10; aces--; }
-        return sum;
-      }
-
-document.getElementById('dealBtn').onclick = async () => {
-  const bet = parseInt(document.getElementById('betAmount').value) || 0;
-
-  try {
-    const rawBalance = await pbjContract.balanceOf(userAddress);
-    const decimals = await pbjContract.decimals();
-    const balance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
-
-    if (bet > balance) {
-      alert('Saldo insuficiente');
-      return;
-    }
-
-    // Continuar con el juego si hay suficiente balance
-    shuffle(); dealerHand = []; playerHand = [];
-    const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
-    dArea.innerHTML = ''; pArea.innerHTML = '';
-
-    dealCard(dealerHand, dArea, 0);
-    dealCard(playerHand, pArea, 1);
-    dealCard(playerHand, pArea, 2);
-    setTimeout(updateScores, 500);
-
-    document.getElementById('hitBtn').disabled = false;
-    document.getElementById('standBtn').disabled = false;
-    document.getElementById('resultMsg').innerText = '';
-  } catch (err) {
-    console.error("Error al verificar el balance:", err);
-    alert("Error al verificar el saldo. Intenta nuevamente.");
-  }
-};
-
-
-      document.getElementById('hitBtn').onclick = () => {
-        dealCard(playerHand, document.getElementById('playerArea'), playerHand.length);
-        setTimeout(() => {
-          updateScores();
-          if (calc(playerHand) > 21) {
-            document.getElementById('hitBtn').disabled = true;
-            document.getElementById('standBtn').disabled = true;
-          }
-        }, 500);
-      };
-
-      document.getElementById('standBtn').onclick = () => {
-  const interval = setInterval(() => {
-    if (calc(dealerHand) < 17) {
-      dealCard(dealerHand, document.getElementById('dealerArea'), dealerHand.length);
-      setTimeout(updateScores, 500);
-    } else {
-      clearInterval(interval);
-      const p = calc(playerHand), d = calc(dealerHand);
-      let msg = 'Empate';
-      if (p <= 21 && (d > 21 || p > d)) { msg = '¡Ganaste!'; }
-      else if (p > 21 || (d <= 21 && d > p)) msg = 'Has perdido';
-      document.getElementById('resultMsg').innerText = msg;
-
-      // → Aquí actualizamos balance de forma centralizada:
-      updatePBJBalance();
-    }
-  }, 600);
-};
-
-    </script>
+    }, 600);
+  };
+</script>
 <script>
   const contractAddress = '0x514963d1deb56ec8aFc212209299A807871A6098'; // contrato de preventa
   const pbjContractAddress = '0x514963d1deb56ec8aFc212209299A807871A6098'; // contrato del token
@@ -484,7 +498,7 @@ document.getElementById('dealBtn').onclick = async () => {
   'function decimals() view returns (uint8)'
 ];
 
-  let provider, signer, contract, pbjContract, userAddress;
+  let provider, signer, contract, pbjContract, casinoContract, userAddress;
 
   const connectButton = document.getElementById('connectButton');
   const buyButton = document.getElementById('buyButton');
@@ -534,6 +548,18 @@ document.getElementById('dealBtn').onclick = async () => {
       buyButton.disabled = false;
 
       updatePBJBalance();
+      
+      // 1️⃣ Instancia del contrato “casino”
+const casinoAbi = [
+  'function placeBet(uint256)',
+  'function finishGame(bool)'
+];
+casinoContract = new ethers.Contract(
+  '0x67C6a3208C0be081f13BDc387bA1Bd4f6C697f12', // tu PepeBlackjackGame
+  casinoAbi,
+  signer
+);
+
     } catch (err) {
       console.error(err);
       statusDiv.innerText = '❌ Error: ' + err.message;
