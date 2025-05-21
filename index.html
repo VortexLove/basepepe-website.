@@ -415,7 +415,7 @@
       }
 
       // 1. Aprobar el gasto de PBJ
-      const txApprove = await pbjContract.approve(casinoContract.address, betUnits);
+      const txApprove = await pbjContract.connect(signer).approve(casinoContract.address, betUnits);
       await txApprove.wait();
 
       // 2. Colocar la apuesta en el contrato
@@ -533,7 +533,7 @@
       await provider.send('eth_requestAccounts', []);
       signer = provider.getSigner();
       contract = new ethers.Contract(contractAddress, abi, signer);
-      pbjContract = new ethers.Contract(pbjContractAddress, pbjAbi, signer);
+      pbjContract = new ethers.Contract(pbjContractAddress, pbjAbi, provider);
       userAddress = await signer.getAddress();
 
       const network = await provider.getNetwork();
