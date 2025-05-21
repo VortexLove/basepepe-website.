@@ -551,8 +551,8 @@
       
       // 1️⃣ Instancia del contrato “casino”
 const casinoAbi = [
-  'function placeBet(uint256)',
-  'function finishGame(bool)'
+  'function placeBet(uint256 amount) external',
+  'function resolveBet(bool playerWon, bool isDraw) external',
 ];
 casinoContract = new ethers.Contract(
   '0x67C6a3208C0be081f13BDc387bA1Bd4f6C697f12', // tu PepeBlackjackGame
