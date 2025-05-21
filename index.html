@@ -337,6 +337,31 @@
       });
     </script>
     <script>
+
+       async function updatePBJBalance() {
+  if (!pbjContract || !userAddress) return;
+  try {
+    // 1. Captura de elementos (pueden no existir, por seguridad)
+    const headerSpan = document.getElementById('pbjBalanceHeader');
+    const gameSpan   = document.getElementById('pbjBalanceGame');
+
+    // 2. Lectura desde la blockchain
+    const raw     = await pbjContract.balanceOf(userAddress);
+    const dec     = await pbjContract.decimals();
+    const balance = ethers.utils.formatUnits(raw, dec);
+
+    // 3. Formateo
+    const formatted = parseFloat(balance).toFixed(2);
+
+    // 4. Asignación segura
+    if (headerSpan) headerSpan.innerText = formatted;
+    if (gameSpan)   gameSpan.innerText   = formatted;
+
+  } catch (err) {
+    console.error("Error al obtener PBJ balance:", err);
+  }
+}
+      
       const suits=['♠','♥','♦','♣'], vals=[2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
       let deck=[], dealerHand=[], playerHand=[];
 
@@ -515,31 +540,6 @@ document.getElementById('dealBtn').onclick = async () => {
     }
   });
 
-  async function updatePBJBalance() {
-  if (!pbjContract || !userAddress) return;
-  try {
-    // 1. Captura de elementos (pueden no existir, por seguridad)
-    const headerSpan = document.getElementById('pbjBalanceHeader');
-    const gameSpan   = document.getElementById('pbjBalanceGame');
-
-    // 2. Lectura desde la blockchain
-    const raw     = await pbjContract.balanceOf(userAddress);
-    const dec     = await pbjContract.decimals();
-    const balance = ethers.utils.formatUnits(raw, dec);
-
-    // 3. Formateo
-    const formatted = parseFloat(balance).toFixed(2);
-
-    // 4. Asignación segura
-    if (headerSpan) headerSpan.innerText = formatted;
-    if (gameSpan)   gameSpan.innerText   = formatted;
-
-  } catch (err) {
-    console.error("Error al obtener PBJ balance:", err);
-  }
-}
-
-  
   buyButton.addEventListener('click', async () => {
     if (!contract) {
       statusDiv.innerText = '❌ Primero conecta la wallet';
