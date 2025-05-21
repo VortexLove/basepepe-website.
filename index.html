@@ -495,7 +495,8 @@
   const abi = ['function buyTokens() payable'];
   const pbjAbi = [
   'function balanceOf(address) view returns (uint256)',
-  'function decimals() view returns (uint8)'
+  'function decimals() view returns (uint8)',
+  'function approve(address spender, uint256 amount) returns (bool)'
 ];
 
   let provider, signer, contract, pbjContract, casinoContract, userAddress;
