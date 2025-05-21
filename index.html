@@ -459,7 +459,10 @@ document.getElementById('dealBtn').onclick = async () => {
   const pbjContractAddress = '0x514963d1deb56ec8aFc212209299A807871A6098'; // contrato del token
   const rate = 1000000;
   const abi = ['function buyTokens() payable'];
-  const pbjAbi = ['function balanceOf(address) view returns (uint256)'];
+  const pbjAbi = [
+  'function balanceOf(address) view returns (uint256)',
+  'function decimals() view returns (uint8)'
+];
 
   let provider, signer, contract, pbjContract, userAddress;
 
