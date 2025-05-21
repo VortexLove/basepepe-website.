@@ -103,7 +103,7 @@
         
         <div id="pbjDisplay" style="display: flex; align-items: center; gap: 8px; font-family: 'Press Start 2P', cursive; font-size: 20px; color: #39ff14; background: transparent; padding: 10px 20px; border: none; border-radius: 8px; box-shadow: none;">
   <img src="./Coin.png" alt="PBJ Coin" width="48" height="48" style="image-rendering: pixelated; border-radius: 50%; border: none;">
-  <span id="pbjBalanceHeader">0</span> PBJ
+  <span id="pbjBalance">0</span> PBJ
 </div>
         
       </header>
@@ -177,10 +177,9 @@
       <section id="blackjackGame" class="bg-gray-900 p-4 sm:p-6 rounded-xl shadow-xl">
         <h2 class="text-xl sm:text-2xl font-bold text-green-400 mb-4">🃏 Juego de Blackjack</h2>
         <div class="mb-4 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center sm:space-x-8 space-y-2 sm:space-y-0">
-         <div id="pbjDisplay" style="...">
+          <div id="pbjDisplay" style="display: flex; align-items: center; gap: 8px; font-family: 'Press Start 2P', cursive; font-size: 20px; color: #39ff14; background: transparent; padding: 10px 20px; border: none; border-radius: 8px; box-shadow: none;">
   <img src="./Coin.png" alt="PBJ Coin" width="48" height="48" style="image-rendering: pixelated; border-radius: 50%; border: none;">
-  <span id="pbjBalanceGame">0</span> PBJ
-</div>
+  <span id="pbjBalance">0</span> PBJ
 </div>
           <div class="flex items-center space-x-2">
             <label for="betAmount" class="text-sm">Apuesta:</label>
@@ -502,26 +501,17 @@
     }
   });
 
-const pbjBalanceHeader = document.getElementById('pbjBalanceHeader');
-const pbjBalanceGame = document.getElementById('pbjBalanceGame');
-
-async function updatePBJBalance() {
-  if (!pbjContract || !userAddress) return;
-  try {
-    const rawBalance = await pbjContract.balanceOf(userAddress);
-    const decimals = await pbjContract.decimals();
-    const balance = ethers.utils.formatUnits(rawBalance, decimals);
-    const formatted = parseFloat(balance).toLocaleString(undefined, {maximumFractionDigits: 2});
-    
-    if (pbjBalanceHeader) pbjBalanceHeader.textContent = formatted;
-    if (pbjBalanceGame) pbjBalanceGame.textContent = formatted;
-  } catch (err) {
-    console.error("Error al obtener balance:", err);
-    if (pbjBalanceHeader) pbjBalanceHeader.textContent = "Error";
-    if (pbjBalanceGame) pbjBalanceGame.textContent = "Error";
+  async function updatePBJBalance() {
+    if (!pbjContract || !userAddress) return;
+    try {
+      const rawBalance = await pbjContract.balanceOf(userAddress);
+      const formatted = ethers.utils.formatUnits(rawBalance, 18);
+      pbjBalanceSpan.textContent = Number(formatted).toLocaleString();
+    } catch (err) {
+      console.error("Error al obtener balance:", err);
+      pbjBalanceSpan.textContent = "Error";
+    }
   }
-}
-
   
   buyButton.addEventListener('click', async () => {
     if (!contract) {
