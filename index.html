@@ -444,7 +444,12 @@ document.getElementById('dealBtn').onclick = async () => {
             if(p <= 21 && (d > 21 || p > d)) {msg = '¡Ganaste!';}
             else if(p > 21 || (d <= 21 && d > p)) msg = 'Has perdido';
             document.getElementById('resultMsg').innerText = msg;
-            pbjBalSpan.innerText = pbjBalance;
+            pbjContract.balanceOf(userAddress).then(raw => {
+  pbjContract.decimals().then(dec => {
+    const realBalance = parseFloat(ethers.utils.formatUnits(raw, dec));
+    pbjBalSpan.innerText = realBalance.toFixed(2);
+  });
+});
           }
         }, 600);
       };
