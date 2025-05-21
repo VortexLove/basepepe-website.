@@ -540,57 +540,93 @@
     }
   });
 
-  async function updatePBJBalance() {
-    if (!pbjContract || !userAddress) return;
-    try {
-      const rawBalance = await pbjContract.balanceOf(userAddress);
-      const formatted = ethers.utils.formatUnits(rawBalance, 18);
-      pbjBalanceSpan.textContent = Number(formatted).toLocaleString();
-    } catch (err) {
-      console.error("Error al obtener balance:", err);
-      pbjBalanceSpan.textContent = "Error";
-    }
+  let pbjBalance = 0;  // balance real en PBJ on-chain
+
+async function updatePBJBalance() {
+  if (!pbjContract || !userAddress) return;
+  try {
+    const rawBalance = await pbjContract.balanceOf(userAddress);
+    pbjBalance = parseFloat(ethers.utils.formatUnits(rawBalance, 18));
+    pbjBalanceSpan.textContent = pbjBalance.toLocaleString(undefined, {maximumFractionDigits: 2});
+  } catch (err) {
+    console.error("Error al obtener balance:", err);
+    pbjBalanceSpan.textContent = "Error";
+  }
+}
+
+// Evento dealBtn ajustado para validar apuesta on-chain y no usar saldo local fijo
+document.getElementById('dealBtn').onclick = async () => {
+  const bet = parseFloat(document.getElementById('betAmount').value) || 0;
+
+  // Verifica si la wallet está conectada y saldo sincronizado
+  if (!userAddress) {
+    alert('Conecta tu wallet primero');
+    return;
+  }
+  await updatePBJBalance(); // actualiza balance antes de validar
+
+  if (bet <= 0) {
+    alert('Ingresa una apuesta válida');
+    return;
   }
 
-  // Comprar tokens PBJ
-  buyButton.addEventListener('click', async () => {
-    if (!presaleContract) {
-      statusDiv.innerText = '❌ Primero conecta la wallet';
-      alert('Conecta tu wallet primero');
-      return;
-    }
+  if (bet > pbjBalance) {
+    alert('Saldo insuficiente');
+    return;
+  }
 
-    const ethVal = parseFloat(ethAmountInput.value);
-    if (isNaN(ethVal) || ethVal <= 0) {
-      alert('Ingresa una cantidad válida de ETH');
-      return;
-    }
+  // Si pasa la validación, empieza el juego y resta la apuesta localmente
+  pbjBalance -= bet;
+  pbjBalanceSpan.textContent = pbjBalance.toLocaleString(undefined, {maximumFractionDigits: 2});
 
-    if (ethVal > 2) {
-      alert('El máximo de compra es 2 ETH por wallet');
-      return;
-    }
+  shuffle();
+  dealerHand = [];
+  playerHand = [];
 
-    try {
-      const value = ethers.utils.parseEther(ethVal.toString());
-      statusDiv.innerText = '⌛ Confirmar en MetaMask...';
-      buyButton.disabled = true;
+  const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
+  dArea.innerHTML = '';
+  pArea.innerHTML = '';
 
-      const tx = await presaleContract.buyTokens({ value });
-      statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0, 10)}...`;
-      await tx.wait();
+  dealCard(dealerHand, dArea, 0);
+  dealCard(playerHand, pArea, 1);
+  dealCard(playerHand, pArea, 2);
 
-      statusDiv.innerText = '✅ Compra exitosa';
-      alert('¡Tokens comprados con éxito!');
+  setTimeout(updateScores, 500);
+
+  document.getElementById('hitBtn').disabled = false;
+  document.getElementById('standBtn').disabled = false;
+  document.getElementById('resultMsg').innerText = '';
+};
+
+// En standBtn, al terminar el juego, actualiza el saldo on-chain consultando el balance real y reemplaza el saldo local
+document.getElementById('standBtn').onclick = async () => {
+  const interval = setInterval(() => {
+    if (calc(dealerHand) < 17) {
+      dealCard(dealerHand, document.getElementById('dealerArea'), dealerHand.length);
+      setTimeout(updateScores, 500);
+    } else {
+      clearInterval(interval);
+      const p = calc(playerHand), d = calc(dealerHand);
+      const bet = parseFloat(document.getElementById('betAmount').value) || 0;
+      let msg = 'Empate';
+
+      if (p <= 21 && (d > 21 || p > d)) {
+        msg = '¡Ganaste!';
+        // En la blockchain se agrega el doble del bet cuando ganas,
+        // así que actualizamos el saldo real consultando la blockchain.
+      } else if (p > 21 || (d <= 21 && d > p)) {
+        msg = 'Has perdido';
+        // Ya se descontó la apuesta antes.
+      }
+
+      document.getElementById('resultMsg').innerText = msg;
+
+      // Actualiza saldo on-chain en la UI y variable pbjBalance
       updatePBJBalance();
-    } catch (e) {
-      console.error(e);
-      statusDiv.innerText = '❌ ' + (e.data?.message || e.message);
-      alert('Error en la compra: ' + (e.data?.message || e.message));
-    } finally {
-      buyButton.disabled = false;
     }
-  });
+  }, 600);
+};
+
 
   // Apostar PBJ en el contrato de blackjack
   async function apostarConPBJ(montoEnPBJ) {
