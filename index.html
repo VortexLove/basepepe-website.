@@ -387,25 +387,38 @@
         return sum;
       }
 
-      document.getElementById('dealBtn').onclick = () => {
-        shuffle(); dealerHand = []; playerHand = [];
-        const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
-        dArea.innerHTML = ''; pArea.innerHTML = '';
+document.getElementById('dealBtn').onclick = async () => {
+  const bet = parseInt(document.getElementById('betAmount').value) || 0;
 
-        const bet = parseInt(document.getElementById('betAmount').value) || 0;
-        if(bet > pbjBalance) { alert('Saldo insuficiente'); return; }
-        pbjBalance -= bet;
-        pbjBalSpan.innerText = pbjBalance;
+  try {
+    const rawBalance = await pbjContract.balanceOf(userAddress);
+    const decimals = await pbjContract.decimals();
+    const balance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
 
-        dealCard(dealerHand, dArea, 0);
-        dealCard(playerHand, pArea, 1);
-        dealCard(playerHand, pArea, 2);
-        setTimeout(updateScores, 500);
+    if (bet > balance) {
+      alert('Saldo insuficiente');
+      return;
+    }
 
-        document.getElementById('hitBtn').disabled = false;
-        document.getElementById('standBtn').disabled = false;
-        document.getElementById('resultMsg').innerText = '';
-      };
+    // Continuar con el juego si hay suficiente balance
+    shuffle(); dealerHand = []; playerHand = [];
+    const dArea = document.getElementById('dealerArea'), pArea = document.getElementById('playerArea');
+    dArea.innerHTML = ''; pArea.innerHTML = '';
+
+    dealCard(dealerHand, dArea, 0);
+    dealCard(playerHand, pArea, 1);
+    dealCard(playerHand, pArea, 2);
+    setTimeout(updateScores, 500);
+
+    document.getElementById('hitBtn').disabled = false;
+    document.getElementById('standBtn').disabled = false;
+    document.getElementById('resultMsg').innerText = '';
+  } catch (err) {
+    console.error("Error al verificar el balance:", err);
+    alert("Error al verificar el saldo. Intenta nuevamente.");
+  }
+};
+
 
       document.getElementById('hitBtn').onclick = () => {
         dealCard(playerHand, document.getElementById('playerArea'), playerHand.length);
@@ -428,7 +441,7 @@
             const p = calc(playerHand), d = calc(dealerHand);
             const bet = parseInt(document.getElementById('betAmount').value) || 0;
             let msg = 'Empate';
-            if(p <= 21 && (d > 21 || p > d)) { pbjBalance += bet * 2; msg = '¡Ganaste!'; }
+            if(p <= 21 && (d > 21 || p > d)) {msg = '¡Ganaste!';}
             else if(p > 21 || (d <= 21 && d > p)) msg = 'Has perdido';
             document.getElementById('resultMsg').innerText = msg;
             pbjBalSpan.innerText = pbjBalance;
@@ -451,7 +464,6 @@
   const ethAmountInput = document.getElementById('ethAmount');
   const pbjAmountInput = document.getElementById('pbjAmount');
   const ethBalanceSpan = document.getElementById('ethBalance');
-  const pbjBalanceSpan = document.getElementById('pbjBalance');
 
   function updateEstimate() {
     const ethVal = parseFloat(ethAmountInput.value) || 0;
