@@ -101,7 +101,7 @@
           class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white w-full sm:w-auto text-center"
         >Conectar Wallet</button>
         <div id="pbjDisplay" style="display: flex; align-items: center; gap: 8px; font-family: 'Press Start 2P', cursive; font-size: 10px; color: #39ff14; background: #111; padding: 6px 10px; border: 2px solid gold; border-radius: 8px; box-shadow: 0 0 8px gold;">
-  <img src="https://i.imgur.com/EvXLZ3U.png" alt="PBJ Coin" width="24" height="24" style="image-rendering: pixelated; border-radius: 50%; border: 2px solid gold;">
+  <img src="./Coin.png" alt="PBJ Coin" width="24" height="24" style="image-rendering: pixelated; border-radius: 50%; border: 2px solid gold;">
   <span id="pbjBalance">0</span> PBJ
 </div>
       </header>
@@ -505,7 +505,7 @@
       console.error("Error al obtener balance:", err);
       pbjBalanceSpan.textContent = "Error";
     }
-  }
+  
 
   buyButton.addEventListener('click', async () => {
     if (!contract) {
