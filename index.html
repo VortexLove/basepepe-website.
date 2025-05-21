@@ -339,8 +339,6 @@
     <script>
       const suits=['♠','♥','♦','♣'], vals=[2,3,4,5,6,7,8,9,10,'J','Q','K','A'];
       let deck=[], dealerHand=[], playerHand=[];
-      let pbjBalance = 100000;
-      const pbjBalSpan = document.getElementById('pbjBalance');
 
       function shuffle() {
         deck = [];
@@ -432,27 +430,24 @@ document.getElementById('dealBtn').onclick = async () => {
       };
 
       document.getElementById('standBtn').onclick = () => {
-        const interval = setInterval(() => {
-          if(calc(dealerHand) < 17) {
-            dealCard(dealerHand, document.getElementById('dealerArea'), dealerHand.length);
-            setTimeout(updateScores, 500);
-          } else {
-            clearInterval(interval);
-            const p = calc(playerHand), d = calc(dealerHand);
-            const bet = parseInt(document.getElementById('betAmount').value) || 0;
-            let msg = 'Empate';
-            if(p <= 21 && (d > 21 || p > d)) {msg = '¡Ganaste!';}
-            else if(p > 21 || (d <= 21 && d > p)) msg = 'Has perdido';
-            document.getElementById('resultMsg').innerText = msg;
-            pbjContract.balanceOf(userAddress).then(raw => {
-  pbjContract.decimals().then(dec => {
-    const realBalance = parseFloat(ethers.utils.formatUnits(raw, dec));
-    pbjBalSpan.innerText = realBalance.toFixed(2);
-  });
-});
-          }
-        }, 600);
-      };
+  const interval = setInterval(() => {
+    if (calc(dealerHand) < 17) {
+      dealCard(dealerHand, document.getElementById('dealerArea'), dealerHand.length);
+      setTimeout(updateScores, 500);
+    } else {
+      clearInterval(interval);
+      const p = calc(playerHand), d = calc(dealerHand);
+      let msg = 'Empate';
+      if (p <= 21 && (d > 21 || p > d)) { msg = '¡Ganaste!'; }
+      else if (p > 21 || (d <= 21 && d > p)) msg = 'Has perdido';
+      document.getElementById('resultMsg').innerText = msg;
+
+      // → Aquí actualizamos balance de forma centralizada:
+      updatePBJBalance();
+    }
+  }, 600);
+};
+
     </script>
 <script>
   const contractAddress = '0x514963d1deb56ec8aFc212209299A807871A6098'; // contrato de preventa
@@ -523,18 +518,24 @@ document.getElementById('dealBtn').onclick = async () => {
   async function updatePBJBalance() {
   if (!pbjContract || !userAddress) return;
   try {
-    const rawBalance = await pbjContract.balanceOf(userAddress);
-    const decimals = await pbjContract.decimals();
-    const balance = ethers.utils.formatUnits(rawBalance, decimals);
-    const formatted = parseFloat(balance).toLocaleString(undefined, {maximumFractionDigits: 2});
+    // 1. Captura de elementos (pueden no existir, por seguridad)
+    const headerSpan = document.getElementById('pbjBalanceHeader');
+    const gameSpan   = document.getElementById('pbjBalanceGame');
 
-    const headerBalance = document.getElementById('pbjBalanceHeader');
-    const gameBalance = document.getElementById('pbjBalanceGame');
+    // 2. Lectura desde la blockchain
+    const raw     = await pbjContract.balanceOf(userAddress);
+    const dec     = await pbjContract.decimals();
+    const balance = ethers.utils.formatUnits(raw, dec);
 
-    if (headerBalance) headerBalance.textContent = formatted;
-    if (gameBalance) gameBalance.textContent = formatted;
+    // 3. Formateo
+    const formatted = parseFloat(balance).toFixed(2);
+
+    // 4. Asignación segura
+    if (headerSpan) headerSpan.innerText = formatted;
+    if (gameSpan)   gameSpan.innerText   = formatted;
+
   } catch (err) {
-    console.error("Error al obtener balance:", err);
+    console.error("Error al obtener PBJ balance:", err);
   }
 }
 
