@@ -178,16 +178,19 @@
         <h2 class="text-xl sm:text-2xl font-bold text-green-400 mb-4">🃏 Juego de Blackjack</h2>
         <div class="mb-4 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center sm:space-x-8 space-y-2 sm:space-y-0">
        <div class="flex items-center space-x-2">
-            <label for="betAmount" class="text-sm">Apuesta:</label>
-            <input
-              type="number"
-              id="betAmount"
-              min="1"
-              step="1"
-              value="1000"
-              class="w-20 px-2 py-1 rounded bg-gray-800 text-white text-sm"
-            />
-          </div>
+  <div class="text-xs text-green-400" style="font-family: 'Press Start 2P', cursive;">
+    Saldo: <span id="pbjBalanceGame">0</span> PBJ
+  </div>
+  <label for="betAmount" class="text-sm ml-4">Apuesta:</label>
+  <input
+    type="number"
+    id="betAmount"
+    min="1"
+    step="1"
+    value="1000"
+    class="w-20 px-2 py-1 rounded bg-gray-800 text-white text-sm"
+  />
+</div>
         </div>
 
         <div class="relative h-64 sm:h-96 cartas-blackjack mb-4">
@@ -498,16 +501,23 @@
   });
 
   async function updatePBJBalance() {
-    if (!pbjContract || !userAddress) return;
-    try {
-      const rawBalance = await pbjContract.balanceOf(userAddress);
-      const formatted = ethers.utils.formatUnits(rawBalance, 18);
-      pbjBalanceSpan.textContent = Number(formatted).toLocaleString();
-    } catch (err) {
-      console.error("Error al obtener balance:", err);
-      pbjBalanceSpan.textContent = "Error";
-    }
+  if (!pbjContract || !userAddress) return;
+  try {
+    const rawBalance = await pbjContract.balanceOf(userAddress);
+    const decimals = await pbjContract.decimals();
+    const balance = ethers.utils.formatUnits(rawBalance, decimals);
+    const formatted = parseFloat(balance).toLocaleString(undefined, {maximumFractionDigits: 2});
+
+    const headerBalance = document.getElementById('pbjBalanceHeader');
+    const gameBalance = document.getElementById('pbjBalanceGame');
+
+    if (headerBalance) headerBalance.textContent = formatted;
+    if (gameBalance) gameBalance.textContent = formatted;
+  } catch (err) {
+    console.error("Error al obtener balance:", err);
   }
+}
+
   
   buyButton.addEventListener('click', async () => {
     if (!contract) {
