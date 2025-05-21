@@ -209,6 +209,11 @@
           <button id="standBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded flex-1" disabled>Plantarse</button>
         </div>
 
+      <div style="margin-top: 20px;">
+  <input type="number" id="pbjBetAmount" placeholder="Monto PBJ a apostar" style="width: 200px;">
+  <button onclick="apostarConPBJ(document.getElementById('pbjBetAmount').value)">Apostar PBJ</button>
+</div>
+
         <div id="resultMsg" class="mt-4 text-base sm:text-lg font-semibold text-center"></div>
       </section>
 
@@ -434,15 +439,30 @@
         }, 600);
       };
     </script>
+    
 <script>
-  const contractAddress = '0x514963d1deb56ec8aFc212209299A807871A6098'; // contrato de preventa
-  const pbjContractAddress = '0x514963d1deb56ec8aFc212209299A807871A6098'; // contrato del token
+  // Dirección de contratos
+  const PRESALE_ADDRESS = '0x514963d1deb56ec8aFc212209299A807871A6098'; // También es el token
+  const PBJ_ADDRESS = '0x514963d1deb56ec8aFc212209299A807871A6098';
+  const BLACKJACK_ADDRESS = '0x67C6a3208C0be081f13BDc387bA1Bd4f6C697f12';
+
+  // ABIs
+  const presaleAbi = ['function buyTokens() payable'];
+  const pbjAbi = [
+    "function approve(address spender, uint256 amount) public returns (bool)",
+    "function allowance(address owner, address spender) public view returns (uint256)",
+    "function balanceOf(address owner) public view returns (uint256)",
+    "function decimals() public view returns (uint8)"
+  ];
+  const blackjackAbi = ["function bet(uint256 amount) public"];
+
   const rate = 1000000;
-  const abi = ['function buyTokens() payable'];
-  const pbjAbi = ['function balanceOf(address) view returns (uint256)'];
 
-  let provider, signer, contract, pbjContract, userAddress;
+  // Web3 vars
+  let provider, signer, userAddress;
+  let presaleContract, pbjContract, blackjackContract;
 
+  // Elementos UI
   const connectButton = document.getElementById('connectButton');
   const buyButton = document.getElementById('buyButton');
   const statusDiv = document.getElementById('status');
@@ -451,6 +471,7 @@
   const ethBalanceSpan = document.getElementById('ethBalance');
   const pbjBalanceSpan = document.getElementById('pbjBalance');
 
+  // Estimación ETH ⇄ PBJ
   function updateEstimate() {
     const ethVal = parseFloat(ethAmountInput.value) || 0;
     const pbjVal = parseFloat(pbjAmountInput.value) || 0;
@@ -460,10 +481,10 @@
       ethAmountInput.value = (pbjVal / rate).toFixed(6);
     }
   }
-
   ethAmountInput.addEventListener('input', updateEstimate);
   pbjAmountInput.addEventListener('input', updateEstimate);
 
+  // Conectar wallet
   connectButton.addEventListener('click', async () => {
     if (!window.ethereum) {
       statusDiv.innerText = '❌ MetaMask no detectado';
@@ -475,8 +496,6 @@
       provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
       signer = provider.getSigner();
-      contract = new ethers.Contract(contractAddress, abi, signer);
-      pbjContract = new ethers.Contract(pbjContractAddress, pbjAbi, provider);
       userAddress = await signer.getAddress();
 
       const network = await provider.getNetwork();
@@ -486,8 +505,14 @@
         return;
       }
 
+      // Instanciar contratos
+      presaleContract = new ethers.Contract(PRESALE_ADDRESS, presaleAbi, signer);
+      pbjContract = new ethers.Contract(PBJ_ADDRESS, pbjAbi, signer);
+      blackjackContract = new ethers.Contract(BLACKJACK_ADDRESS, blackjackAbi, signer);
+
       const balance = await provider.getBalance(userAddress);
       ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(balance)).toFixed(4)} ETH`;
+
       statusDiv.innerText = '✅ Wallet conectada';
       buyButton.disabled = false;
 
@@ -509,9 +534,10 @@
       pbjBalanceSpan.textContent = "Error";
     }
   }
-  
+
+  // Comprar tokens PBJ
   buyButton.addEventListener('click', async () => {
-    if (!contract) {
+    if (!presaleContract) {
       statusDiv.innerText = '❌ Primero conecta la wallet';
       alert('Conecta tu wallet primero');
       return;
@@ -533,8 +559,8 @@
       statusDiv.innerText = '⌛ Confirmar en MetaMask...';
       buyButton.disabled = true;
 
-      const tx = await contract.buyTokens({ value });
-      statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0,10)}...`;
+      const tx = await presaleContract.buyTokens({ value });
+      statusDiv.innerText = `📨 Tx enviada: ${tx.hash.slice(0, 10)}...`;
       await tx.wait();
 
       statusDiv.innerText = '✅ Compra exitosa';
@@ -549,7 +575,45 @@
     }
   });
 
-  ethAmountInput.dispatchEvent(new Event('input'));
+  // Apostar PBJ en el contrato de blackjack
+  async function apostarConPBJ(montoEnPBJ) {
+    if (!pbjContract || !blackjackContract || !signer) {
+      alert("Primero conecta tu wallet.");
+      return;
+    }
+
+    try {
+      statusDiv.innerText = '⌛ Validando monto y permitiendo contrato...';
+
+      const decimals = await pbjContract.decimals();
+      const amount = ethers.utils.parseUnits(montoEnPBJ.toString(), decimals);
+
+      const balance = await pbjContract.balanceOf(userAddress);
+      if (balance.lt(amount)) {
+        alert("No tienes suficientes PBJ");
+        return;
+      }
+
+      const currentAllowance = await pbjContract.allowance(userAddress, BLACKJACK_ADDRESS);
+      if (currentAllowance.lt(amount)) {
+        const approveTx = await pbjContract.approve(BLACKJACK_ADDRESS, amount);
+        await approveTx.wait();
+      }
+
+      statusDiv.innerText = '🎲 Enviando apuesta...';
+      const betTx = await blackjackContract.bet(amount);
+      await betTx.wait();
+
+      statusDiv.innerText = '✅ ¡Apuesta realizada con éxito!';
+      alert("¡Apuesta realizada con éxito!");
+      await updatePBJBalance(); // ✅ Se actualiza balance tras apostar
+    } catch (err) {
+      console.error("Error en la apuesta:", err);
+      statusDiv.innerText = '❌ Error en apuesta: ' + (err.data?.message || err.message);
+      alert("Error al apostar: " + (err.data?.message || err.message));
+    }
+  }
 </script>
+
   </body>
 </html>
