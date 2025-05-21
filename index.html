@@ -210,7 +210,13 @@
 
       <div style="margin-top: 20px;">
   <input type="number" id="pbjBetAmount" placeholder="Monto PBJ a apostar" style="width: 200px;">
-  <button onclick="bg-green-500 hover:bg-green-600 px-4 py-2 rounded flex-1 apostarConPBJ(document.getElementById('pbjBetAmount').value)">Apostar PBJ</button>
+  <button
+  onclick="apostarConPBJ(document.getElementById('pbjBetAmount').value)"
+  class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded flex-1 text-white text-sm"
+>
+  Apostar PBJ
+</button>
+
 </div>
 
         <div id="resultMsg" class="mt-4 text-base sm:text-lg font-semibold text-center"></div>
