@@ -561,9 +561,10 @@ try {
 
     // Instancia del contrato casino
     const casinoAbi = [
-      'function placeBet(uint256 amount) external',
-      'function resolveBet(bool playerWon, bool isDraw) external',
-    ];
+  'function placeBet(uint256 amount) external',
+  'function finishGame(bool playerWon) external',
+  'function cancelBet() external'
+];
     casinoContract = new ethers.Contract(
       '0x90445C86ba5593DfA9E9dc9DDc3b8D8519b0f70e',
       casinoAbi,
