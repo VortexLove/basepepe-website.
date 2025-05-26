@@ -522,50 +522,54 @@
   pbjAmountInput.addEventListener('input', updateEstimate);
 
   connectButton.addEventListener('click', async () => {
-    if (!window.ethereum) {
-      statusDiv.innerText = '❌ MetaMask no detectado';
-      alert('MetaMask no detectado');
+  if (!window.ethereum) {
+    statusDiv.innerText = '❌ MetaMask no detectado';
+    alert('MetaMask no detectado');
+    return;
+  }
+
+  try {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+    signer = provider.getSigner();
+
+    const network = await provider.getNetwork();
+    if (network.chainId !== 8453) {
+      statusDiv.innerText = '❌ Conéctate a la red Base';
+      alert('Por favor cambia a la red Base en MetaMask.');
       return;
     }
 
-    try {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-      signer = provider.getSigner();
-      contract = new ethers.Contract(contractAddress, abi, signer);
-      pbjContract = new ethers.Contract(pbjContractAddress, pbjAbi, provider);
-      userAddress = await signer.getAddress();
+    userAddress = await signer.getAddress();
 
-      const network = await provider.getNetwork();
-      if (network.chainId !== 8453) {
-        statusDiv.innerText = '❌ Conéctate a la red Base';
-        alert('Por favor cambia a la red Base en MetaMask.');
-        return;
-      }
+    // Instancia del contrato de preventa y token, con signer para poder enviar tx
+    contract = new ethers.Contract(contractAddress, abi, signer);
+    pbjContract = new ethers.Contract(pbjContractAddress, pbjAbi, signer);
 
-      const balance = await provider.getBalance(userAddress);
-      ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(balance)).toFixed(4)} ETH`;
-      statusDiv.innerText = '✅ Wallet conectada';
-      buyButton.disabled = false;
+    const balance = await provider.getBalance(userAddress);
+    ethBalanceSpan.innerText = `${parseFloat(ethers.utils.formatEther(balance)).toFixed(4)} ETH`;
+    statusDiv.innerText = '✅ Wallet conectada';
+    buyButton.disabled = false;
 
-      updatePBJBalance();
-      
-      // 1️⃣ Instancia del contrato “casino”
-const casinoAbi = [
-  'function placeBet(uint256 amount) external',
-  'function resolveBet(bool playerWon, bool isDraw) external',
-];
-casinoContract = new ethers.Contract(
-  '0x0525bC0BB69A127A953eB7B25dD3f830879C3Dc7', // tu PepeBlackjackGame
-  casinoAbi,
-  signer
-);
+    updatePBJBalance();
 
-    } catch (err) {
-      console.error(err);
-      statusDiv.innerText = '❌ Error: ' + err.message;
-    }
-  });
+    // Instancia del contrato casino
+    const casinoAbi = [
+      'function placeBet(uint256 amount) external',
+      'function resolveBet(bool playerWon, bool isDraw) external',
+    ];
+    casinoContract = new ethers.Contract(
+      '0x0525bC0BB69A127A953eB7B25dD3f830879C3Dc7',
+      casinoAbi,
+      signer
+    );
+
+  } catch (err) {
+    console.error(err);
+    statusDiv.innerText = '❌ Error: ' + err.message;
+  }
+});
+
 
   buyButton.addEventListener('click', async () => {
     if (!contract) {
