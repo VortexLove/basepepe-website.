@@ -337,6 +337,30 @@
       });
     </script>
     <script>
+async function checkAndApprove(amountToApprove) {
+  const userAddr = await signer.getAddress();
+  const allowance = await pbjContract.allowance(userAddr, casinoContract.address);
+  console.log("Allowance actual:", allowance.toString());
+
+  if (allowance.gte(amountToApprove)) {
+    console.log("Allowance suficiente, no se necesita aprobar.");
+    return true;
+  } else {
+    try {
+      // Aprueba un monto alto para evitar aprobar varias veces
+      const approveAmount = ethers.utils.parseUnits("1000000", await pbjContract.decimals());
+      const txApprove = await pbjContract.approve(casinoContract.address, approveAmount);
+      console.log("Solicitando aprobación, tx hash:", txApprove.hash);
+      await txApprove.wait();
+      console.log("Aprobación confirmada.");
+      return true;
+    } catch (error) {
+      console.error("Error o rechazo en aprobación:", error);
+      return false;
+    }
+  }
+}
+      
   async function updatePBJBalance() {
     if (!pbjContract || !userAddress) return;
     try {
@@ -401,45 +425,52 @@
   }
 
   document.getElementById('dealBtn').onclick = async () => {
-    const bet = parseInt(document.getElementById('betAmount').value) || 0;
+  const bet = parseFloat(document.getElementById('betAmount').value) || 0;
+  if (bet <= 0) {
+    alert('Ingresa una cantidad válida para apostar');
+    return;
+  }
 
-    try {
-      const decimals = await pbjContract.decimals();
-      const betUnits = ethers.utils.parseUnits(bet.toString(), decimals);
-      const rawBalance = await pbjContract.balanceOf(userAddress);
-      const balance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
-
-      if (bet > balance) {
-        alert('Saldo insuficiente');
-        return;
-      }
-
-      // 1. Aprobar el gasto de PBJ
-      const txApprove = await pbjContract.connect(signer).approve(casinoContract.address, betUnits);
-      await txApprove.wait();
-
-      // 2. Colocar la apuesta en el contrato
-      const txPlace = await casinoContract.placeBet(betUnits);
-      await txPlace.wait();
-
-      // 3. Repartir cartas en UI
-      shuffle(); dealerHand = []; playerHand = [];
-      const dArea = document.getElementById('dealerArea'),
-            pArea = document.getElementById('playerArea');
-      dArea.innerHTML = ''; pArea.innerHTML = '';
-      dealCard(dealerHand, dArea, 0);
-      dealCard(playerHand, pArea, 1);
-      dealCard(playerHand, pArea, 2);
-      setTimeout(updateScores, 500);
-
-      document.getElementById('hitBtn').disabled = false;
-      document.getElementById('standBtn').disabled = false;
-      document.getElementById('resultMsg').innerText = '';
-    } catch (err) {
-      console.error("Error al colocar la apuesta:", err);
-      alert("No se pudo colocar la apuesta: " + (err.data?.message || err.message));
+  try {
+    const decimals = await pbjContract.decimals();
+    const betUnits = ethers.utils.parseUnits(bet.toString(), decimals);
+    const rawBalance = await pbjContract.balanceOf(userAddress);
+    const balance = parseFloat(ethers.utils.formatUnits(rawBalance, decimals));
+    if (bet > balance) {
+      alert('Saldo insuficiente');
+      return;
     }
-  };
+
+    // Solo una vez: aprobación
+    const approved = await checkAndApprove(betUnits);
+    if (!approved) {
+      alert('No se pudo aprobar el token para apostar');
+      return;
+    }
+
+    // Colocar la apuesta
+    const txPlace = await casinoContract.placeBet(betUnits);
+    await txPlace.wait();
+
+    // UI repartir cartas
+    shuffle(); dealerHand = []; playerHand = [];
+    const dArea = document.getElementById('dealerArea'),
+          pArea = document.getElementById('playerArea');
+    dArea.innerHTML = ''; pArea.innerHTML = '';
+    dealCard(dealerHand, dArea, 0);
+    dealCard(playerHand, pArea, 1);
+    dealCard(playerHand, pArea, 2);
+    setTimeout(updateScores, 500);
+
+    document.getElementById('hitBtn').disabled = false;
+    document.getElementById('standBtn').disabled = false;
+    document.getElementById('resultMsg').innerText = '';
+
+  } catch (err) {
+    console.error("Error al colocar la apuesta:", err);
+    alert("No se pudo colocar la apuesta: " + (err.data?.message || err.message));
+  }
+};
 
   document.getElementById('hitBtn').onclick = () => {
     dealCard(playerHand, document.getElementById('playerArea'), playerHand.length);
