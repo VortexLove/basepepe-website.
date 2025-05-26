@@ -483,7 +483,7 @@ try {
   console.log("playerWon:", playerWon);
   console.log("isDraw:", isDraw);
 
-  const txResolve = await casinoContract.connect(signer).resolveBet(playerWon, isDraw);
+  const txResolve = await casinoContract.connect(signer).finishGame(playerWon);
   await txResolve.wait();
   updatePBJBalance();
 } catch (err) {
