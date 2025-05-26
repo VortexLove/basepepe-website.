@@ -476,14 +476,20 @@
 
         document.getElementById('resultMsg').innerText = msg;
 
-        try {
-          const txResolve = await casinoContract.connect(signer).resolveBet(playerWon, isDraw);
-          await txResolve.wait();
-          updatePBJBalance();
-        } catch (err) {
-          console.error("Error al resolver la apuesta:", err);
-          alert("Error al resolver la apuesta on-chain.");
-        }
+try {
+  console.log("Resolviendo apuesta con los siguientes datos:");
+  console.log("playerScore:", p);
+  console.log("dealerScore:", d);
+  console.log("playerWon:", playerWon);
+  console.log("isDraw:", isDraw);
+
+  const txResolve = await casinoContract.connect(signer).resolveBet(playerWon, isDraw);
+  await txResolve.wait();
+  updatePBJBalance();
+} catch (err) {
+  console.error("Error al resolver la apuesta:", err);
+  alert("Error al resolver la apuesta on-chain.");
+}
       }
     }, 600);
   };
